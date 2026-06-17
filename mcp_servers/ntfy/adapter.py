@@ -15,15 +15,15 @@ from urllib.request import Request, urlopen
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_NTFY_URL = os.getenv("NTFY_BASE_URL", "")
-DEFAULT_TOPIC = os.getenv("NTFY_TOPIC", "mcp-hub")
+DEFAULT_NTFY_URL = os.getenv("NTFY_BASE_URL", "https://ntfy.sh")
+DEFAULT_TOPIC = os.getenv("NTFY_TOPIC", "ai-infrastructure")
 
 
 class NtfyAdapter:
     """Push notification adapter.
 
-    By default, notifications are logged to stdout.
-    Set NTFY_BASE_URL to enable HTTP forwarding to a ntfy.sh instance.
+    Forwards notifications to ntfy.sh API by default.
+    Falls back to stdout logging if HTTP send fails.
     """
 
     def __init__(
@@ -38,7 +38,7 @@ class NtfyAdapter:
 
     @property
     def endpoint(self) -> str:
-        return self._base_url or "(stdout)"
+        return self._base_url
 
     @property
     def topic(self) -> str:

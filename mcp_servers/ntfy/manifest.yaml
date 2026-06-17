@@ -1,9 +1,15 @@
-# ntfy MCP — Push notification service
+# ntfy MCP — External push notification service
 #
-# Self-contained MCP service. No external deployment required.
-# send_notification() logs to stdout; optional HTTP forwarding to ntfy.sh.
+# ntfy is an external service. The Hub connects via HTTP adapter.
+# Default: https://ntfy.sh, topic: ai-infrastructure
 
 name: ntfy
 version: "0.1.0"
 class: NtfyServer
-description: Push notifications — stdout logging with optional ntfy.sh forwarding
+description: External push notification service — ntfy.sh API integration
+type: external_service
+health_endpoint: /health
+tools:
+  - ntfy_health
+  - ntfy_info
+  - ntfy_send

@@ -1,12 +1,9 @@
 # ──────────────────────────────────────────
-# ntfy MCP Server — Configuration
+# ntfy MCP — External Service Configuration
 # ──────────────────────────────────────────
 
 server:
-  name: ntfy-mcp
-  port: 3000
+  url: "${NTFY_BASE_URL:-https://ntfy.sh}"
 
-ntfy:
-  base_url: "${NTFY_BASE_URL}"
-  topic: "${NTFY_TOPIC}"
-  # TODO: configure notification rules and triggers
+notification:
+  default_topic: "${NTFY_TOPIC:-ai-infrastructure}"

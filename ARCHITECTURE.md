@@ -193,7 +193,7 @@ MCP Hub (this repository)
     └── ...
 ```
 
-Ombre's `services/ombre/` foundation (Task-002) provides the Hub-facing adapter. The actual Ombre service runs separately and communicates through the Hub.
+Ombre's `mcp_servers/ombre/` foundation (Task-002) provides the Hub-facing adapter. The actual Ombre service runs separately and communicates through the Hub. Task-009 will complete the integration.
 
 ---
 

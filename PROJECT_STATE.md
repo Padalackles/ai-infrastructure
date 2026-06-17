@@ -29,15 +29,20 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 
 | Task | Status | Description |
 |---|---|---|
-| Task-001 | ✅ | Migrate Ombre MCP Server to Docker Compose |
-| Task-002 | ✅ | Establish Ombre MCP Server foundation (FastAPI + stubs) |
-| Task-003 | ✅ | MCP Hub Core Runtime (ServerManager, Discovery, lifecycle) |
-| Task-004 | ✅ | JSON-RPC 2.0 Transport Layer |
-| Task-004.1 | ✅ | Lifecycle fixes, Discovery isolation, API stats |
-| Task-004 Review | ✅ | Router→handlers, Runtime layer, Loader, unified `mcp_servers/` |
-| Task-Doc-Refine | ✅ | Documentation refinement (completed) |
-| Task-003 Skeleton | ✅ | Complete MCP Hub skeleton — modules, models, interfaces |
-| Task-005 | ⬜ | Claude Desktop ↔ MCP Hub wiring |
+| Task-001 | ✅ | Project Specification |
+| Task-002 | ✅ | Foundation — Ombre MCP Server stubs |
+| Task-003 | ✅ | MCP Hub Skeleton — modules, models, interfaces |
+| Task-004 | ✅ | Registry — ServerManager, Discovery |
+| Task-005 | ✅ | Router — JSON-RPC dispatch, handlers |
+| Task-006 | ✅ | Lifecycle Manager — BaseMCPServer, lifecycle_start/stop |
+| Task-007 | ✅ | Configuration — config.yaml, load_config() |
+| Task-008 | ✅ | Plugin Loader — Loader ABC, PythonLoader |
+| Task-009 | ⬜ | Ombre MCP Integration |
+| Task-010 | ⬜ | ntfy MCP Integration |
+| Task-011 | ⬜ | Claude Desktop Integration |
+| Task-012 | ⬜ | Docker Production |
+| Task-013 | ⬜ | Cloudflare + Caddy |
+| Task-014 | ⬜ | Production Hardening |
 
 ---
 
@@ -45,9 +50,9 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-003 Skeleton |
-| **Status** | ✅ Completed |
-| **Description** | Complete Hub module structure: router, utils, models, interfaces |
+| **Task ID** | Task-009 |
+| **Status** | ⬜ Pending |
+| **Description** | Integrate Ombre as external MCP service |
 
 ---
 
@@ -126,19 +131,19 @@ mcp-hub/src/
 | Capability | Location |
 |---|---|
 | MCP Hub Gateway (FastAPI) | `mcp-hub/src/main.py` |
-| Server lifecycle (init → lifecycle_start → lifecycle_stop) | `mcp-hub/src/core/base_server.py` |
-| ServerManager (register, start_all, stop_all, stats, tools, health) | `mcp-hub/src/core/server_manager.py` |
-| Auto-discovery (manifest.yaml + server.py, error isolation) | `mcp-hub/src/core/discovery.py` |
-| Loader abstraction (PythonLoader, extensible) | `mcp-hub/src/core/loader.py` |
-| Event bus (in-memory pub/sub) | `mcp-hub/src/core/events.py` |
+| Server lifecycle | `mcp-hub/src/lifecycle/` |
+| ServerManager (registry) | `mcp-hub/src/registry/` |
+| Auto-discovery + Loader | `mcp-hub/src/loader/` |
+| Event bus | `mcp-hub/src/core/events.py` |
 | JSON-RPC 2.0 transport | `mcp-hub/src/transport/` |
-| Handler modules (initialize, tools, health) | `mcp-hub/src/transport/handlers/` |
-| Runtime middleware layer | `mcp-hub/src/runtime/` |
-| REST endpoints (/health, /status, /tools) | `mcp-hub/src/api/routes.py` |
-| Structured logging | All modules |
-| Ombre MCP Server foundation | `services/ombre/` |
-| Docker Compose (Core + MCP services) | `docker-compose.yml` |
-| Unit tests (lifecycle, discovery, transport, tools) | `mcp-hub/tests/` |
+| Router + handlers | `mcp-hub/src/router/` + `transport/handlers/` |
+| Runtime middleware | `mcp-hub/src/runtime/` |
+| REST endpoints | `mcp-hub/src/api/routes.py` |
+| Configuration | `mcp-hub/src/config/` |
+| Shared models | `mcp-hub/src/models/` |
+| Ombre MCP Server foundation | `mcp_servers/ombre/` |
+| Docker Compose | `docker-compose.yml` |
+| Unit tests | `mcp-hub/tests/` |
 
 ## Not Yet Implemented
 

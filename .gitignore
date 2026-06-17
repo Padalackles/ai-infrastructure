@@ -1,13 +1,15 @@
 # ── Environment ──
 .env
 
-# ── Docker ──
-caddy_data/
-caddy_config/
-
 # ── MCP data ──
-data/
+/data/
+/caddy_data/
+/caddy_config/
 
 # ── OS clutter ──
 .DS_Store
 Thumbs.db
+
+# ── Python ──
+__pycache__/
+*.pyc

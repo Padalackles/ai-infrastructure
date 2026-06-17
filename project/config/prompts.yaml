@@ -1,0 +1,8 @@
+# ──────────────────────────────────────────
+# Ombre Brain — Prompt Templates
+# ──────────────────────────────────────────
+
+system: |
+  You are Ombre Brain, a personal AI assistant.
+
+# TODO: add domain-specific prompts in future tasks

@@ -28,18 +28,13 @@ Build a personal AI infrastructure centered on **Claude Desktop + MCP Hub**.
 
 ## Current Task
 
-**Task-001 — Migrate Ombre Brain to Docker Compose**
+**Task-002 — Establish Ombre Brain Project Foundation**
 
 **Current priorities:**
 
-- [x] README.md
-- [x] PROJECT_STATE.md
-- [x] ARCHITECTURE.md
-- [x] ROADMAP.md
-- [x] docs/MCP.md
-- [x] docs/SPECIFICATION.md
-- [x] tasks/ directory
-- [ ] Task-001: Migrate Ombre Brain to Docker Compose
+- [x] Task-001: Migrate Ombre Brain to Docker Compose (defined)
+- [x] Task-002: Establish Ombre Brain project foundation
+- [ ] Task-003: TBD
 
 ---
 
@@ -49,6 +44,7 @@ Build a personal AI infrastructure centered on **Claude Desktop + MCP Hub**.
 - Switched architecture from "Docker-centric" to "MCP-first".
 - Decided Claude Desktop will be the unified AI entry point.
 - Decided MCP Hub will be the system core.
+- Created Task-002: Established Ombre Brain project foundation (FastAPI + MCP stubs + storage + models).
 
 ---
 

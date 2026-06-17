@@ -36,19 +36,23 @@ MCP Hub (Gateway)       ← VPS
 ```
 Gateway (main.py)
     │
-Registry (ServerManager + Discovery)
+Config (src/config/)
     │
-Router (transport/router.py)
+Registry (src/registry/)
     │
-Handlers (transport/handlers/)
+Lifecycle (src/lifecycle/)
     │
-Runtime (runtime/)
+Loader (src/loader/)
     │
-Lifecycle (core/base_server.py, core/server_manager.py)
+Router (src/router/ + src/transport/handlers/)
     │
-Transport (transport/ — JSON-RPC 2.0)
+Runtime (src/runtime/)
     │
-Config (config.yaml)
+Transport (src/transport/ — JSON-RPC 2.0)
+    │
+Models (src/models/)
+    │
+Utils (src/utils/)
 ```
 
 | Component | Responsibility |

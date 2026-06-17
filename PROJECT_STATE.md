@@ -36,6 +36,7 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | Task-004.1 | ✅ | Lifecycle fixes, Discovery isolation, API stats |
 | Task-004 Review | ✅ | Router→handlers, Runtime layer, Loader, unified `mcp_servers/` |
 | Task-Doc-Refine | ✅ | Documentation refinement (completed) |
+| Task-003 Skeleton | ✅ | Complete MCP Hub skeleton — modules, models, interfaces |
 | Task-005 | ⬜ | Claude Desktop ↔ MCP Hub wiring |
 
 ---
@@ -44,9 +45,29 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-Documentation-Refinement |
+| **Task ID** | Task-003 Skeleton |
 | **Status** | ✅ Completed |
-| **Description** | Refine documentation: PROJECT_STATE, CLAUDE, DECISIONS |
+| **Description** | Complete Hub module structure: router, utils, models, interfaces |
+
+---
+
+## Hub Module Structure
+
+```
+mcp-hub/src/
+├── main.py              Entry point — 7-step startup pipeline
+├── config/              load_config() — unified YAML config
+├── lifecycle/           BaseMCPServer, ToolNotFoundError
+├── registry/            ServerManager — service registry
+├── loader/              Discovery, Loader, PythonLoader
+├── router/              Router + RouterInterface + RouteRegistry
+├── runtime/             Runtime — middleware pass-through
+├── transport/           JSON-RPC 2.0 stack (server, handlers)
+├── models/              ServiceInfo, PluginManifest, HubState, RuntimeContext
+├── api/                 REST endpoints (/health, /status, /tools)
+├── core/                EventBus
+└── utils/               generate_id() helpers
+```
 
 ---
 

@@ -37,3 +37,35 @@ Filesystem GitHub Ombre ntfy
 ---
 
 # Installed MCPs
+
+## Filesystem MCP
+
+### Purpose
+
+Provide secure access to project files.
+
+### Capabilities
+
+- Read files
+- Write files
+- Search files
+- Create folders
+
+### Permission
+
+Local workspace only.
+
+### Communication
+
+Claude Desktop
+→ MCP Hub
+→ Filesystem MCP
+
+### Status
+
+✅ Planned
+
+### Future
+
+- Workspace isolation
+- Permission control

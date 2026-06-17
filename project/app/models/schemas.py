@@ -1,6 +1,13 @@
-"""Pydantic models — minimal field set, extensible for future tasks."""
+"""Pydantic models — minimal field set, extensible for future tasks.
 
-from datetime import datetime
+These models represent the core domain objects of Ombre Brain:
+  - Conversation — tracks an AI conversation thread.
+  - Memory — a persistent, keyed memory entry.
+  - Task — a scheduled or tracked task.
+  - UserConfig — per-user configuration preferences.
+"""
+
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
@@ -19,19 +26,20 @@ class Conversation(BaseModel):
 
     id: str = Field(default="")
     title: str = Field(default="")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     messages: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class Memory(BaseModel):
-    """A persistent memory entry."""
+    """A persistent memory entry stored by Ombre Brain."""
 
     id: str = Field(default="")
     key: str = Field(default="")
     value: Any = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    tags: list[str] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class Task(BaseModel):
@@ -41,12 +49,14 @@ class Task(BaseModel):
     title: str = Field(default="")
     description: str = Field(default="")
     status: TaskStatus = Field(default=TaskStatus.PENDING)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    due_at: datetime | None = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class UserConfig(BaseModel):
-    """User-level configuration."""
+    """Per-user configuration and preferences."""
 
+    user_id: str = Field(default="default")
     name: str = Field(default="")
     preferences: dict[str, Any] = Field(default_factory=dict)

@@ -1,0 +1,1 @@
+"""Ombre Brain — Core configuration."""

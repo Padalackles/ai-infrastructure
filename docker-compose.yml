@@ -3,8 +3,6 @@
 # ──────────────────────────────────────────
 # docker compose up -d
 
-version: "3.9"
-
 services:
   # ── Caddy — Reverse Proxy ────────────────
   caddy:
@@ -22,7 +20,7 @@ services:
       - ai-net
     # TODO: configure for Cloudflare tunnel upstream
 
-  # ── MCP Hub — System Core ────────────────
+  # ── MCP Hub — System Core (Gateway) ───────
   mcp-hub:
     build: ./mcp-hub
     container_name: ai-mcp-hub
@@ -31,11 +29,11 @@ services:
       - "${MCP_HUB_PORT:-8080}:8080"
     volumes:
       - ./mcp-hub/config.yaml:/app/config.yaml:ro
+      - ./mcp-hub/mcp_servers:/app/mcp_servers:ro
     environment:
       - MCP_HUB_AUTH_TOKEN=${MCP_HUB_AUTH_TOKEN}
     networks:
       - ai-net
-    # TODO: implement MCP Hub service
 
   # ── GitHub MCP Server ────────────────────
   github-mcp:

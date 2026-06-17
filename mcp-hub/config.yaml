@@ -2,24 +2,18 @@
 # MCP Hub — Configuration
 # ──────────────────────────────────────────
 
-hub:
+server:
+  host: "0.0.0.0"
   port: 8080
-  auth_token: "${MCP_HUB_AUTH_TOKEN}"
 
-# Registered MCP servers
-mcp_servers:
-  - name: github
-    endpoint: http://github-mcp:3000
-    # TODO: configure
+logging:
+  level: "INFO"
 
-  - name: filesystem
-    endpoint: http://filesystem-mcp:3000
-    # TODO: configure
-
-  - name: ombre
-    endpoint: http://ombre-mcp:3000
-    # TODO: configure
-
-  - name: ntfy
-    endpoint: http://ntfy-mcp:3000
-    # TODO: configure
+# MCP servers are auto-discovered from mcp_servers/ directory.
+# Manual per-server overrides can be added here when needed:
+#
+# mcp_servers:
+#   ombre:
+#     enabled: true
+#   ntfy:
+#     enabled: true

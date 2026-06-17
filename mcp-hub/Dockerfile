@@ -1,11 +1,21 @@
-# ── MCP Hub — Environment ──────────────────
+# ── MCP Hub — Runtime Environment ──────────
 FROM python:3.12-slim
 
 WORKDIR /app
-# TODO: add requirements.txt and source code
-# COPY requirements.txt .
-# RUN pip install -r requirements.txt
-# COPY . .
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application source
+COPY src/ ./src/
+COPY mcp_servers/ ./mcp_servers/
+COPY config.yaml .
 
 EXPOSE 8080
-CMD ["echo", "MCP Hub — not yet implemented"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" || exit 1
+
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]

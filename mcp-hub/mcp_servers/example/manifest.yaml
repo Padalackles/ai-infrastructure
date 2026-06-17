@@ -1,0 +1,4 @@
+# Example MCP Server — proves the discovery + lifecycle pipeline works.
+name: example
+version: "0.1.0"
+class: ExampleServer

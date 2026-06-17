@@ -193,3 +193,17 @@ Future
 - Redis
 - Monitoring
 - AI Agent
+
+---
+
+# MCP Integration Rules
+
+Every new capability should follow this workflow:
+
+1. Evaluate whether it can be implemented as an MCP.
+2. Register the MCP in this document.
+3. Define permissions.
+4. Define communication flow.
+5. Update ARCHITECTURE.md if necessary.
+
+Avoid directly coupling new functionality into the core infrastructure.

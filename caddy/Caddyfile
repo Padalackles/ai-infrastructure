@@ -1,25 +1,22 @@
 # ──────────────────────────────────────────
-# Caddyfile — Reverse Proxy Configuration
+# Caddyfile — Reverse Proxy + Auto HTTPS
 # ──────────────────────────────────────────
+# Caddy automatically provisions Let's Encrypt
+# certificates and redirects HTTP → HTTPS.
 
 {
     email {$CADDY_ACME_EMAIL}
 }
 
-{$DOMAIN} {
-    reverse_proxy mcp-hub:8080
+{$DOMAIN:localhost} {
+    # Reverse proxy /mcp to the Hub
+    reverse_proxy /mcp* mcp-hub:8080
 
-    # TODO: add per-MCP-server routes once MCP Hub dispatches
-    # handle_path /github* {
-    #     reverse_proxy github-mcp:3000
-    # }
-    # handle_path /filesystem* {
-    #     reverse_proxy filesystem-mcp:3000
-    # }
-    # handle_path /ombre* {
-    #     reverse_proxy ombre-mcp:3000
-    # }
-    # handle_path /ntfy* {
-    #     reverse_proxy ntfy-mcp:3000
-    # }
+    # Health check endpoint
+    reverse_proxy /health* mcp-hub:8080
+    reverse_proxy /status* mcp-hub:8080
+    reverse_proxy /tools* mcp-hub:8080
+
+    # Default: proxy everything to Hub
+    reverse_proxy mcp-hub:8080
 }

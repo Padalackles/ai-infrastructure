@@ -40,6 +40,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-009 | ✅ | Ombre Adapter — HTTP bridge to external Ombre |
 | Task-010 | ✅ | ntfy External Service Integration — via ntfy.sh API |
 | Task-011 | ✅ | Remote MCP Transport — protocol validated, Claude Desktop Ready |
+| Task-012 | 🟡 | Domain + HTTPS + Cloudflare — implemented (pending real domain) |
 | Task-012 | ⬜ | Docker Production |
 | Task-013 | ⬜ | Cloudflare + Caddy |
 | Task-014 | ⬜ | Production Hardening |

@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import logging
 import os
-import signal
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
@@ -32,6 +31,7 @@ from fastapi import FastAPI
 from src.core.discovery import Discovery
 from src.core.events import EventBus
 from src.core.server_manager import ServerManager
+from src.transport.router import Router
 
 # ── Constants ───────────────────────────────────────────────────
 
@@ -68,23 +68,19 @@ async def lifespan(app: FastAPI):
     """Startup and shutdown lifecycle for the MCP Hub."""
 
     # ── Startup ──────────────────────────────────────────────────
-    print("Starting MCP Hub...")
     logger.info("Starting MCP Hub...")
 
     # Load config
     config = _load_config(CONFIG_PATH)
     app.state.config = config
-    print("Config Loaded")
     logger.info("Config Loaded")
 
     # Logger is already configured above
-    print("Logger Ready")
     logger.info("Logger Ready")
 
     # Create Server Manager
     server_manager = ServerManager()
     app.state.server_manager = server_manager
-    print("Server Manager Ready")
     logger.info("Server Manager Ready")
 
     # Create Event Bus
@@ -92,22 +88,25 @@ async def lifespan(app: FastAPI):
     app.state.event_bus = event_bus
     logger.info("Event Bus Ready")
 
-    # Auto-discover servers
+    # Create Router (transport layer — uses ServerManager for all dispatch)
+    router = Router(server_manager)
+    app.state.router = router
+    logger.info("Router Ready")
+
+    # Auto-discover servers (isolated — one failure won't block others)
     discovery = Discovery()
-    discovered = await discovery.discover()
+    discovered, disc_result = await discovery.discover()
     for server in discovered:
         server_manager.register(server)
+    app.state.discovery_result = disc_result
 
-    print(f"{server_manager.count} Servers Loaded")
-    logger.info("%d Servers Loaded", server_manager.count)
-
-    # Start all registered servers
+    # Start all registered servers (lifecycle_start manages _running state)
     await server_manager.start_all()
 
-    print("HTTP API Ready")
-    logger.info("HTTP API Ready")
+    logger.info("Servers — total: %d running: %d failed: %d",
+                server_manager.count, server_manager.running_count, server_manager.failed_count)
 
-    print("MCP Hub Ready")
+    logger.info("HTTP API Ready")
     logger.info("MCP Hub Ready")
 
     # Store version / runtime metadata
@@ -117,12 +116,10 @@ async def lifespan(app: FastAPI):
     yield  # ── Application runs here ──
 
     # ── Shutdown ─────────────────────────────────────────────────
-    print("\nStopping Servers...")
     logger.info("Stopping Servers...")
 
     await server_manager.stop_all()
 
-    print("Exit.")
     logger.info("Exit.")
 
 
@@ -138,5 +135,7 @@ app = FastAPI(
 )
 
 from src.api.routes import router as api_router  # noqa: E402
+from src.transport.server import router as transport_router  # noqa: E402
 
 app.include_router(api_router)
+app.include_router(transport_router)

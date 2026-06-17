@@ -158,16 +158,49 @@ Routing is **transparent to Claude Desktop** — it never knows which service in
 
 ### 3. Lifecycle Management
 
-The Hub manages the full lifecycle of every registered service:
+Every MCP server follows a strict lifecycle managed by the Hub via `ServerManager`:
+
+```
+discover()
+    ↓
+register(server)
+    ↓
+initialize()       ← subclass hook
+    ↓
+lifecycle_start()  ← BaseMCPServer wrapper — calls start() then sets _running = True
+    ↓
+(server running)
+    ↓
+lifecycle_stop()   ← BaseMCPServer wrapper — calls stop() then sets _running = False
+```
+
+**Key rule:** `_running` state lives ONLY in `BaseMCPServer`. `ServerManager` never touches it directly. The `lifecycle_start()` and `lifecycle_stop()` wrappers are the single source of truth for state transitions.
 
 | Phase | Action |
 |---|---|
-| **Startup** | Service registers → Hub validates → Hub adds to active registry. |
-| **Health** | Hub periodically health-checks every registered service. |
-| **Shutdown** | Service deregisters → Hub removes from registry → in-flight requests drain. |
-| **Failure** | Unhealthy services are marked offline; requests are rejected with a clear error. |
+| **Startup** | Discover → Register → Initialize → Lifecycle Start → Running |
+| **Health** | Hub periodically health-checks every registered server. |
+| **Shutdown** | Lifecycle Stop → Unregister → Drain in-flight requests. |
+| **Failure** | Failed servers are isolated; one failure never blocks other servers. |
 
-### 4. Configuration
+### 4. Auto-Discovery
+
+Servers are auto-discovered from `mcp_servers/` at startup:
+
+```
+mcp_servers/
+    ombre/
+        manifest.yaml    ← declarative: name, version, class
+        server.py        ← implementation: BaseMCPServer subclass
+```
+
+Two modes, tried in order:
+1. **manifest.yaml** (preferred) — declarative registration
+2. **server.py scan** (fallback) — convention-based
+
+**Error isolation:** A broken manifest or import failure in one server never blocks discovery of other servers. Failed servers are reported in `/status` under `failed_names`.
+
+### 5. Configuration
 
 The Hub stores per-service configuration, making it the single source of truth for:
 

@@ -9,8 +9,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application source
 COPY src/ ./src/
-COPY mcp_servers/ ./mcp_servers/
 COPY config.yaml .
+
+# mcp_servers/ is mounted at runtime (see docker-compose.yml).
+# The Hub auto-discovers servers from /app/mcp_servers.
 
 EXPOSE 8080
 

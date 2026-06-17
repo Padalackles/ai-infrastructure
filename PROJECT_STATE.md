@@ -33,18 +33,39 @@ Build a personal AI infrastructure centered on **Claude Desktop + MCP Hub**.
 | **Task-001** | ✅ Completed | Migrate Ombre Brain to Docker Compose (defined) |
 | **Task-002** | ✅ Completed | Establish Ombre Brain Project Foundation (fully implemented) |
 | **Task-003** | ✅ Completed | Implement MCP Hub Core Runtime (fully implemented) |
+| **Task-004** | ✅ Completed | MCP Transport Layer — JSON-RPC 2.0 (fully implemented) |
+| **Task-004.1** | ✅ Completed | Lifecycle fix, Discovery isolation, API stats, tests |
 
 ---
 
 ## Current Focus
 
-**Task-004 — TBD**
+**Task-005 — TBD**
 
-First concrete MCP Server implementation + Claude Desktop wiring.
+Claude Desktop ↔ MCP Hub communication wiring.
 
 ---
 
-## Currently Implemented (as of Task-003)
+## Currently Implemented (as of Task-004.1)
+
+| Capability | Where |
+|---|---|
+| MCP Hub Gateway (FastAPI) | `mcp-hub/src/main.py` |
+| Server lifecycle (init → lifecycle_start → lifecycle_stop) | `mcp-hub/src/core/base_server.py` |
+| ServerManager (register, start_all, stop_all, stats) | `mcp-hub/src/core/server_manager.py` |
+| Auto-discovery (manifest.yaml + server.py fallback) | `mcp-hub/src/core/discovery.py` |
+| Error isolation (one failure never blocks others) | `mcp-hub/src/core/discovery.py` |
+| Event bus (in-memory pub/sub) | `mcp-hub/src/core/events.py` |
+| JSON-RPC 2.0 transport (initialize, tools/list, tools/call) | `mcp-hub/src/transport/` |
+| REST endpoints (/health, /status, /tools) | `mcp-hub/src/api/routes.py` |
+| Health status (healthy/degraded/failed) | `mcp-hub/src/api/routes.py` |
+| Server statistics (total/running/failed counts) | `mcp-hub/src/core/server_manager.py` |
+| Structured logging (REQUEST → RESPONSE with timing) | `mcp-hub/src/transport/router.py` |
+| Graceful startup/shutdown | `mcp-hub/src/main.py` (lifespan) |
+| Docker Compose integration | `docker-compose.yml` + `mcp-hub/Dockerfile` |
+| Plugin architecture | `mcp_servers/` + Discovery |
+| Unit tests (JSON-RPC, router, transport, tools, lifecycle, discovery) | `mcp-hub/tests/` |
+| Ombre Brain foundation | `project/` (Task-002) |
 
 | Capability | Where |
 |---|---|
@@ -64,13 +85,13 @@ First concrete MCP Server implementation + Claude Desktop wiring.
 
 | Capability | Planned In |
 |---|---|
-| Concrete MCP Servers (Ombre, ntfy, GitHub, …) | Task-004+ |
-| Claude Desktop ↔ Hub MCP protocol wiring | Task-004+ |
-| Per-service configuration in config.yaml | Task-004+ |
-| Hub authentication / token validation | Task-004+ |
-| Inter-service communication via EventBus | Task-005+ |
-| Health-check loop for registered servers | Task-005+ |
-| Tests | Task-004+ |
+| Concrete MCP Servers (Ombre, ntfy, GitHub, …) | Task-005+ |
+| Claude Desktop ↔ Hub MCP protocol wiring | Task-005 |
+| Per-service configuration in config.yaml | Task-005+ |
+| Hub authentication / token validation | Task-006+ |
+| Inter-service communication via EventBus | Task-006+ |
+| Health-check loop for registered servers | Task-005 |
+| Remote MCP server adapters (HTTP/SSE/WebSocket) | Task-006+ |
 
 ---
 

@@ -7,14 +7,17 @@ Contains the foundational classes that every MCP service depends on:
   - Discovery — auto-discovery of servers in mcp_servers/
 """
 
-from src.core.base_server import BaseMCPServer
-from src.core.discovery import Discovery
+from src.core.base_server import BaseMCPServer, ToolNotFoundError
+from src.core.discovery import Discovery, DiscoveryError, DiscoveryResult
 from src.core.events import EventBus
 from src.core.server_manager import ServerManager
 
 __all__ = [
     "BaseMCPServer",
     "Discovery",
+    "DiscoveryError",
+    "DiscoveryResult",
     "EventBus",
     "ServerManager",
+    "ToolNotFoundError",
 ]

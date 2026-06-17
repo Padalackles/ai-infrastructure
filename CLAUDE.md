@@ -2,7 +2,7 @@
 
 ## Project
 
-MCP Gateway (Hub) — not an AI application, not a chatbot. Deployed on a VPS.
+MCP Hub — not an AI application, not a chatbot. Deployed on a VPS.
 Claude Desktop is the unified user entry point. The Hub routes requests to MCP services.
 
 ## Architecture

@@ -1,6 +1,6 @@
-# MCP Gateway
+# MCP Hub
 
-An **MCP Gateway (Hub)** deployed on a VPS — not an AI application, not a chatbot.
+An **MCP Hub** deployed on a VPS — not an AI application, not a chatbot.
 
 The Hub connects **Claude Desktop** (the user's AI interface) to multiple **MCP services** through the Model Context Protocol.
 
@@ -35,7 +35,7 @@ MCP Hub (Gateway)     ← runs on VPS
 ## Repository Structure
 
 ```
-├── mcp-hub/              MCP Hub Gateway (Core)
+├── mcp-hub/              MCP Hub (Core)
 │   ├── src/
 │   │   ├── config/       Configuration loader
 │   │   ├── lifecycle/    BaseMCPServer, lifecycle contracts
@@ -52,11 +52,10 @@ MCP Hub (Gateway)     ← runs on VPS
 │   ├── config.yaml
 │   └── Dockerfile
 ├── mcp_servers/          MCP Service Layer (extensible)
-│   ├── ombre/            Ombre MCP (external — Docker build context)
-│   ├── ntfy/             ntfy MCP (Docker build context)
-│   ├── github/           GitHub MCP (Docker build context)
-│   ├── filesystem/       Filesystem MCP (Docker build context)
-│   └── example/          Example Server (Hub pipeline test)
+│   ├── ombre/            Ombre MCP — external, connected via adapter
+│   ├── ntfy/             ntfy MCP — external, connected via adapter
+│   ├── example/          Example Server — Hub pipeline test
+│   └── ...               Future MCP Services
 ├── docker-compose.yml
 ├── ARCHITECTURE.md
 ├── ROADMAP.md

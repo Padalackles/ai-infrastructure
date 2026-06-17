@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is an **MCP Gateway (Hub)** — not an AI application. It routes requests between Claude Desktop and multiple independent MCP services through the Model Context Protocol.
+This project is an **MCP Hub** — not an AI application. It routes requests between Claude Desktop and multiple independent MCP services through the Model Context Protocol.
 
 The architecture has two layers:
 
@@ -130,7 +130,7 @@ MCP Server        (mcp_servers/)             ← concrete implementation
 
 | Service | Purpose |
 |---|---|
-| `mcp-hub` | MCP Gateway (the Hub itself) |
+| `mcp-hub` | MCP Hub (orchestration core) |
 | `caddy` | Reverse proxy + automatic TLS |
 | `cloudflared` | Cloudflare Tunnel |
 

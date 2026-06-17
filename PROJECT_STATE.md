@@ -8,7 +8,7 @@
 
 ## Project Goal
 
-Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to multiple MCP services.
+Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple MCP services.
 
 **Design Principles:**
 
@@ -29,7 +29,7 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 
 | Task | Status | Description |
 |---|---|---|
-| Task-001 | ✅ | Project Specification — MCP Gateway architecture |
+| Task-001 | ✅ | Project Specification — MCP Hub architecture |
 | Task-002 | ✅ | Foundation — repository structure, FastAPI stubs |
 | Task-003 | ✅ | MCP Hub Skeleton — modules, models, interfaces |
 | Task-004 | ✅ | Registry — ServerManager, Discovery |
@@ -38,7 +38,7 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | Task-007 | ✅ | Configuration — config.yaml, load_config() |
 | Task-008 | ✅ | Plugin Loader — Loader ABC, PythonLoader |
 | Task-009 | ✅ | Ombre Adapter — HTTP bridge to external Ombre |
-| Task-010 | ✅ | ntfy External Service Integration — via ntfy.sh API |
+| Task-010 | 🟡 | ntfy External Service Integration — under review |
 | Task-011 | ⬜ | Claude Desktop Integration — end-to-end MCP wiring |
 | Task-012 | ⬜ | Docker Production |
 | Task-013 | ⬜ | Cloudflare + Caddy |
@@ -50,9 +50,9 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-011 |
-| **Status** | ⬜ Pending |
-| **Description** | Claude Desktop Integration — end-to-end MCP wiring |
+| **Task ID** | Task-010 Review |
+| **Status** | 🟡 In Progress |
+| **Description** | Architecture review of ntfy external service integration |
 
 ---
 
@@ -78,7 +78,7 @@ mcp-hub/src/
 
 ## Completed Tasks
 
-1. Task-001 — Project Specification (MCP Gateway architecture)
+1. Task-001 — Project Specification (MCP Hub architecture)
 2. Task-002 — Foundation (repository structure, stubs)
 3. Task-003 — MCP Hub Core Runtime
 4. Task-004 — JSON-RPC 2.0 Transport Layer

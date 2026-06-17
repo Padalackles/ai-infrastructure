@@ -2,7 +2,7 @@
 
 ## Vision
 
-Build an **MCP Gateway (Hub)** that connects Claude Desktop to multiple MCP services through a standardized protocol.
+Build an **MCP Hub** that connects Claude Desktop to multiple MCP services through a standardized protocol.
 
 > **MCP First**: Every new capability is an MCP service. The Core never grows business logic.
 

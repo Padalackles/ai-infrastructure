@@ -35,13 +35,42 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | Task-004 | ✅ | JSON-RPC 2.0 Transport Layer |
 | Task-004.1 | ✅ | Lifecycle fixes, Discovery isolation, API stats |
 | Task-004 Review | ✅ | Router→handlers, Runtime layer, Loader, unified `mcp_servers/` |
+| Task-Doc-Refine | 🟡 | Documentation refinement (current) |
 | Task-005 | ⬜ | Claude Desktop ↔ MCP Hub wiring |
+
+---
+
+## Current Task
+
+| Field | Value |
+|---|---|
+| **Task ID** | Task-Documentation-Refinement |
+| **Status** | 🟡 In Progress |
+| **Description** | Refine documentation: PROJECT_STATE, CLAUDE, DECISIONS |
+
+---
+
+## Completed Tasks
+
+1. Task-001 — Migrate Ombre MCP Server to Docker Compose
+2. Task-002 — Establish Ombre MCP Server foundation
+3. Task-003 — MCP Hub Core Runtime
+4. Task-004 — JSON-RPC 2.0 Transport Layer
+5. Task-004.1 — Lifecycle fixes, Discovery isolation, API stats
+6. Task-004 Review — Router→handlers, Runtime, Loader, unified dirs
+7. Task-002 Refactor — Repository architecture alignment
 
 ---
 
 ## Current Focus
 
-**Task-005** — Claude Desktop ↔ MCP Hub communication.
+**Task-005** — Claude Desktop ↔ MCP Hub communication wiring.
+
+---
+
+## Next Task
+
+**Task-005** — Implement Claude Desktop to MCP Hub JSON-RPC wiring. Enable end-to-end tool invocation from Claude Desktop through the Hub to a registered MCP server.
 
 ---
 
@@ -113,6 +142,25 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | ntfy MCP | Planned |
 | Filesystem MCP | Planned |
 | GitHub MCP | Planned |
+
+---
+
+## Repository Health
+
+| Check | Status |
+|---|---|
+| Documentation | ✅ Consistent |
+| Architecture | ✅ Stable Core / Extensible Service Layer |
+| Tests | ✅ 6 test files (lifecycle, discovery, transport, tools) |
+| GitHub Sync | ✅ Up to date |
+| No duplicate docs | ✅ Single source of truth per concern |
+
+## Last Commit
+
+| Field | Value |
+|---|---|
+| **Hash** | `9fedea7` |
+| **Summary** | refactor: align repository to MCP Gateway architecture |
 
 ---
 

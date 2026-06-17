@@ -50,7 +50,7 @@ MCP server integrations through Hub adapters:
 
 Wire Claude Desktop to the MCP Hub via JSON-RPC / MCP protocol. End-to-end tool invocation.
 
-**Status:** Planned (Task-005)
+**Status:** Planned (Task-011)
 
 ---
 

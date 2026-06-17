@@ -98,18 +98,6 @@ mcp-hub/src/
 
 ---
 
-## Current Focus
-
-**Task-005** — Claude Desktop ↔ MCP Hub communication wiring.
-
----
-
-## Next Task
-
-**Task-005** — Implement Claude Desktop to MCP Hub JSON-RPC wiring. Enable end-to-end tool invocation from Claude Desktop through the Hub to a registered MCP server.
-
----
-
 ## Architecture
 
 ```
@@ -158,12 +146,12 @@ mcp-hub/src/
 
 | Capability | Target |
 |---|---|
-| Claude Desktop ↔ Hub MCP wiring | Task-005 |
-| Concrete MCP Servers (ntfy, GitHub, Filesystem) | Task-005+ |
-| Formal MCP Registry (manifests, enable/disable) | Task-005+ |
-| Authentication / token validation | Phase 6 |
-| Health-check loop | Task-005 |
-| Remote server adapters (HTTP/SSE/WebSocket) | Phase 7 |
+| Claude Desktop ↔ Hub MCP wiring | Task-011 |
+| Concrete MCP Servers (ntfy, GitHub, Filesystem) | Task-010+ |
+| Formal MCP Registry (manifests, enable/disable) | Task-012+ |
+| Authentication / token validation | Task-014 |
+| Health-check loop | Task-012+ |
+| Remote server adapters (HTTP/SSE/WebSocket) | Future |
 
 ---
 
@@ -207,4 +195,4 @@ When resuming this project:
 1. Read README.md
 2. Read PROJECT_STATE.md
 3. Read ARCHITECTURE.md
-4. Continue from **Task-005**
+4. Continue from **Task-010**

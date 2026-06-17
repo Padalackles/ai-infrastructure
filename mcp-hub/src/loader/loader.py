@@ -64,6 +64,13 @@ class PythonLoader(Loader):
         class_name: str | None,
         manifest: dict[str, Any] | None,
     ) -> BaseMCPServer | None:
+        # Ensure mcp_servers/ parent is on sys.path so dynamic modules
+        # can use absolute imports like `from mcp_servers.ombre.adapter import ...`
+        import sys
+        parent = str(directory.parent.parent)  # repo root
+        if parent not in sys.path:
+            sys.path.insert(0, parent)
+
         module_name = f"mcp_servers.{directory.name}.server"
         spec = importlib.util.spec_from_file_location(module_name, server_py)
         if spec is None or spec.loader is None:

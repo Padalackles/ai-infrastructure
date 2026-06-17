@@ -37,26 +37,31 @@ MCP Hub (Gateway)     ← runs on VPS
 ```
 ├── mcp-hub/              MCP Hub Gateway (Core)
 │   ├── src/
-│   │   ├── api/          REST endpoints
-│   │   ├── core/         ServerManager, Discovery, BaseMCPServer, EventBus
-│   │   ├── runtime/      Middleware layer (auth, metrics, retries — future)
-│   │   ├── transport/    JSON-RPC 2.0 endpoint, Router, Handlers
-│   │   └── main.py       FastAPI entry point
+│   │   ├── config/       Configuration loader
+│   │   ├── lifecycle/    BaseMCPServer, lifecycle contracts
+│   │   ├── registry/     ServerManager, service registry
+│   │   ├── loader/       Discovery, Loader, plugin loading
+│   │   ├── router/       Router, route interfaces
+│   │   ├── runtime/      Middleware layer
+│   │   ├── transport/    JSON-RPC 2.0 endpoint + handlers
+│   │   ├── api/          REST endpoints (/health, /status, /tools)
+│   │   ├── models/       Shared dataclasses
+│   │   ├── core/         EventBus
+│   │   └── utils/        Helpers
 │   ├── tests/
 │   ├── config.yaml
 │   └── Dockerfile
 ├── mcp_servers/          MCP Service Layer (extensible)
-│   ├── ombre/            Ombre MCP Server
-│   ├── ntfy/             ntfy MCP Server (Docker only)
-│   ├── github/           GitHub MCP Server (Docker only)
-│   ├── filesystem/       Filesystem MCP Server (Docker only)
-│   └── example/          Example Server (test pipeline)
-├── services/             Service implementations
-│   └── ombre/            Ombre MCP Server foundation (Task-002)
+│   ├── ombre/            Ombre MCP (external — Docker build context)
+│   ├── ntfy/             ntfy MCP (Docker build context)
+│   ├── github/           GitHub MCP (Docker build context)
+│   ├── filesystem/       Filesystem MCP (Docker build context)
+│   └── example/          Example Server (Hub pipeline test)
 ├── docker-compose.yml
 ├── ARCHITECTURE.md
 ├── ROADMAP.md
 ├── PROJECT_STATE.md
+├── DECISIONS.md
 ├── docs/
 └── tasks/
 ```

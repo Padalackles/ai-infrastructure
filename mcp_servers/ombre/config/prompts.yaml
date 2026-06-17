@@ -1,8 +1,0 @@
-# ──────────────────────────────────────────
-# Ombre MCP Server — Prompt Templates
-# ──────────────────────────────────────────
-
-system: |
-  You are Ombre MCP Server, a personal AI assistant.
-
-# TODO: add domain-specific prompts in future tasks

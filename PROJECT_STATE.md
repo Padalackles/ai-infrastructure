@@ -29,8 +29,8 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 
 | Task | Status | Description |
 |---|---|---|
-| Task-001 | ✅ | Project Specification |
-| Task-002 | ✅ | Foundation — Ombre MCP Server stubs |
+| Task-001 | ✅ | Project Specification — MCP Gateway architecture |
+| Task-002 | ✅ | Foundation — repository structure, FastAPI stubs |
 | Task-003 | ✅ | MCP Hub Skeleton — modules, models, interfaces |
 | Task-004 | ✅ | Registry — ServerManager, Discovery |
 | Task-005 | ✅ | Router — JSON-RPC dispatch, handlers |
@@ -78,8 +78,8 @@ mcp-hub/src/
 
 ## Completed Tasks
 
-1. Task-001 — Migrate Ombre MCP Server to Docker Compose
-2. Task-002 — Establish Ombre MCP Server foundation
+1. Task-001 — Project Specification (MCP Gateway architecture)
+2. Task-002 — Foundation (repository structure, stubs)
 3. Task-003 — MCP Hub Core Runtime
 4. Task-004 — JSON-RPC 2.0 Transport Layer
 5. Task-004.1 — Lifecycle fixes, Discovery isolation, API stats
@@ -141,7 +141,7 @@ mcp-hub/src/
 | REST endpoints | `mcp-hub/src/api/routes.py` |
 | Configuration | `mcp-hub/src/config/` |
 | Shared models | `mcp-hub/src/models/` |
-| Ombre MCP Server foundation | `mcp_servers/ombre/` |
+| Ombre MCP Docker build context | `mcp_servers/ombre/Dockerfile` |
 | Docker Compose | `docker-compose.yml` |
 | Unit tests | `mcp-hub/tests/` |
 
@@ -165,7 +165,7 @@ mcp-hub/src/
 | MCP Hub (Gateway) | ✅ Runtime |
 | Caddy | Planned |
 | Cloudflare | Planned |
-| Ombre MCP | ✅ Foundation |
+| Ombre MCP | External (Docker only) |
 | ntfy MCP | Planned |
 | Filesystem MCP | Planned |
 | GitHub MCP | Planned |

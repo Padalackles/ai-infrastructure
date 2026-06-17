@@ -13,5 +13,10 @@ hub:
   capabilities:
     tools: {}
 
+services:
+  ombre:
+    enabled: true
+    endpoint: "${OMBRE_ENDPOINT:-http://45.76.169.98:8000}"
+
 logging:
   level: "INFO"

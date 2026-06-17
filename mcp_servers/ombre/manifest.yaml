@@ -1,0 +1,11 @@
+# Ombre MCP — External long-term memory service
+#
+# Ombre is an existing external deployment.
+# This repository does NOT reimplement Ombre.
+# The Hub connects to Ombre via HTTP.
+
+name: ombre
+version: "0.1.0"
+class: OmbreServer
+description: Long-term AI memory — external MCP-compatible service
+endpoint: "${OMBRE_ENDPOINT:-http://45.76.169.98:8000}"

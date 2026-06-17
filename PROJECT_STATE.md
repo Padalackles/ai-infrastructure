@@ -50,9 +50,18 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-009 |
-| **Status** | ✅ Completed |
-| **Description** | Ombre Adapter — HTTP bridge to external Ombre at 45.76.169.98:8000 |
+| **Task ID** | Task-010 |
+| **Status** | ⬜ Pending |
+| **Description** | ntfy MCP Integration — push notifications |
+
+---
+
+## Next Task
+
+| Field | Value |
+|---|---|
+| **Task ID** | Task-011 |
+| **Description** | Claude Desktop Integration — end-to-end MCP wiring |
 
 ---
 

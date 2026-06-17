@@ -20,7 +20,7 @@ Deployable foundation: Docker Compose, Caddy reverse proxy, Cloudflare Tunnel.
 
 Central orchestration runtime: ServerManager, Discovery, JSON-RPC transport, Router, Runtime layer.
 
-**Status:** ✅ Implemented (Task-003, Task-004)
+**Status:** ✅ Implemented (Task-003 through Task-009)
 
 ---
 
@@ -34,11 +34,11 @@ Formal MCP registry with per-service manifests. Enable/disable services. Lifecyc
 
 ## Phase 4 — Core MCP Services
 
-First concrete MCP server implementations:
+MCP server integrations through Hub adapters:
 
 | Service | Purpose | Status |
 |---|---|---|
-| Ombre MCP | Long-term AI memory | Foundation ✓ |
+| Ombre MCP | External deployment — Hub adapter complete | ✅ Integrated |
 | ntfy MCP | Push notifications | Planned |
 | Filesystem MCP | File operations | Planned |
 | GitHub MCP | Repository management | Planned |

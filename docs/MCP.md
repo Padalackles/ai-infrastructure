@@ -179,3 +179,17 @@ Remote server management
 ### Status
 
 Future
+
+---
+
+# Planned MCPs
+
+- Calendar
+- Email
+- Database
+- Docker
+- Kubernetes
+- PostgreSQL
+- Redis
+- Monitoring
+- AI Agent

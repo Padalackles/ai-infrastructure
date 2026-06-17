@@ -69,3 +69,35 @@ Claude Desktop
 
 - Workspace isolation
 - Permission control
+
+## GitHub MCP
+
+### Purpose
+
+Interact with GitHub repositories.
+
+### Capabilities
+
+- Read repositories
+- Commit changes
+- Create Pull Requests
+- Manage Issues
+
+### Permission
+
+GitHub Personal Access Token
+
+### Communication
+
+Claude Desktop
+→ MCP Hub
+→ GitHub API
+
+### Status
+
+⬜ Not Installed
+
+### Future
+
+- Automatic documentation update
+- CI/CD integration

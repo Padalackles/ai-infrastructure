@@ -28,15 +28,18 @@ Build a personal AI infrastructure centered on **Claude Desktop + MCP Hub**.
 
 ## Current Task
 
-Create the project structure and core documentation.
+**Task-001 — Migrate Ombre Brain to Docker Compose**
 
 **Current priorities:**
 
 - [x] README.md
 - [x] PROJECT_STATE.md
-- [ ] ARCHITECTURE.md
-- [ ] ROADMAP.md
-- [ ] docs/MCP.md
+- [x] ARCHITECTURE.md
+- [x] ROADMAP.md
+- [x] docs/MCP.md
+- [x] docs/SPECIFICATION.md
+- [x] tasks/ directory
+- [ ] Task-001: Migrate Ombre Brain to Docker Compose
 
 ---
 

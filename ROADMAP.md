@@ -25,8 +25,8 @@ Establish the project structure and documentation so development can continue co
 - [x] Create PROJECT_STATE.md
 - [x] Create ARCHITECTURE.md
 - [x] Create ROADMAP.md
-- [ ] Create docs/
-- [ ] Create tasks/
+- [x] Create docs/
+- [x] Create tasks/
 
 ### Completion Criteria
 

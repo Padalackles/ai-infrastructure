@@ -146,12 +146,28 @@ MCP Service ──► register(name, capabilities, endpoint) ──► MCP Hub
 
 The Hub maintains a live registry of available services, their capabilities, and their health status.
 
-### 2. Routing
-
-Claude Desktop sends every MCP request to the Hub. The Hub inspects the request, resolves the target service, and forwards it:
+### 2. Request Flow
 
 ```
-Claude Desktop ──► MCP Hub ──► resolve("github") ──► GitHub MCP
+Claude Desktop
+      │  POST /mcp  (JSON-RPC 2.0)
+      ▼
+Transport Server  (src/transport/server.py)
+      │
+      ▼
+Router            (src/transport/router.py)  ← thin dispatch
+      │
+      ▼
+Handlers          (src/transport/handlers/)  ← per-method logic
+      │
+      ▼
+Runtime           (src/runtime/)             ← middleware: auth, metrics, retries (future)
+      │
+      ▼
+ServerManager     (src/core/)                ← lifecycle + tool dispatch
+      │
+      ▼
+MCP Servers       (mcp_servers/)             ← auto-discovered
 ```
 
 Routing is **transparent to Claude Desktop** — it never knows which service instance handles a request.

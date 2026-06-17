@@ -10,6 +10,7 @@ Contains the foundational classes that every MCP service depends on:
 from src.core.base_server import BaseMCPServer, ToolNotFoundError
 from src.core.discovery import Discovery, DiscoveryError, DiscoveryResult
 from src.core.events import EventBus
+from src.core.loader import Loader, PythonLoader
 from src.core.server_manager import ServerManager
 
 __all__ = [
@@ -18,6 +19,8 @@ __all__ = [
     "DiscoveryError",
     "DiscoveryResult",
     "EventBus",
+    "Loader",
+    "PythonLoader",
     "ServerManager",
     "ToolNotFoundError",
 ]

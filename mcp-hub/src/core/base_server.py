@@ -126,27 +126,37 @@ class BaseMCPServer(ABC):
         """Return whether the server is currently running."""
         return self._running
 
-    # ── Tool interface (Task004 transport layer) ─────────────────
+    # ── Tool interface (Task004) ──────────────
 
     async def get_tools(self) -> list[dict[str, Any]]:
-        """Return the tools this server exposes.
-
-        Override in subclasses to declare available tools.
-        Default: no tools.
-
-        Tool schema:
-            {"name": "...", "description": "...", "inputSchema": {...}}
-        """
         return []
 
     async def call_tool(
         self, tool_name: str, arguments: dict[str, Any] | None = None
     ) -> Any:
-        """Execute a tool by name.
-
-        Override in subclasses. Default raises ToolNotFoundError.
-        """
         raise ToolNotFoundError(self.name, tool_name)
+
+    # ── Resource interface (Task-005+ stubs) ─
+
+    async def get_resources(self) -> list[dict[str, Any]]:
+        """Return the resource templates this server exposes. Stub."""
+        return []
+
+    async def read_resource(self, uri: str) -> Any:
+        """Read a resource by URI. Stub."""
+        raise NotImplementedError(f"read_resource not implemented on {self.name}")
+
+    # ── Prompt interface (Task-005+ stubs) ──
+
+    async def get_prompts(self) -> list[dict[str, Any]]:
+        """Return the prompt templates this server exposes. Stub."""
+        return []
+
+    async def get_prompt(
+        self, name: str, arguments: dict[str, Any] | None = None
+    ) -> Any:
+        """Retrieve a rendered prompt by name. Stub."""
+        raise NotImplementedError(f"get_prompt not implemented on {self.name}")
 
 
 class ToolNotFoundError(Exception):

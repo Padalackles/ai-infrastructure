@@ -35,6 +35,7 @@ Build a personal AI infrastructure centered on **Claude Desktop + MCP Hub**.
 | **Task-003** | ✅ Completed | Implement MCP Hub Core Runtime (fully implemented) |
 | **Task-004** | ✅ Completed | MCP Transport Layer — JSON-RPC 2.0 (fully implemented) |
 | **Task-004.1** | ✅ Completed | Lifecycle fix, Discovery isolation, API stats, tests |
+| **Task-004 Review** | ✅ Completed | Unify dirs, Router→handlers, Runtime layer, Loader, configurable init |
 
 ---
 

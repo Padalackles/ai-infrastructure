@@ -3,7 +3,9 @@
 import pytest
 
 from src.core.base_server import BaseMCPServer, ToolNotFoundError
+from src.core.events import EventBus
 from src.core.server_manager import ServerManager
+from src.runtime.runtime import Runtime
 from src.transport.request import JSONRPCRequest
 from src.transport.response import ErrorCode, JSONRPCResponse
 from src.transport.router import Router
@@ -70,14 +72,18 @@ def manager():
 
 
 @pytest.fixture
+def _runtime(mgr):
+    return Runtime(mgr, EventBus(), {})
+
+
 def router(manager):
-    return Router(manager)
+    return Router(_runtime(manager))
 
 
 @pytest.fixture
 def router_with_server(manager):
     mgr.register(_EchoServer())
-    return Router(manager)
+    return Router(_runtime(manager))
 
 
 # ── initialize ────────────────────────────────────────────────
@@ -119,7 +125,7 @@ class TestToolsList:
 
     async def test_failing_server_reports_error(self, manager):
         manager.register(_FailingServer())
-        router = Router(manager)
+        router = Router(_runtime(manager))
         req = JSONRPCRequest(jsonrpc="2.0", id=1, method="tools/list")
         resp = await router.route(req)
         tools = resp.result["tools"]
@@ -240,7 +246,7 @@ class TestGenericDispatch:
         srv = _EchoServer()
         srv.name = "arbitrary-name-123"
         manager.register(srv)
-        router = Router(manager)
+        router = Router(_runtime(manager))
 
         req = JSONRPCRequest(
             jsonrpc="2.0", id=1, method="tools/call",

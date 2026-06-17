@@ -37,7 +37,7 @@ services:
 
   # ── GitHub MCP Server ────────────────────
   github-mcp:
-    build: ./mcp-servers/github
+    build: ./mcp_servers/github
     container_name: ai-github-mcp
     restart: unless-stopped
     environment:
@@ -49,7 +49,7 @@ services:
 
   # ── Filesystem MCP Server ────────────────
   filesystem-mcp:
-    build: ./mcp-servers/filesystem
+    build: ./mcp_servers/filesystem
     container_name: ai-filesystem-mcp
     restart: unless-stopped
     volumes:
@@ -60,7 +60,7 @@ services:
 
   # ── Ombre MCP Server ─────────────────────
   ombre-mcp:
-    build: ./mcp-servers/ombre
+    build: ./mcp_servers/ombre
     container_name: ai-ombre-mcp
     restart: unless-stopped
     environment:
@@ -72,7 +72,7 @@ services:
 
   # ── ntfy MCP Server ──────────────────────
   ntfy-mcp:
-    build: ./mcp-servers/ntfy
+    build: ./mcp_servers/ntfy
     container_name: ai-ntfy-mcp
     restart: unless-stopped
     environment:

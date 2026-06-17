@@ -1,17 +1,7 @@
 """MCP Hub — FastAPI application entry point.
 
-Lifecycle:
-    Application
-        ↓
-    Config
-        ↓
-    Logger
-        ↓
-    ServerManager
-        ↓
-    All Servers
-        ↓
-    Ready
+Architecture:
+    Router → Runtime → ServerManager → MCP Servers
 
 Start with:
     uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload
@@ -31,12 +21,11 @@ from fastapi import FastAPI
 from src.core.discovery import Discovery
 from src.core.events import EventBus
 from src.core.server_manager import ServerManager
+from src.runtime.runtime import Runtime
 from src.transport.router import Router
 
 # ── Constants ───────────────────────────────────────────────────
 
-VERSION = "0.1.0"
-RUNTIME_NAME = "MCP Hub"
 CONFIG_PATH = os.getenv("MCP_HUB_CONFIG", str(Path(__file__).resolve().parent.parent / "config.yaml"))
 
 # ── Logging ─────────────────────────────────────────────────────
@@ -88,20 +77,25 @@ async def lifespan(app: FastAPI):
     app.state.event_bus = event_bus
     logger.info("Event Bus Ready")
 
-    # Create Router (transport layer — uses ServerManager for all dispatch)
-    router = Router(server_manager)
+    # Create Runtime (middleware layer between Router and ServerManager)
+    runtime = Runtime(server_manager, event_bus, config)
+    app.state.runtime = runtime
+    logger.info("Runtime Ready")
+
+    # Create Router (thin dispatch — uses Runtime for all processing)
+    router = Router(runtime)
     app.state.router = router
     logger.info("Router Ready")
 
-    # Auto-discover servers (isolated — one failure won't block others)
+    # Auto-discover servers
     discovery = Discovery()
     discovered, disc_result = await discovery.discover()
     for server in discovered:
         server_manager.register(server)
     app.state.discovery_result = disc_result
 
-    # Start all registered servers (lifecycle_start manages _running state)
-    await server_manager.start_all()
+    # Start all registered servers via Runtime
+    await runtime.start_all()
 
     logger.info("Servers — total: %d running: %d failed: %d",
                 server_manager.count, server_manager.running_count, server_manager.failed_count)
@@ -109,16 +103,17 @@ async def lifespan(app: FastAPI):
     logger.info("HTTP API Ready")
     logger.info("MCP Hub Ready")
 
-    # Store version / runtime metadata
-    app.state.version = VERSION
-    app.state.runtime_name = RUNTIME_NAME
+    # Store metadata from config
+    hub = config.get("hub", {})
+    app.state.version = hub.get("version", "0.1.0")
+    app.state.runtime_name = hub.get("name", "MCP Hub")
 
-    yield  # ── Application runs here ──
+    yield
 
     # ── Shutdown ─────────────────────────────────────────────────
     logger.info("Stopping Servers...")
 
-    await server_manager.stop_all()
+    await runtime.stop_all()
 
     logger.info("Exit.")
 
@@ -130,7 +125,7 @@ app = FastAPI(
     description="Central orchestration layer for MCP services. "
                 "Routes requests, manages server lifecycles, "
                 "and provides discovery — zero business logic.",
-    version=VERSION,
+    version="0.1.0",
     lifespan=lifespan,
 )
 

@@ -6,14 +6,12 @@ server:
   host: "0.0.0.0"
   port: 8080
 
+hub:
+  protocol_version: "2024-11-05"
+  name: "mcp-hub"
+  version: "0.1.0"
+  capabilities:
+    tools: {}
+
 logging:
   level: "INFO"
-
-# MCP servers are auto-discovered from mcp_servers/ directory.
-# Manual per-server overrides can be added here when needed:
-#
-# mcp_servers:
-#   ombre:
-#     enabled: true
-#   ntfy:
-#     enabled: true

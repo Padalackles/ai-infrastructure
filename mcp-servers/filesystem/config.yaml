@@ -1,0 +1,11 @@
+# ──────────────────────────────────────────
+# Filesystem MCP Server — Configuration
+# ──────────────────────────────────────────
+
+server:
+  name: filesystem-mcp
+  port: 3000
+
+filesystem:
+  root: /data
+  # TODO: configure allowed paths, permissions, etc.

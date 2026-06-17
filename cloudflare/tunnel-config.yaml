@@ -1,0 +1,12 @@
+# ──────────────────────────────────────────
+# Cloudflare Tunnel — Configuration
+# ──────────────────────────────────────────
+
+# TODO: replace with actual tunnel token and ingress rules
+# tunnel: <tunnel-uuid>
+# credentials-file: /etc/cloudflared/<tunnel-uuid>.json
+
+ingress:
+  - hostname: "${DOMAIN}"
+    service: http://caddy:80
+  - service: http_status:404

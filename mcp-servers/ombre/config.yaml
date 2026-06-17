@@ -1,0 +1,12 @@
+# ──────────────────────────────────────────
+# Ombre MCP Server — Configuration
+# ──────────────────────────────────────────
+
+server:
+  name: ombre-mcp
+  port: 3000
+
+ombre:
+  api_url: "${OMBRE_API_URL}"
+  api_key: "${OMBRE_API_KEY}"
+  # TODO: configure Ombre connection settings

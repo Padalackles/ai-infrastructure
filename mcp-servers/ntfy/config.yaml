@@ -1,0 +1,12 @@
+# ──────────────────────────────────────────
+# ntfy MCP Server — Configuration
+# ──────────────────────────────────────────
+
+server:
+  name: ntfy-mcp
+  port: 3000
+
+ntfy:
+  base_url: "${NTFY_BASE_URL}"
+  topic: "${NTFY_TOPIC}"
+  # TODO: configure notification rules and triggers

@@ -1,0 +1,25 @@
+# ──────────────────────────────────────────
+# Caddyfile — Reverse Proxy Configuration
+# ──────────────────────────────────────────
+
+{
+    email {$CADDY_ACME_EMAIL}
+}
+
+{$DOMAIN} {
+    reverse_proxy mcp-hub:8080
+
+    # TODO: add per-MCP-server routes once MCP Hub dispatches
+    # handle_path /github* {
+    #     reverse_proxy github-mcp:3000
+    # }
+    # handle_path /filesystem* {
+    #     reverse_proxy filesystem-mcp:3000
+    # }
+    # handle_path /ombre* {
+    #     reverse_proxy ombre-mcp:3000
+    # }
+    # handle_path /ntfy* {
+    #     reverse_proxy ntfy-mcp:3000
+    # }
+}

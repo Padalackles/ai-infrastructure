@@ -1,0 +1,25 @@
+# ──────────────────────────────────────────
+# MCP Hub — Configuration
+# ──────────────────────────────────────────
+
+hub:
+  port: 8080
+  auth_token: "${MCP_HUB_AUTH_TOKEN}"
+
+# Registered MCP servers
+mcp_servers:
+  - name: github
+    endpoint: http://github-mcp:3000
+    # TODO: configure
+
+  - name: filesystem
+    endpoint: http://filesystem-mcp:3000
+    # TODO: configure
+
+  - name: ombre
+    endpoint: http://ombre-mcp:3000
+    # TODO: configure
+
+  - name: ntfy
+    endpoint: http://ntfy-mcp:3000
+    # TODO: configure

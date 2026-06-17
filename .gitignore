@@ -1,0 +1,13 @@
+# ── Environment ──
+.env
+
+# ── Docker ──
+caddy_data/
+caddy_config/
+
+# ── MCP data ──
+data/
+
+# ── OS clutter ──
+.DS_Store
+Thumbs.db

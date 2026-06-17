@@ -1,0 +1,12 @@
+# ──────────────────────────────────────────
+# GitHub MCP Server — Configuration
+# ──────────────────────────────────────────
+
+server:
+  name: github-mcp
+  port: 3000
+
+github:
+  token: "${GITHUB_TOKEN}"
+  owner: "${GITHUB_OWNER}"
+  # TODO: configure repos, webhooks, etc.

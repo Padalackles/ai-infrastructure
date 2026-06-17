@@ -1,0 +1,9 @@
+# ntfy MCP — Push notification service
+#
+# Self-contained MCP service. No external deployment required.
+# send_notification() logs to stdout; optional HTTP forwarding to ntfy.sh.
+
+name: ntfy
+version: "0.1.0"
+class: NtfyServer
+description: Push notifications — stdout logging with optional ntfy.sh forwarding

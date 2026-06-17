@@ -64,6 +64,10 @@ class Runtime:
     async def list_tools(self) -> dict[str, Any]:
         return await self._server_manager.list_tools()
 
+    async def find_tool_server(self, tool_name: str) -> str | None:
+        """Resolve which server owns a tool by name."""
+        return await self._server_manager.find_tool_server(tool_name)
+
     async def call_tool(
         self, server_name: str, tool_name: str, arguments: dict[str, Any] | None = None
     ) -> dict[str, Any]:

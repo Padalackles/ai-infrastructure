@@ -88,6 +88,24 @@ class ServerManager:
 
     # ── Public tool aggregation ─────────────────────────────────
 
+    async def find_tool_server(self, tool_name: str) -> str | None:
+        """Find which registered server owns a tool by name.
+
+        Used for standard MCP tools/call where the client doesn't
+        specify a server — the Hub resolves globally.
+
+        Returns:
+            Server name, or None if no server owns the tool.
+        """
+        for name, server in self._servers.items():
+            try:
+                tools = await server.get_tools()
+                if any(t.get("name") == tool_name for t in tools):
+                    return name
+            except Exception:
+                continue
+        return None
+
     async def list_tools(self) -> dict[str, Any]:
         """Aggregate tools from all registered servers."""
         tools: list[dict[str, Any]] = []

@@ -35,7 +35,7 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | Task-004 | ✅ | JSON-RPC 2.0 Transport Layer |
 | Task-004.1 | ✅ | Lifecycle fixes, Discovery isolation, API stats |
 | Task-004 Review | ✅ | Router→handlers, Runtime layer, Loader, unified `mcp_servers/` |
-| Task-Doc-Refine | 🟡 | Documentation refinement (current) |
+| Task-Doc-Refine | ✅ | Documentation refinement (completed) |
 | Task-005 | ⬜ | Claude Desktop ↔ MCP Hub wiring |
 
 ---
@@ -45,7 +45,7 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | Field | Value |
 |---|---|
 | **Task ID** | Task-Documentation-Refinement |
-| **Status** | 🟡 In Progress |
+| **Status** | ✅ Completed |
 | **Description** | Refine documentation: PROJECT_STATE, CLAUDE, DECISIONS |
 
 ---
@@ -59,6 +59,7 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 5. Task-004.1 — Lifecycle fixes, Discovery isolation, API stats
 6. Task-004 Review — Router→handlers, Runtime, Loader, unified dirs
 7. Task-002 Refactor — Repository architecture alignment
+8. Task-Documentation-Refinement — PROJECT_STATE, CLAUDE, DECISIONS
 
 ---
 
@@ -159,8 +160,8 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 
 | Field | Value |
 |---|---|
-| **Hash** | `9fedea7` |
-| **Summary** | refactor: align repository to MCP Gateway architecture |
+| **Hash** | `a9e8f44` |
+| **Summary** | docs: refine documentation — PROJECT_STATE, CLAUDE, DECISIONS |
 
 ---
 

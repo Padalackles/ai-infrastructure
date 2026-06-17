@@ -38,7 +38,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-007 | ✅ | Configuration — config.yaml, load_config() |
 | Task-008 | ✅ | Plugin Loader — Loader ABC, PythonLoader |
 | Task-009 | ✅ | Ombre Adapter — HTTP bridge to external Ombre |
-| Task-010 | 🟡 | ntfy External Service Integration — under review |
+| Task-010 | ✅ | ntfy External Service Integration — via ntfy.sh API |
 | Task-011 | ⬜ | Claude Desktop Integration — end-to-end MCP wiring |
 | Task-012 | ⬜ | Docker Production |
 | Task-013 | ⬜ | Cloudflare + Caddy |
@@ -50,9 +50,9 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-010 Review |
-| **Status** | 🟡 In Progress |
-| **Description** | Architecture review of ntfy external service integration |
+| **Task ID** | Task-011 |
+| **Status** | ⬜ Pending |
+| **Description** | Claude Desktop End-to-End Integration |
 
 ---
 

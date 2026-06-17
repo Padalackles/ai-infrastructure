@@ -39,7 +39,7 @@ MCP server integrations through Hub adapters:
 | Service | Purpose | Status |
 |---|---|---|
 | Ombre MCP | External deployment — Hub adapter complete | ✅ Integrated |
-| ntfy MCP | Push notifications | ✅ Integrated |
+| ntfy MCP | Push notifications — ntfy.sh API via adapter | ✅ Completed (Task-010) |
 | Filesystem MCP | File operations | Planned |
 | GitHub MCP | Repository management | Planned |
 | Browser MCP | Web interaction | Planned |

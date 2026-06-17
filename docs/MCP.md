@@ -133,3 +133,29 @@ Claude Desktop
 
 - Multi-session memory
 - Knowledge graph
+
+## ntfy MCP
+
+### Purpose
+
+Push notifications to mobile devices.
+
+### Capabilities
+
+- Deployment notification
+- Task completion
+- Alert delivery
+
+### Permission
+
+Configured ntfy topic
+
+### Communication
+
+Claude Desktop
+→ MCP Hub
+→ ntfy
+
+### Status
+
+⬜ Planned

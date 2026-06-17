@@ -1,53 +1,97 @@
-# ai-infrastructure
+# AI Infrastructure
 
-Personal AI infrastructure centered on **Claude Desktop + MCP Hub** — self-hosted, modular, MCP-first.
+*A personal AI infrastructure built around Claude Desktop and the Model Context Protocol (MCP).*
+
+---
+
+## Vision
+
+This project aims to build a modular, extensible personal AI infrastructure.
+
+Instead of integrating every service directly, the system follows an **MCP First** architecture, where new capabilities are added through standardized MCP services.
+
+Claude Desktop acts as the unified AI entry point, while MCP Hub serves as the central integration layer.
+
+---
 
 ## Design Principles
 
-- **MCP First** — every new capability is added through the Model Context Protocol.
-- **Docker Compose** — one-command deployment for the full stack.
-- **Caddy** — automatic HTTPS reverse proxy.
-- **Cloudflare** — DNS and secure external access.
-- **Modular** — swap or extend components without rewiring the system.
+- **MCP First** – Prefer adding new capabilities through MCP.
+- **Modular** – Every service should be independently replaceable.
+- **Documentation First** – Keep documentation synchronized with implementation.
+- **Infrastructure as Code** – Deploy everything with Docker Compose.
+- **Extensible** – New services should integrate without changing the overall architecture.
+
+---
 
 ## Architecture
 
 ```
-Internet → Cloudflare → Caddy → Docker Compose → MCP Hub
-                                                    ├── GitHub MCP
-                                                    ├── Filesystem MCP
-                                                    ├── Ombre MCP
-                                                    ├── ntfy MCP
-                                                    └── Future MCP Services
+Internet
+    │
+Cloudflare
+    │
+Caddy
+    │
+Docker Compose
+    │
+MCP Hub
+ ├── Filesystem MCP
+ ├── GitHub MCP
+ ├── Ombre MCP
+ ├── ntfy MCP
+ ├── Browser MCP
+ └── Future MCP Services
 ```
 
-Claude Desktop is the unified AI entry point. The MCP Hub is the system core — Docker is only the deployment layer.
+---
 
-## Quick Start
+## Repository Structure
 
-```bash
-git clone https://github.com/Padalackles/ai-infrastructure.git
-cd ai-infrastructure
-cp .env.example .env   # edit with your domain, tokens, etc.
-docker compose up -d
-```
-
-## Prerequisites
-
-- Docker Engine 24+ and Docker Compose v2
-- [Claude Desktop](https://claude.ai/download)
-- A domain managed by Cloudflare
-- (Optional) NVIDIA GPU + nvidia-container-toolkit
-
-## Documentation
-
-| Document | Purpose |
+| File | Purpose |
 |---|---|
-| [PROJECT_STATE.md](PROJECT_STATE.md) | Current status, phase, and next tasks. |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Design decisions and system layout. |
-| [ROADMAP.md](ROADMAP.md) | Planned features and milestones. |
-| [docs/MCP.md](docs/MCP.md) | MCP server catalog and integration guide. |
+| README.md | Project overview |
+| PROJECT_STATE.md | Current project status |
+| ARCHITECTURE.md | System architecture |
+| ROADMAP.md | Development roadmap |
+
+| Directory | Purpose |
+|---|---|
+| `docs/` | MCP documentation, development conventions |
+| `tasks/` | Development tasks |
+| `docker/` | Docker configurations |
+| `scripts/` | Utility scripts |
+
+---
+
+## Development Workflow
+
+1. Read `PROJECT_STATE.md`
+2. Check the current task.
+3. Implement the required changes.
+4. Update documentation.
+5. Commit changes.
+
+---
+
+## Current Status
+
+See [`PROJECT_STATE.md`](PROJECT_STATE.md) for the latest project progress.
+
+---
+
+## Roadmap
+
+- **Phase 0** – Project Bootstrap
+- **Phase 1** – Infrastructure
+- **Phase 2** – MCP Platform
+- **Phase 3** – Core MCP Services
+- **Phase 4** – Operations
+- **Phase 5** – Automation
+- **Phase 6** – Production
+
+---
 
 ## License
 
-MIT
+MIT License

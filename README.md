@@ -19,7 +19,7 @@ MCP Hub (Gateway)     ← runs on VPS
      └── Future MCPs
 ```
 
-> **Ombre Status:** Ombre is an existing external MCP-compatible long-term memory service, already deployed independently. This repository builds the MCP Hub — it does **not** reimplement Ombre. Task-009 will integrate Ombre as an external MCP service.
+> **Ombre Status:** Ombre is an existing external MCP-compatible long-term memory service, deployed at `http://45.76.169.98:8000`. This repository builds the MCP Hub — it does **not** reimplement Ombre. The Hub connects to Ombre through an HTTP adapter (`mcp_servers/ombre/server.py`).
 
 ---
 

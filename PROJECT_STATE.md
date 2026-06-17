@@ -37,7 +37,7 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | Task-006 | ✅ | Lifecycle Manager — BaseMCPServer, lifecycle_start/stop |
 | Task-007 | ✅ | Configuration — config.yaml, load_config() |
 | Task-008 | ✅ | Plugin Loader — Loader ABC, PythonLoader |
-| Task-009 | ⬜ | Ombre MCP Integration |
+| Task-009 | ✅ | Ombre Adapter — HTTP bridge to external Ombre |
 | Task-010 | ⬜ | ntfy MCP Integration |
 | Task-011 | ⬜ | Claude Desktop Integration |
 | Task-012 | ⬜ | Docker Production |
@@ -51,8 +51,8 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | Field | Value |
 |---|---|
 | **Task ID** | Task-009 |
-| **Status** | ⬜ Pending |
-| **Description** | Integrate Ombre as external MCP service |
+| **Status** | ✅ Completed |
+| **Description** | Ombre Adapter — HTTP bridge to external Ombre at 45.76.169.98:8000 |
 
 ---
 

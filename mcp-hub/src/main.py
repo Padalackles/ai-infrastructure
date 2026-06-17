@@ -5,7 +5,7 @@ Startup pipeline:
         ↓
     Initialize Registry
         ↓
-    Load Plugins (Discovery)
+    Load Services (Discovery)
         ↓
     Register Services
         ↓
@@ -65,13 +65,13 @@ async def lifespan(app: FastAPI):
     app.state.event_bus = event_bus
     logger.info("Event Bus Ready")
 
-    # ── 4. Load Plugins (Discovery) ───────────────────────────────
+    # ── 4. Load Services (Discovery) ───────────────────────────────
     discovery = Discovery()
     discovered, disc_result = await discovery.discover()
     for server in discovered:
         registry.register(server)
     app.state.discovery_result = disc_result
-    logger.info("Plugins Loaded — %d discovered", len(discovered))
+    logger.info("Services Loaded — %d discovered", len(discovered))
 
     # ── 5. Initialize Runtime ─────────────────────────────────────
     runtime = Runtime(registry, event_bus, config)

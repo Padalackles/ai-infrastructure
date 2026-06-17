@@ -40,10 +40,11 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-009 | ✅ | Ombre Adapter — HTTP bridge to external Ombre |
 | Task-010 | ✅ | ntfy External Service Integration — via ntfy.sh API |
 | Task-011 | ✅ | Remote MCP Transport — protocol validated, Claude Desktop Ready |
-| Task-012 | 🟡 | Domain + HTTPS + Cloudflare — implemented (pending real domain) |
-| Task-012 | ⬜ | Docker Production |
-| Task-013 | ⬜ | Cloudflare + Caddy |
-| Task-014 | ⬜ | Production Hardening |
+| Task-012 | 🟡 | Domain + HTTPS + Cloudflare |
+| Task-013 | ⬜ | Claude Desktop Remote Connection |
+| Task-014 | ⬜ | Real ntfy Notification Test |
+| Task-015 | ⬜ | Docker Production |
+| Task-016 | ⬜ | Production Hardening |
 
 ---
 
@@ -51,9 +52,9 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-011 |
-| **Status** | ✅ Completed |
-| **Description** | Remote MCP Transport — protocol validated, Claude Desktop Ready |
+| **Task ID** | Task-012 |
+| **Status** | 🟡 In Progress |
+| **Description** | Domain + HTTPS + Cloudflare |
 
 ---
 
@@ -138,11 +139,11 @@ mcp-hub/src/
 
 | Capability | Target |
 |---|---|
-| Claude Desktop ↔ Hub MCP wiring | Task-011 |
-| Concrete MCP Servers (ntfy, GitHub, Filesystem) | Task-010+ |
-| Formal MCP Registry (manifests, enable/disable) | Task-012+ |
-| Authentication / token validation | Task-014 |
-| Health-check loop | Task-012+ |
+| Claude Desktop ↔ Hub MCP wiring | Task-013 |
+| Concrete MCP Servers (ntfy, GitHub, Filesystem) | Task-014+ |
+| Formal MCP Registry (manifests, enable/disable) | Future |
+| Authentication / token validation | Task-016 |
+| Health-check loop | Future |
 | Remote server adapters (HTTP/SSE/WebSocket) | Future |
 
 ---
@@ -187,4 +188,4 @@ When resuming this project:
 1. Read README.md
 2. Read PROJECT_STATE.md
 3. Read ARCHITECTURE.md
-4. Continue from **Task-010**
+4. Continue from **Task-012**

@@ -169,3 +169,13 @@ Web browsing
 ### Status
 
 Future
+
+## SSH MCP
+
+### Purpose
+
+Remote server management
+
+### Status
+
+Future

@@ -101,3 +101,35 @@ Claude Desktop
 
 - Automatic documentation update
 - CI/CD integration
+
+## Ombre MCP
+
+### Purpose
+
+Provide long-term AI memory.
+
+### Capabilities
+
+- Store memories
+- Retrieve memories
+- Semantic search
+- Context restoration
+
+### Permission
+
+Local database
+
+### Communication
+
+Claude Desktop
+→ MCP Hub
+→ Ombre
+
+### Status
+
+⬜ Planned
+
+### Future
+
+- Multi-session memory
+- Knowledge graph

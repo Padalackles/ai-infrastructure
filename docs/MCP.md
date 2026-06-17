@@ -159,3 +159,13 @@ Claude Desktop
 ### Status
 
 ⬜ Planned
+
+## Browser MCP
+
+### Purpose
+
+Web browsing
+
+### Status
+
+Future

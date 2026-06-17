@@ -67,6 +67,42 @@ MCP Hub (Gateway)     ← runs on VPS
 
 ---
 
+## Remote MCP Server
+
+The Hub is a standard MCP server. Claude Desktop (or any MCP client) connects via JSON-RPC 2.0:
+
+```
+POST http://<host>:8080/mcp
+```
+
+### Initialize
+
+```bash
+curl -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}'
+```
+
+### Discover Tools
+
+```bash
+curl -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
+```
+
+### Invoke Tools
+
+```bash
+curl -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"server":"ntfy","tool":"ntfy_send","arguments":{"title":"Hello","message":"World"}}}'
+```
+
+Tools are auto-discovered from all registered MCP servers — no hardcoded names.
+
+---
+
 ## Quick Start
 
 ```bash

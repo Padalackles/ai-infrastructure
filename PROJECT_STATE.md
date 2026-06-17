@@ -38,8 +38,8 @@ Build an **MCP Gateway (Hub)** deployed on a VPS that connects Claude Desktop to
 | Task-007 | ✅ | Configuration — config.yaml, load_config() |
 | Task-008 | ✅ | Plugin Loader — Loader ABC, PythonLoader |
 | Task-009 | ✅ | Ombre Adapter — HTTP bridge to external Ombre |
-| Task-010 | ✅ | ntfy MCP Integration — push notification service |
-| Task-011 | ⬜ | Claude Desktop Integration |
+| Task-010 | ✅ | ntfy External Service Integration — via ntfy.sh API |
+| Task-011 | ⬜ | Claude Desktop Integration — end-to-end MCP wiring |
 | Task-012 | ⬜ | Docker Production |
 | Task-013 | ⬜ | Cloudflare + Caddy |
 | Task-014 | ⬜ | Production Hardening |

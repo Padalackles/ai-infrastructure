@@ -1,7 +1,12 @@
-"""Ntfy MCP Server — push notification service.
+"""Ntfy MCP — External Service Adapter.
 
-Self-contained MCP service. No external deployment required.
-Implements: health, service_info, send_notification.
+ntfy is an EXTERNAL service (https://ntfy.sh). The Hub connects via HTTP adapter.
+
+This server.py is the Hub-facing interface (BaseMCPServer subclass) required by
+Discovery, Registry, Lifecycle, and Router. All actual communication with the
+ntfy API happens in adapter.py.
+
+Pattern: Hub → NtfyServer(BaseMCPServer) → NtfyAdapter → ntfy.sh API
 """
 
 from __future__ import annotations

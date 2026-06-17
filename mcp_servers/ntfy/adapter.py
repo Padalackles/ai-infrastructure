@@ -1,7 +1,7 @@
-"""Ntfy Adapter — push notification service.
+"""Ntfy Adapter — HTTP bridge to the external ntfy.sh API.
 
-Self-contained: health always returns ok, send_notification logs to stdout.
-Optional: HTTP forwarding to ntfy.sh if NTFY_BASE_URL is configured.
+Receives Hub calls → converts to HTTP requests → calls ntfy.sh API.
+Does NOT implement notification logic. Pure integration layer.
 """
 
 from __future__ import annotations

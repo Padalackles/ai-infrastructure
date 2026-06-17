@@ -1,6 +1,6 @@
 """Pydantic models — minimal field set, extensible for future tasks.
 
-These models represent the core domain objects of Ombre Brain:
+These models represent the core domain objects of Ombre MCP Server:
   - Conversation — tracks an AI conversation thread.
   - Memory — a persistent, keyed memory entry.
   - Task — a scheduled or tracked task.
@@ -32,7 +32,7 @@ class Conversation(BaseModel):
 
 
 class Memory(BaseModel):
-    """A persistent memory entry stored by Ombre Brain."""
+    """A persistent memory entry stored by Ombre MCP Server."""
 
     id: str = Field(default="")
     key: str = Field(default="")

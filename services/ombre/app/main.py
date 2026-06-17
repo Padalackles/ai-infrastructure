@@ -1,7 +1,7 @@
 """
-Ombre Brain — FastAPI Application Entry Point.
+Ombre MCP Server — FastAPI Application Entry Point.
 
-Ombre Brain is the long-term memory and MCP orchestration platform
+Ombre MCP Server is the long-term memory and MCP orchestration platform
 for the personal AI infrastructure. It provides:
 
   - Persistent memory storage and retrieval
@@ -18,7 +18,7 @@ from fastapi import FastAPI
 from app.api.routes import router as api_router
 
 app = FastAPI(
-    title="Ombre Brain",
+    title="Ombre MCP Server",
     description="Long-term AI memory and MCP orchestration platform.",
     version="0.1.0",
 )

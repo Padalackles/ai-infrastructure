@@ -11,7 +11,7 @@ The MCP Hub contains **zero business logic**. It is a pure orchestration layer: 
 ## Background
 
 - **Task-001** — Requirements, architecture, roadmap defined.
-- **Task-002** — Ombre Brain project foundation established.
+- **Task-002** — Ombre MCP Server project foundation established.
 
 The MCP Hub is the system's **gateway**. Claude Desktop connects to it; all MCP services register with it.
 

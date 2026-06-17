@@ -1,4 +1,4 @@
-"""Ombre Brain — Utility helpers."""
+"""Ombre MCP Server — Utility helpers."""
 
 from app.utils.helpers import generate_id
 

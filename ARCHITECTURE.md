@@ -2,151 +2,94 @@
 
 ## Overview
 
-This project is a personal AI infrastructure built around **Claude Desktop** as the unified AI entry point and the **Model Context Protocol (MCP)** as the standard integration protocol.
+This project is an **MCP Gateway (Hub)** — not an AI application. It routes requests between Claude Desktop and multiple independent MCP services through the Model Context Protocol.
 
-The architecture is divided into two primary layers:
+The architecture has two layers:
 
-- **Core Layer** — Claude Desktop, MCP Hub, and the infrastructure that connects them.
-- **MCP Service Layer** — Independent, replaceable services that provide capabilities through MCP.
+- **Stable Core** — Gateway, Registry, Router, Lifecycle, Transport, Config. Changes here are rare and deliberate.
+- **Extensible MCP Service Layer** — Independent, replaceable services. Adding one requires zero Core changes.
 
 ---
 
 ## Claude Desktop — Unified Entry Point
 
-Claude Desktop is the **single point of interaction** for the user. All AI capabilities, whether local or remote, are accessed through Claude Desktop. It does not connect directly to individual services; instead it communicates exclusively with the **MCP Hub**, which routes requests to the appropriate backend service.
+Claude Desktop is the **single point of interaction** for the user. It communicates exclusively with the MCP Hub via JSON-RPC 2.0. The user never interacts with backend services directly.
 
 ```
-                         User
-                          │
-                    ┌─────▼─────┐
-                    │  Claude    │
-                    │  Desktop   │  ◄── Unified AI entry point
-                    └─────┬─────┘
-                          │  MCP Protocol
-                          │
-```
-
-This design means:
-
-- The user never needs to know which backend service handles a request.
-- New MCP services become available in Claude Desktop automatically once registered with the Hub.
-- Claude Desktop's configuration only needs to point to the MCP Hub — not to every individual service.
-
----
-
-## High-Level Architecture
-
-```
-                    ┌──────────────────────┐
-                    │       Internet        │
-                    └──────────┬───────────┘
-                               │
-                          Cloudflare
-                               │
-                            HTTPS
-                               │
-                             Caddy
-                               │
-                       Docker Compose
-                               │
-          ┌────────────────────┼────────────────────┐
-          │              CORE LAYER                 │
-          │                                         │
-          │  ┌──────────┐      ┌───────────────┐   │
-          │  │  Claude  │ MCP  │               │   │
-          │  │ Desktop  ├─────►│   MCP Hub     │   │
-          │  │          │      │               │   │
-          │  └──────────┘      └───────┬───────┘   │
-          │                            │           │
-          └────────────────────────────┼───────────┘
-                                       │
-          ┌────────────────────────────┼───────────┐
-          │                MCP SERVICE LAYER       │
-          │                            │           │
-          │     ┌──────────────────────┼───────┐   │
-          │     │                      │       │   │
-          │  ┌──▼──┐  ┌──────┐  ┌─────▼──┐ ┌──▼──┐│
-          │  │Files│  │GitHub│  │ Ombre  │ │ntfy ││
-          │  │system│  │ MCP  │  │  MCP   │ │ MCP ││
-          │  └─────┘  └──────┘  └────────┘ └─────┘│
-          │                                       │
-          │  ┌──────┐  ┌──────┐                   │
-          │  │Browser│  │ SSH  │  ... future      │
-          │  │ MCP  │  │ MCP  │                   │
-          │  └──────┘  └──────┘                   │
-          │                                       │
-          └───────────────────────────────────────┘
+User
+ │
+ ▼
+Claude Desktop          ← local machine
+ │  JSON-RPC / MCP
+ ▼
+MCP Hub (Gateway)       ← VPS
+ │
+ ├── Ombre MCP
+ ├── ntfy MCP
+ └── ...
 ```
 
 ---
 
-## Deployment
-
-- **Claude Desktop** runs **locally** on the user's machine.
-- **MCP Hub** is deployed on a **VPS**.
-- All **MCP Servers** (Ombre, ntfy, GitHub, Filesystem, etc.) run on the **same VPS** as the Hub.
-- Claude Desktop communicates **only** with the MCP Hub — never directly with individual MCP servers.
-- The Hub routes every request to the appropriate MCP Server and returns the response.
+## Stable Core Layer
 
 ```
-┌── Local Machine ──┐         ┌── VPS ────────────────────────────┐
-│                    │         │                                    │
-│  Claude Desktop    │  MCP    │  MCP Hub                          │
-│                    ├────────►│  (Gateway)                        │
-│                    │         │    │                               │
-│                    │         │    ├── Ombre MCP                   │
-│                    │         │    ├── ntfy MCP                   │
-│                    │         │    ├── GitHub MCP                 │
-│                    │         │    ├── Filesystem MCP             │
-│                    │         │    └── ... (future)               │
-│                    │         │                                    │
-└────────────────────┘         └────────────────────────────────────┘
+Gateway (main.py)
+    │
+Registry (ServerManager + Discovery)
+    │
+Router (transport/router.py)
+    │
+Handlers (transport/handlers/)
+    │
+Runtime (runtime/)
+    │
+Lifecycle (core/base_server.py, core/server_manager.py)
+    │
+Transport (transport/ — JSON-RPC 2.0)
+    │
+Config (config.yaml)
 ```
-
----
-
-## Layer Description
-
-### Core Layer
-
-The Core Layer is the **stable foundation** of the system. It contains the components that every MCP service depends on. Changes to the Core Layer should be rare and deliberate.
 
 | Component | Responsibility |
 |---|---|
-| **Claude Desktop** | Unified AI entry point — all user interaction flows through it. |
-| **MCP Hub** | Central integration layer — service registration, routing, lifecycle management, configuration. |
-| **Docker Compose** | Deployment orchestration for all services. |
-| **Caddy** | Reverse proxy and automatic TLS termination. |
-| **Cloudflare** | External access, DDoS protection, DNS. |
+| **Gateway** | FastAPI application entry point, lifespan management |
+| **Registry** | Service registration, discovery, enable/disable, lifecycle |
+| **Router** | Thin JSON-RPC method dispatch → handler |
+| **Handlers** | Per-method logic (initialize, tools/list, tools/call, health) |
+| **Runtime** | Middleware layer (future: auth, metrics, retries) |
+| **Lifecycle** | Server initialize → start → stop with rollback guarantees |
+| **Transport** | JSON-RPC 2.0 wire protocol (POST /mcp) |
+| **Config** | YAML-based configuration with defaults |
 
-### MCP Service Layer
-
-The MCP Service Layer contains **independently replaceable** services. Each service provides one capability and communicates through the MCP Hub using the Model Context Protocol.
-
-Services in this layer:
-
-- Are **loosely coupled** — no direct dependencies between services.
-- Are **independently deployable** — each can be updated or replaced without affecting others.
-- Follow **single responsibility** — one service, one capability.
-- Register with the MCP Hub at startup and deregister at shutdown.
+**Core Principle:** The Core is stable. Adding a new MCP service must not require Core changes.
 
 ---
 
-## MCP Hub — Expanded Responsibilities
+## MCP Service Layer
 
-The MCP Hub is the **central nervous system** of the architecture. Its responsibilities go beyond simple proxying:
-
-### 1. Service Registration
-
-When an MCP service starts, it registers with the Hub:
+Each MCP service is an independent module:
 
 ```
-MCP Service ──► register(name, capabilities, endpoint) ──► MCP Hub
+mcp_servers/
+    ombre/
+        manifest.yaml      ← declarative: name, version, class
+        server.py          ← implementation: BaseMCPServer subclass
+    ntfy/
+        manifest.yaml
+        server.py
+    ...
 ```
 
-The Hub maintains a live registry of available services, their capabilities, and their health status.
+Services are:
+- **Loosely coupled** — no direct dependencies between services
+- **Independently deployable** — can be updated without affecting others
+- **Single responsibility** — one service, one capability
+- **Auto-discovered** — scanned at Hub startup via manifest.yaml
 
-### 2. Request Flow
+---
+
+## Request Flow
 
 ```
 Claude Desktop
@@ -155,206 +98,107 @@ Claude Desktop
 Transport Server  (src/transport/server.py)
       │
       ▼
-Router            (src/transport/router.py)  ← thin dispatch
+Router            (src/transport/router.py)  ← dispatch by method
       │
       ▼
-Handlers          (src/transport/handlers/)  ← per-method logic
+Handler           (src/transport/handlers/)  ← per-method logic
       │
       ▼
-Runtime           (src/runtime/)             ← middleware: auth, metrics, retries (future)
+Runtime           (src/runtime/)             ← future middleware
       │
       ▼
-ServerManager     (src/core/)                ← lifecycle + tool dispatch
+ServerManager     (src/core/)                ← resolve → call tool
       │
       ▼
-MCP Servers       (mcp_servers/)             ← auto-discovered
+MCP Server        (mcp_servers/)             ← concrete implementation
 ```
 
-Routing is **transparent to Claude Desktop** — it never knows which service instance handles a request.
+---
+
+## Deployment
+
+- **Claude Desktop** runs locally on the user's machine
+- **MCP Hub** is deployed on a VPS
+- **MCP Servers** run on the same VPS as the Hub
+- Docker Compose is the deployment layer, not the architecture
+
+### Core Services (docker-compose.yml)
+
+| Service | Purpose |
+|---|---|
+| `mcp-hub` | MCP Gateway (the Hub itself) |
+| `caddy` | Reverse proxy + automatic TLS |
+| `cloudflared` | Cloudflare Tunnel |
+
+### MCP Services (docker-compose.yml)
+
+| Service | Purpose |
+|---|---|
+| `ombre-mcp` | Ombre MCP Server |
+| `ntfy-mcp` | ntfy MCP Server |
+| `github-mcp` | GitHub MCP Server |
+| `filesystem-mcp` | Filesystem MCP Server |
+
+---
+
+## MCP Hub — Expanded Responsibilities
+
+### 1. Service Registration
+
+```
+MCP Service ──► register(name, capabilities, endpoint) ──► Registry
+```
+
+### 2. Routing
+
+```
+Claude Desktop ──► Hub ──► resolve("github") ──► GitHub MCP
+```
 
 ### 3. Lifecycle Management
-
-Every MCP server follows a strict lifecycle managed by the Hub via `ServerManager`:
-
-```
-discover()
-    ↓
-register(server)
-    ↓
-initialize()       ← subclass hook
-    ↓
-lifecycle_start()  ← BaseMCPServer wrapper — calls start() then sets _running = True
-    ↓
-(server running)
-    ↓
-lifecycle_stop()   ← BaseMCPServer wrapper — calls stop() then sets _running = False
-```
-
-**Key rule:** `_running` state lives ONLY in `BaseMCPServer`. `ServerManager` never touches it directly. The `lifecycle_start()` and `lifecycle_stop()` wrappers are the single source of truth for state transitions.
 
 | Phase | Action |
 |---|---|
 | **Startup** | Discover → Register → Initialize → Lifecycle Start → Running |
-| **Health** | Hub periodically health-checks every registered server. |
-| **Shutdown** | Lifecycle Stop → Unregister → Drain in-flight requests. |
-| **Failure** | Failed servers are isolated; one failure never blocks other servers. |
+| **Health** | Hub health-checks every registered server |
+| **Shutdown** | Lifecycle Stop → Drain → Unregister |
+| **Failure** | Failed servers are isolated; never block healthy ones |
 
 ### 4. Auto-Discovery
 
-Servers are auto-discovered from `mcp_servers/` at startup:
-
-```
-mcp_servers/
-    ombre/
-        manifest.yaml    ← declarative: name, version, class
-        server.py        ← implementation: BaseMCPServer subclass
-```
-
-Two modes, tried in order:
-1. **manifest.yaml** (preferred) — declarative registration
-2. **server.py scan** (fallback) — convention-based
-
-**Error isolation:** A broken manifest or import failure in one server never blocks discovery of other servers. Failed servers are reported in `/status` under `failed_names`.
+Manifest-first: `*/manifest.yaml` → fallback to `server.py` scan.
+Error isolation: a broken plugin never blocks others.
 
 ### 5. Configuration
 
-The Hub stores per-service configuration, making it the single source of truth for:
-
-- Service endpoints and ports.
-- Authentication credentials (referenced, not stored in plaintext).
-- Capability declarations (which methods each service exposes).
-- Rate limits and quotas.
-
----
-
-## Communication Flow
-
-### Standard Request Path
-
-```
-User
- │
- │  "What's in my GitHub repo?"
- │
- ▼
-Claude Desktop
- │
- │  MCP request: { service: "github", method: "list_repos" }
- │
- ▼
-MCP Hub
- │
- │  1. Authenticate request
- │  2. Resolve "github" → GitHub MCP
- │  3. Forward request
- │
- ▼
-GitHub MCP
- │
- │  Call GitHub API
- │
- ▼
-GitHub Repository
- │
- │  Response flows back through the same chain
- │
- ▼
-Claude Desktop → User
-```
-
-### Service Registration Flow
-
-```
-MCP Service starts
- │
- ▼
-Register with MCP Hub  ──►  Hub validates
- │                              │
- │                              ▼
- │                           Add to active registry
- │                              │
- │                              ▼
- │                           Health-check loop begins
- │
- ▼
-Service ready to handle requests
-```
-
----
-
-## Planned MCP Services
-
-| Service      | Purpose                  | Layer  | Status   |
-|--------------|--------------------------|--------|----------|
-| Filesystem   | Local file operations    | MCP    | Planned  |
-| GitHub       | Repository management    | MCP    | Planned  |
-| Browser      | Web interaction          | MCP    | Planned  |
-| ntfy         | Push notifications       | MCP    | Planned  |
-| Ombre        | Long-term AI memory      | MCP    | Planned  |
-| SSH          | Remote server access     | MCP    | Planned  |
+Per-service configuration in `config.yaml`. Hub metadata (protocol version, name, capabilities) is configurable.
 
 ---
 
 ## Design Principles
 
 ### MCP First
-
-Every new capability should be implemented as an MCP service. Avoid tightly coupling functionality into the Core Layer.
-
----
-
-### Loose Coupling
-
-Services must not directly depend on each other. All inter-service communication goes through the MCP Hub.
-
----
-
-### Single Responsibility
-
-Each MCP service provides exactly one capability. If a service starts handling two unrelated domains, split it.
-
----
-
-### Replaceability
-
-Any MCP service can be replaced with an alternative implementation without modifying the Core Layer, the Hub, or any other service.
-
----
-
-### Claude Desktop as Sole Entry Point
-
-The user never interacts with backend services directly. Claude Desktop is the only interface — this simplifies the architecture and provides a consistent experience.
-
----
+Every new capability is an MCP service. Nothing is baked into the Core.
 
 ### Hub Contains No Business Logic
+The MCP Hub is an orchestration layer. It routes, registers, manages lifecycles. It never processes data, makes decisions, or implements features.
 
-The MCP Hub is an **orchestration layer**.
+### Loose Coupling
+Services communicate only through the Hub. No direct inter-service dependencies.
 
-It should **never** contain business logic.
+### Plugin Architecture
+Adding a new MCP: create `mcp_servers/<name>/manifest.yaml` + `server.py`. Zero Core changes.
 
-All domain logic belongs to individual MCP servers. The Hub routes, registers, manages lifecycles, and stores configuration — it does not process data, make decisions, or implement features. If a capability involves domain knowledge, it belongs in an MCP service, not in the Hub.
-
----
+### Claude Desktop as Sole Entry Point
+The user never interacts with backend services directly.
 
 ### Documentation First
-
-Architecture changes must be documented before or alongside implementation. The architecture document is part of the source code.
+Architecture changes are documented before or alongside implementation.
 
 ---
 
 ## Future Expansion
 
-New capabilities are added by introducing new MCP services — never by modifying the Core Layer.
+New MCP services are added by creating directories under `mcp_servers/`. The architecture evolves through **extension, not reconstruction**.
 
-**Candidate future services:**
-
-- Calendar MCP
-- Email MCP
-- Database MCP
-- Home Assistant MCP
-- Monitoring MCP
-- Kubernetes MCP
-- Redis MCP
-
-The architecture evolves through **extension, not reconstruction**.
+**Candidate services:** Calendar MCP, Email MCP, Database MCP, Home Assistant MCP, Monitoring MCP, Redis MCP.

@@ -1,4 +1,4 @@
-"""Ombre Brain — Business-logic services."""
+"""Ombre MCP Server — Business-logic services."""
 
 from app.services.conversation_service import ConversationService
 from app.services.memory_service import MemoryService

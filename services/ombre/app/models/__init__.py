@@ -1,4 +1,4 @@
-"""Ombre Brain — Pydantic domain models."""
+"""Ombre MCP Server — Pydantic domain models."""
 
 from app.models.schemas import Conversation, Memory, Task, TaskStatus, UserConfig
 

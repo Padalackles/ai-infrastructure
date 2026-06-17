@@ -1,9 +1,13 @@
 # ──────────────────────────────────────────
-# ai-infrastructure — Docker Compose
+# MCP Gateway — Docker Compose
 # ──────────────────────────────────────────
 # docker compose up -d
 
 services:
+  # ──────────────────────────────────────────
+  # Core Services
+  # ──────────────────────────────────────────
+
   # ── Caddy — Reverse Proxy ────────────────
   caddy:
     image: caddy:2-alpine
@@ -34,6 +38,10 @@ services:
       - MCP_HUB_AUTH_TOKEN=${MCP_HUB_AUTH_TOKEN}
     networks:
       - ai-net
+
+  # ──────────────────────────────────────────
+  # MCP Services
+  # ──────────────────────────────────────────
 
   # ── GitHub MCP Server ────────────────────
   github-mcp:

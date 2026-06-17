@@ -1,97 +1,88 @@
-# AI Infrastructure
+# MCP Gateway
 
-*A personal AI infrastructure built around Claude Desktop and the Model Context Protocol (MCP).*
+An **MCP Gateway (Hub)** deployed on a VPS — not an AI application, not a chatbot.
 
----
+The Hub connects **Claude Desktop** (the user's AI interface) to multiple **MCP services** through the Model Context Protocol.
 
-## Vision
-
-This project aims to build a modular, extensible personal AI infrastructure.
-
-Instead of integrating every service directly, the system follows an **MCP First** architecture, where new capabilities are added through standardized MCP services.
-
-Claude Desktop acts as the unified AI entry point, while MCP Hub serves as the central integration layer.
+```
+Claude Desktop        ← runs locally
+     │
+     │  JSON-RPC / MCP
+     ▼
+MCP Hub (Gateway)     ← runs on VPS
+     │
+     ├── Ombre MCP         (long-term memory)
+     ├── ntfy MCP          (push notifications)
+     ├── Filesystem MCP    (file operations)
+     ├── GitHub MCP        (repository management)
+     ├── Browser MCP       (web interaction)
+     └── Future MCPs
+```
 
 ---
 
 ## Design Principles
 
-- **MCP First** – Prefer adding new capabilities through MCP.
-- **Modular** – Every service should be independently replaceable.
-- **Documentation First** – Keep documentation synchronized with implementation.
-- **Infrastructure as Code** – Deploy everything with Docker Compose.
-- **Extensible** – New services should integrate without changing the overall architecture.
-
----
-
-## Architecture
-
-```
-Internet
-    │
-Cloudflare
-    │
-Caddy
-    │
-Docker Compose
-    │
-MCP Hub
- ├── Filesystem MCP
- ├── GitHub MCP
- ├── Ombre MCP
- ├── ntfy MCP
- ├── Browser MCP
- └── Future MCP Services
-```
+- **MCP First** — Every capability is an MCP service. Nothing is baked into the Core.
+- **Gateway, not Application** — The Hub routes requests; servers implement behavior.
+- **Plugin Architecture** — Adding a new MCP service requires zero Core changes.
+- **Docker is Deployment Only** — The architecture is defined in code, not in containers.
 
 ---
 
 ## Repository Structure
 
-| File | Purpose |
-|---|---|
-| README.md | Project overview |
-| PROJECT_STATE.md | Current project status |
-| ARCHITECTURE.md | System architecture |
-| ROADMAP.md | Development roadmap |
-
-| Directory | Purpose |
-|---|---|
-| `docs/` | MCP documentation, development conventions |
-| `tasks/` | Development tasks |
-| `docker/` | Docker configurations |
-| `scripts/` | Utility scripts |
+```
+├── mcp-hub/              MCP Hub Gateway (Core)
+│   ├── src/
+│   │   ├── api/          REST endpoints
+│   │   ├── core/         ServerManager, Discovery, BaseMCPServer, EventBus
+│   │   ├── runtime/      Middleware layer (auth, metrics, retries — future)
+│   │   ├── transport/    JSON-RPC 2.0 endpoint, Router, Handlers
+│   │   └── main.py       FastAPI entry point
+│   ├── tests/
+│   ├── config.yaml
+│   └── Dockerfile
+├── mcp_servers/          MCP Service Layer (extensible)
+│   ├── ombre/            Ombre MCP Server
+│   ├── ntfy/             ntfy MCP Server (Docker only)
+│   ├── github/           GitHub MCP Server (Docker only)
+│   ├── filesystem/       Filesystem MCP Server (Docker only)
+│   └── example/          Example Server (test pipeline)
+├── services/             Service implementations
+│   └── ombre/            Ombre MCP Server foundation (Task-002)
+├── docker-compose.yml
+├── ARCHITECTURE.md
+├── ROADMAP.md
+├── PROJECT_STATE.md
+├── docs/
+└── tasks/
+```
 
 ---
 
-## Development Workflow
+## Quick Start
 
-1. Read `PROJECT_STATE.md`
-2. Check the current task.
-3. Implement the required changes.
-4. Update documentation.
-5. Commit changes.
+```bash
+cd mcp-hub
+pip install -r requirements.txt
+uvicorn src.main:app --reload
+```
+
+```
+GET  /health  →  {"status":"healthy","total_servers":1,...}
+GET  /status  →  {"version":"0.1.0","runtime":"mcp-hub",...}
+POST /mcp     →  JSON-RPC 2.0  (initialize, tools/list, tools/call, health)
+```
 
 ---
 
 ## Current Status
 
-See [`PROJECT_STATE.md`](PROJECT_STATE.md) for the latest project progress.
-
----
-
-## Roadmap
-
-- **Phase 0** – Project Bootstrap
-- **Phase 1** – Infrastructure
-- **Phase 2** – MCP Platform
-- **Phase 3** – Core MCP Services
-- **Phase 4** – Operations
-- **Phase 5** – Automation
-- **Phase 6** – Production
+See [`PROJECT_STATE.md`](PROJECT_STATE.md).
 
 ---
 
 ## License
 
-MIT License
+MIT

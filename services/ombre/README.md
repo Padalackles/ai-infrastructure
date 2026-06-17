@@ -1,9 +1,9 @@
-# Ombre Brain
+# Ombre MCP Server
 
 Long-term AI memory and MCP orchestration platform — part of the
 [AI Infrastructure](https://github.com/Padalackles/ai-infrastructure) project.
 
-Ombre Brain provides persistent memory, conversation tracking, task scheduling,
+Ombre MCP Server provides persistent memory, conversation tracking, task scheduling,
 and MCP Hub integration through a FastAPI application following the
 **MCP First** architecture principle.
 
@@ -83,7 +83,7 @@ CONFIG_PATH=/path/to/custom.yaml uvicorn app.main:app --reload
 
 ## MCP Integration
 
-Ombre Brain integrates with the MCP Hub through three modules:
+Ombre MCP Server integrates with the MCP Hub through three modules:
 
 | Module | Role |
 |---|---|

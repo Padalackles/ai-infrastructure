@@ -1,4 +1,4 @@
-"""Ombre Brain — File-based persistence layer."""
+"""Ombre MCP Server — File-based persistence layer."""
 
 from app.storage.file_storage import FileStorage
 

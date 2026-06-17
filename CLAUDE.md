@@ -1,27 +1,33 @@
 # CLAUDE.md
 
-## Project Goal
+## Project
 
-Build a personal AI infrastructure based on MCP.
+MCP Gateway (Hub) — not an AI application, not a chatbot. Deployed on a VPS.
+Claude Desktop is the unified user entry point. The Hub routes requests to MCP services.
 
 ## Architecture
 
-Claude Desktop
-    ↓
-MCP Hub
-    ↓
-Filesystem
-GitHub
-Ombre
-ntfy
-...
+```
+Claude Desktop (local)
+    ↓  JSON-RPC / MCP
+MCP Hub (VPS)
+    ├── Ombre MCP
+    ├── ntfy MCP
+    ├── Filesystem MCP
+    ├── GitHub MCP
+    └── ...
+```
+
+Stable Core → Extensible MCP Service Layer.
+Adding a new MCP requires zero Core changes.
 
 ## Principles
 
-- MCP First
-- Documentation First
-- Keep modules independent.
-- Update PROJECT_STATE.md after every milestone.
+- MCP First — every capability is an MCP service
+- Hub is orchestration only — zero business logic
+- Documentation First — update docs alongside code
+- Keep modules independent
+- Update PROJECT_STATE.md after every milestone
 
 ## Workflow
 

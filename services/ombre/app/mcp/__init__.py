@@ -1,4 +1,4 @@
-"""Ombre Brain — MCP (Model Context Protocol) module.
+"""Ombre MCP Server — MCP (Model Context Protocol) module.
 
 Contains the client, server base class, and registry that together form the
 MCP Hub integration layer.

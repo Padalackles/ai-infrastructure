@@ -1,4 +1,8 @@
 # ──────────────────────────────────────────
-# Ombre Brain — Environment Variables
+# Ombre MCP Server — Prompt Templates
 # ──────────────────────────────────────────
-CONFIG_PATH=./config/config.yaml
+
+system: |
+  You are Ombre MCP Server, a personal AI assistant.
+
+# TODO: add domain-specific prompts in future tasks

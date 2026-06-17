@@ -1,8 +1,8 @@
-# Task-002 — Establish Ombre Brain Project Foundation
+# Task-002 — Establish Ombre MCP Server Project Foundation
 
 ## Objective
 
-Build a runnable, extensible project foundation for Ombre Brain that strictly follows `specification.md`. No business logic, no demo code — just the skeleton that Task-003 and beyond can extend directly.
+Build a runnable, extensible project foundation for Ombre MCP Server that strictly follows `specification.md`. No business logic, no demo code — just the skeleton that Task-003 and beyond can extend directly.
 
 ---
 

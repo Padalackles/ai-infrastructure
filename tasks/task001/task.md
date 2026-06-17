@@ -1,8 +1,8 @@
-# Task-001 — Migrate Ombre Brain to Docker Compose
+# Task-001 — Migrate Ombre MCP Server to Docker Compose
 
 ## Objective
 
-Take over the existing Ombre Brain container and migrate it from a standalone `docker run` deployment to the project's unified Docker Compose management.
+Take over the existing Ombre MCP Server container and migrate it from a standalone `docker run` deployment to the project's unified Docker Compose management.
 
 This task establishes Docker Compose as the standard deployment method for all current and future services.
 
@@ -10,7 +10,7 @@ This task establishes Docker Compose as the standard deployment method for all c
 
 ## Background
 
-The Ombre Brain service is already deployed and running correctly.
+The Ombre MCP Server service is already deployed and running correctly.
 
 Current deployment uses a standalone Docker container.
 
@@ -22,7 +22,7 @@ Future development requires every service to be managed through the project's `d
 
 ### Step 1
 
-Inspect the current Ombre Brain container.
+Inspect the current Ombre MCP Server container.
 
 Collect:
 
@@ -72,7 +72,7 @@ all function correctly.
 
 ## Success Criteria
 
-- Ombre Brain runs under Docker Compose.
+- Ombre MCP Server runs under Docker Compose.
 - No data is lost.
 - Future management no longer relies on `docker run`.
 
@@ -81,7 +81,7 @@ all function correctly.
 ## Dependencies
 
 - Docker
-- Existing Ombre Brain container
+- Existing Ombre MCP Server container
 
 ---
 

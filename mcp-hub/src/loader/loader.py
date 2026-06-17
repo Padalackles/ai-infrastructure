@@ -15,7 +15,7 @@ from typing import Any
 
 import yaml
 
-from src.core.base_server import BaseMCPServer
+from src.lifecycle.base_server import BaseMCPServer
 
 logger = logging.getLogger(__name__)
 

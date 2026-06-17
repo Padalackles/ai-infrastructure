@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from src.core.base_server import BaseMCPServer, ToolNotFoundError
+from src.lifecycle.base_server import BaseMCPServer, ToolNotFoundError
 
 logger = logging.getLogger(__name__)
 

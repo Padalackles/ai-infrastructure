@@ -2,9 +2,9 @@
 
 import pytest
 
-from src.core.base_server import BaseMCPServer, ToolNotFoundError
+from src.lifecycle.base_server import BaseMCPServer, ToolNotFoundError
 from src.core.events import EventBus
-from src.core.server_manager import ServerManager
+from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
 from src.transport.request import JSONRPCRequest
 from src.transport.response import ErrorCode, JSONRPCResponse

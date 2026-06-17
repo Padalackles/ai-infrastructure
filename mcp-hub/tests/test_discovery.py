@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from src.core.base_server import BaseMCPServer
-from src.core.discovery import Discovery, DiscoveryError, DiscoveryResult
+from src.lifecycle.base_server import BaseMCPServer
+from src.loader.discovery import Discovery, DiscoveryError, DiscoveryResult
 
 
 # ── Test servers ──────────────────────────────────────────────
@@ -54,7 +54,7 @@ def _write_server_py(directory: Path, class_name: str, import_line: str = "") ->
 import sys
 sys.path.insert(0, r"C:/Users/victor/ai-infrastructure/mcp-hub")
 {import_line}
-from src.core.base_server import BaseMCPServer
+from src.lifecycle.base_server import BaseMCPServer
 
 class {class_name}(BaseMCPServer):
     def __init__(self, name=None, version="0.1.0"):

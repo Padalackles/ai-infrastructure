@@ -2,8 +2,8 @@
 
 import pytest
 
-from src.core.base_server import BaseMCPServer, ToolNotFoundError
-from src.core.server_manager import ServerManager
+from src.lifecycle.base_server import BaseMCPServer, ToolNotFoundError
+from src.registry.server_manager import ServerManager
 
 
 # ── Test servers ──────────────────────────────────────────────

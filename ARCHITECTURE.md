@@ -175,6 +175,24 @@ Per-service configuration in `config.yaml`. Hub metadata (protocol version, name
 
 ---
 
+## Ombre — External MCP Service
+
+Ombre is an **existing external MCP-compatible long-term memory service** that has already been deployed and validated independently. This repository does not reimplement Ombre. Instead, the MCP Hub integrates Ombre as one of its external MCP services through the standard manifest + server.py plugin mechanism.
+
+The relationship:
+
+```
+MCP Hub (this repository)
+    │
+    ├── Ombre MCP   ← external, already deployed
+    ├── ntfy MCP    ← future
+    └── ...
+```
+
+Ombre's `services/ombre/` foundation (Task-002) provides the Hub-facing adapter. The actual Ombre service runs separately and communicates through the Hub.
+
+---
+
 ## Design Principles
 
 ### MCP First

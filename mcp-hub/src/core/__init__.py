@@ -1,17 +1,20 @@
-"""MCP Hub — Core modules.
+"""MCP Hub — Core module (backward-compatible re-exports).
 
-Contains the foundational classes that every MCP service depends on:
-  - BaseMCPServer — abstract base for all MCP server implementations
-  - ServerManager — lifecycle management for registered servers
-  - EventBus — in-memory publish/subscribe event system
-  - Discovery — auto-discovery of servers in mcp_servers/
+Modules reorganized into dedicated packages:
+  - lifecycle/   BaseMCPServer, ToolNotFoundError
+  - registry/    ServerManager
+  - loader/      Discovery, Loader, PythonLoader
+  - config/      load_config()
+  - models/      (future Pydantic models)
+
+events.py stays in core/ — it has no dedicated module yet.
 """
 
-from src.core.base_server import BaseMCPServer, ToolNotFoundError
-from src.core.discovery import Discovery, DiscoveryError, DiscoveryResult
 from src.core.events import EventBus
-from src.core.loader import Loader, PythonLoader
-from src.core.server_manager import ServerManager
+from src.lifecycle.base_server import BaseMCPServer, ToolNotFoundError
+from src.loader.discovery import Discovery, DiscoveryError, DiscoveryResult
+from src.loader.loader import Loader, PythonLoader
+from src.registry.server_manager import ServerManager
 
 __all__ = [
     "BaseMCPServer",

@@ -9,7 +9,7 @@ import logging
 from typing import Any
 
 from src.core.events import EventBus
-from src.core.server_manager import ServerManager
+from src.registry.server_manager import ServerManager
 
 logger = logging.getLogger(__name__)
 

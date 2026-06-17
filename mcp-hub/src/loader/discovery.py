@@ -13,8 +13,8 @@ from typing import Any
 
 import yaml
 
-from src.core.base_server import BaseMCPServer
-from src.core.loader import Loader, PythonLoader
+from src.lifecycle.base_server import BaseMCPServer
+from src.loader.loader import Loader, PythonLoader
 
 logger = logging.getLogger("discovery")
 

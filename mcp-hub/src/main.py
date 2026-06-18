@@ -145,8 +145,9 @@ def _check_auth(scope: Scope) -> tuple[int, str] | None:
     if configured is None:
         return None  # auth disabled
 
-    headers = dict(scope.get("headers", []))
-    auth = headers.get(_AUTH_HEADER.encode(), b"").decode()
+    # ASGI/Starlette normalizes header names to lowercase bytes
+    headers = {k.decode().lower(): v.decode() for k, v in scope.get("headers", [])}
+    auth = headers.get("authorization", "")
     if not auth.startswith(_BEARER_PREFIX):
         return (401, "Missing or malformed Authorization header. Expected: Bearer <token>")
     token = auth[len(_BEARER_PREFIX):].strip()

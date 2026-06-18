@@ -2,7 +2,7 @@
 
 **Status:** 🟡 In Progress
 **Version:** v0.1.0
-**Last Updated:** 2026-06-17
+**Last Updated:** 2026-06-18
 
 ---
 
@@ -40,7 +40,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-009 | ✅ | Ombre Adapter — HTTP bridge to external Ombre |
 | Task-010 | ✅ | ntfy External Service Integration — via ntfy.sh API |
 | Task-011 | ✅ | Remote MCP Transport — protocol validated, Claude Desktop Ready |
-| Task-012 | 🟡 | Domain + HTTPS + Cloudflare |
+| Task-012 | 🟡 | Domain + HTTPS + Cloudflare (architecture audit ✅, pending real domain binding) |
 | Task-013 | ⬜ | Claude Desktop Remote Connection |
 | Task-014 | ⬜ | Real ntfy Notification Test |
 | Task-015 | ⬜ | Docker Production |
@@ -168,16 +168,18 @@ mcp-hub/src/
 |---|---|
 | Documentation | ✅ Consistent |
 | Architecture | ✅ Stable Core / Extensible Service Layer |
+| Architecture Audit | ✅ Pre-deployment check passed (2026-06-18) |
 | Tests | ✅ 6 test files (lifecycle, discovery, transport, tools) |
 | GitHub Sync | ✅ Up to date |
 | No duplicate docs | ✅ Single source of truth per concern |
+| CHANGELOG | ✅ Created |
 
 ## Last Commit
 
 | Field | Value |
 |---|---|
-| **Hash** | `a9e8f44` |
-| **Summary** | docs: refine documentation — PROJECT_STATE, CLAUDE, DECISIONS |
+| **Hash** | `a7fe756` |
+| **Summary** | fix: architecture consistency — align docker-compose, docs, and stale comments |
 
 ---
 

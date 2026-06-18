@@ -47,8 +47,10 @@ class JSONFormatter(logging.Formatter):
     """Single-line JSON log records with all required fields."""
 
     def format(self, record: logging.LogRecord) -> str:
+        now = datetime.now(timezone.utc)
+        ts = now.strftime("%Y-%m-%dT%H:%M:%S.") + f"{now.microsecond // 1000:03d}Z"
         obj: dict[str, Any] = {
-            "ts": datetime.now(timezone.utc).isoformat(),
+            "ts": ts,
             "level": record.levelname,
             "component": getattr(record, "component", record.name),
             "msg": record.getMessage(),
@@ -168,9 +170,10 @@ def audit(
     error: str = "",
 ) -> None:
     """Write an audit record for a tool invocation."""
+    now = datetime.now(timezone.utc)
     record = {
         "event": "tool_call",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": now.strftime("%Y-%m-%dT%H:%M:%S.") + f"{now.microsecond // 1000:03d}Z",
         "service": service,
         "tool": tool,
         "execution_time_ms": round(duration_ms, 1),

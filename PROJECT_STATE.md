@@ -44,7 +44,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-013 | ⬜ | Claude Desktop Remote Connection |
 | Task-014 | ⬜ | Real ntfy Notification Test |
 | Task-015 | ⬜ | Docker Production |
-| Task-016 | ⬜ | Production Hardening |
+| Task-016 | 🟡 | Production Hardening (MCP Auth ✅, remaining items in progress) |
 
 ---
 
@@ -133,7 +133,8 @@ mcp-hub/src/
 | Shared models | `mcp-hub/src/models/` |
 | Ombre MCP Docker build context | `mcp_servers/ombre/Dockerfile` |
 | Docker Compose | `docker-compose.yml` |
-| Unit tests | `mcp-hub/tests/` |
+| MCP Auth (Bearer Token) | `mcp-hub/src/core/auth.py` |
+| Unit tests | `mcp-hub/tests/` (166 tests) |
 
 ## Not Yet Implemented
 
@@ -142,7 +143,7 @@ mcp-hub/src/
 | Claude Desktop ↔ Hub MCP wiring | Task-013 |
 | Concrete MCP Servers (ntfy, GitHub, Filesystem) | Task-014+ |
 | Formal MCP Registry (manifests, enable/disable) | Future |
-| Authentication / token validation | Task-016 |
+| Authentication / token validation | ✅ Implemented (Bearer Token, Task-016) |
 | Health-check loop | Future |
 | Remote server adapters (HTTP/SSE/WebSocket) | Future |
 
@@ -178,8 +179,8 @@ mcp-hub/src/
 
 | Field | Value |
 |---|---|
-| **Hash** | `63106d3` |
-| **Summary** | fix: pass DOMAIN and CADDY_ACME_EMAIL env vars to Caddy container |
+| **Hash** | `01c9e55` |
+| **Summary** | feat: add Bearer Token authentication to POST /mcp endpoint |
 
 ---
 

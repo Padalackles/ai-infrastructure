@@ -6,6 +6,16 @@ All notable changes to the MCP Hub project.
 
 ## [v0.1.0] — 2026-06-18 (Production Deployed)
 
+### Task-016 — MCP Auth (Bearer Token) ✅
+
+- `src/core/auth.py`: FastAPI dependency that validates `Authorization: Bearer <token>`
+- Token configured via `MCP_HUB_AUTH_TOKEN` env var; empty = auth disabled
+- POST /mcp requires valid token when configured; REST endpoints always public
+- Wrong/missing token → HTTP 401 + JSON-RPC error body (code -32003)
+- Per-request token resolution — no import-time caching, test-safe
+- `tests/test_auth.py`: 9 tests covering all scenarios
+- Total: 166 tests passing
+
 ### Task-012 — Domain + HTTPS + Cloudflare ✅
 
 **Domain:** `raven-victor.click`  

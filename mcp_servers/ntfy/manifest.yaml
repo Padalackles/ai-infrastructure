@@ -10,6 +10,6 @@ description: Push notification service — ntfy.sh via curl on VPS host
 type: external_service
 health_endpoint: /health
 tools:
-  - notify.send
+  - notify_send
   - ntfy_health
   - ntfy_info

@@ -1,4 +1,4 @@
-"""Tests for Notification MCP — notify.send via curl to ntfy.sh."""
+"""Tests for Notification MCP — notify_send via curl to ntfy.sh."""
 
 import pytest
 
@@ -45,13 +45,13 @@ class TestNtfyServer:
         server = NtfyServer()
         tools = await server.get_tools()
         names = [t["name"] for t in tools]
-        assert "notify.send" in names
+        assert "notify_send" in names
         assert "ntfy_health" in names
         assert "ntfy_info" in names
 
     async def test_call_tool_notify_send(self):
         server = NtfyServer()
-        result = await server.call_tool("notify.send", {
+        result = await server.call_tool("notify_send", {
             "message": "Integration test",
             "title": "Pytest",
         })

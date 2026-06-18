@@ -51,7 +51,7 @@ class NtfyServer(BaseMCPServer):
     async def get_tools(self) -> list[dict[str, Any]]:
         tools = [
             {
-                "name": "notify.send",
+                "name": "notify_send",
                 "description": "Send a push notification via ntfy.sh",
                 "inputSchema": {
                     "type": "object",
@@ -100,7 +100,7 @@ class NtfyServer(BaseMCPServer):
     ) -> Any:
         args = arguments or {}
 
-        if tool_name == "notify.send":
+        if tool_name == "notify_send":
             return await send(
                 message=args.get("message", ""),
                 title=args.get("title", "Claude"),

@@ -24,10 +24,11 @@ Start with:
 from __future__ import annotations
 
 import logging
+import os
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, Request
-from fastapi.responses import Response
+from fastapi import FastAPI
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from src.config import load_config
 from src.core.events import EventBus
@@ -115,62 +116,92 @@ app = FastAPI(
                 "and provides discovery — zero business logic.",
     version="0.1.0",
     lifespan=lifespan,
-    # Caddy on Docker network forwards with original Host header
-    # (raven-victor.click).  Allow all hosts.
     allowed_hosts=["*"],
 )
 
 from src.api.routes import router as api_router  # noqa: E402
-from src.core.auth import verify_bearer_token  # noqa: E402
 
 app.include_router(api_router)
 
 
-# ── /mcp Route (passthrough to FastMCP Starlette ASGI app) ──────
+# ── Bearer Token check (raw ASGI — no FastAPI Depends) ───────────
 
-@app.api_route("/mcp", methods=["GET", "POST", "DELETE", "OPTIONS", "HEAD", "PUT", "PATCH"])
-async def mcp_gateway(
-    request: Request,
-    _auth: None = Depends(verify_bearer_token),
-) -> Response:
-    """Forward all /mcp traffic to the FastMCP Streamable HTTP app.
+_AUTH_HEADER = "Authorization"
+_BEARER_PREFIX = "Bearer "
 
-    Rewrites the ASGI scope path from /mcp to / so FastMCP's internal
-    routing (streamable_http_path="/") matches.
+def _get_token() -> str | None:
+    token = os.getenv("MCP_HUB_AUTH_TOKEN", "").strip()
+    return token if token else None
+
+def _check_auth(scope: Scope) -> tuple[int, str] | None:
+    """Return (401, message) if auth fails, None if OK."""
+    configured = _get_token()
+    if configured is None:
+        return None  # auth disabled
+
+    headers = dict(scope.get("headers", []))
+    auth = headers.get(_AUTH_HEADER.encode(), b"").decode()
+    if not auth.startswith(_BEARER_PREFIX):
+        return (401, "Missing or malformed Authorization header. Expected: Bearer <token>")
+    token = auth[len(_BEARER_PREFIX):].strip()
+    if token != configured:
+        return (401, "Invalid Bearer token")
+    return None
+
+
+# ── MCP ASGI Proxy (zero-buffer, pure passthrough) ───────────────
+
+class MCPProxy:
+    """ASGI middleware that proxies /mcp requests directly to FastMCP.
+
+    No Response wrapping.  No body buffering.  No collect.
+    send() is passed straight through to FastMCP so SSE streaming
+    works natively.
     """
-    scope = dict(request.scope)
-    scope["path"] = "/"
-    scope["raw_path"] = b"/"
 
-    status_code = 200
-    response_headers: list[tuple[bytes, bytes]] = []
-    body_chunks: list[bytes] = []
+    def __init__(self, app: ASGIApp, mcp_app: ASGIApp) -> None:
+        self.app = app
+        self.mcp_app = mcp_app
 
-    async def receive() -> dict:
-        return {
-            "type": "http.request",
-            "body": await request.body(),
-            "more_body": False,
-        }
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
 
-    async def send(message: dict) -> None:
-        nonlocal status_code, response_headers
-        if message["type"] == "http.response.start":
-            status_code = message["status"]
-            response_headers = message.get("headers", [])
-        elif message["type"] == "http.response.body":
-            body_chunks.append(message.get("body", b""))
+        path = scope.get("path", "")
+        if path != "/mcp":
+            await self.app(scope, receive, send)
+            return
 
-    await _mcp_asgi(scope, receive, send)
+        # Auth check before forwarding
+        auth_error = _check_auth(scope)
+        if auth_error is not None:
+            status, message = auth_error
+            body = (
+                f'{{"jsonrpc":"2.0","id":null,'
+                f'"error":{{"code":-32003,"message":"Unauthorized: {message}"}}}}'
+            ).encode()
+            await send({
+                "type": "http.response.start",
+                "status": status,
+                "headers": [
+                    (b"content-type", b"application/json"),
+                    (b"www-authenticate", b"Bearer"),
+                ],
+            })
+            await send({
+                "type": "http.response.body",
+                "body": body,
+            })
+            return
 
-    plain_headers = {}
-    for k, v in response_headers:
-        key = k.decode() if isinstance(k, bytes) else k
-        val = v.decode() if isinstance(v, bytes) else v
-        plain_headers[key] = val
+        # Rewrite path so FastMCP sees "/" (its internal streamable_http_path)
+        scope = dict(scope)
+        scope["path"] = "/"
+        scope["raw_path"] = b"/"
 
-    return Response(
-        content=b"".join(body_chunks),
-        status_code=status_code,
-        headers=plain_headers,
-    )
+        await self.mcp_app(scope, receive, send)
+
+
+# Wrap FastAPI with the MCP proxy
+app.add_middleware(MCPProxy, mcp_app=_mcp_asgi)

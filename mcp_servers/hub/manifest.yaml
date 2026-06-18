@@ -1,0 +1,4 @@
+name: hub
+version: "0.1.0"
+class: HubServer
+description: Hub management tools — status, services, health checks

@@ -32,6 +32,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from src.config import load_config
 from src.core.events import EventBus
+from src.core.hub_state import set_state
 from src.loader.discovery import Discovery
 from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
@@ -87,6 +88,10 @@ async def lifespan(app: FastAPI):
     runtime = Runtime(registry, event_bus, config)
     app.state.runtime = runtime
     logger.info("Runtime Initialized")
+
+    # Share state so MCP service plugins can inspect the Hub
+    import time
+    set_state(registry, runtime, time.time())
 
     # ── 6. Bind Runtime + Start FastMCP Transport ─────────────────
     set_runtime(runtime)

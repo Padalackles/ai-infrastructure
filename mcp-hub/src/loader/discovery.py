@@ -39,7 +39,18 @@ class Discovery:
 
     def __init__(self, base_path: str | None = None, loader: Loader | None = None) -> None:
         if base_path is None:
-            base_path = str(
+            # Auto-detect: try 3 levels up (Docker flat layout: /app/src/...)
+            # then 4 levels up (local nested layout: repo/mcp-hub/src/...)
+            resolved = None
+            for levels in (3, 4):
+                candidate = Path(__file__).resolve()
+                for _ in range(levels):
+                    candidate = candidate.parent
+                candidate = candidate / _DISCOVERY_DIR
+                if candidate.is_dir():
+                    resolved = candidate
+                    break
+            base_path = str(resolved) if resolved else str(
                 Path(__file__).resolve().parent.parent.parent.parent / _DISCOVERY_DIR
             )
         self._base_path = Path(base_path)

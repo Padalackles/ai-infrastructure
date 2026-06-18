@@ -44,7 +44,7 @@ services:
   # ──────────────────────────────────────────
 
   # ── GitHub MCP Server (Reserved) ──────────
-  # Reserved — not yet implemented. Uncomment when Task-014+ adds source.
+  # Reserved — not yet implemented. Uncomment when source is added.
   # github-mcp:
   #   build: ./mcp_servers/github
   #   container_name: ai-github-mcp
@@ -56,7 +56,7 @@ services:
   #     - ai-net
 
   # ── Filesystem MCP Server (Reserved) ──────
-  # Reserved — not yet implemented. Uncomment when Task-014+ adds source.
+  # Reserved — not yet implemented. Uncomment when source is added.
   # filesystem-mcp:
   #   build: ./mcp_servers/filesystem
   #   container_name: ai-filesystem-mcp
@@ -66,40 +66,27 @@ services:
   #   networks:
   #     - ai-net
 
-  # ── Ombre MCP Server ─────────────────────
-  # External Ombre deployment (adapter implemented — Task-009)
-  ombre-mcp:
-    build: ./mcp_servers/ombre
-    container_name: ai-ombre-mcp
-    restart: unless-stopped
-    environment:
-      - OMBRE_ENDPOINT=${OMBRE_ENDPOINT:-http://45.76.169.98:8000}
-    networks:
-      - ai-net
+  # ── Ombre — EXTERNAL (deployed at 45.76.169.98:8000) ──
+  # Ombre runs as a standalone service on this VPS (NOT via this compose file).
+  # The MCP Hub connects to it through mcp_servers/ombre/adapter.py (HTTP bridge).
+  # This adapter is loaded by Hub discovery — no separate container needed.
 
-  # ── ntfy MCP Server ──────────────────────
-  # ntfy.sh push notifications (adapter implemented — Task-010)
-  ntfy-mcp:
-    build: ./mcp_servers/ntfy
-    container_name: ai-ntfy-mcp
-    restart: unless-stopped
-    environment:
-      - NTFY_BASE_URL=${NTFY_BASE_URL:-https://ntfy.sh}
-      - NTFY_TOPIC=${NTFY_TOPIC:-ai-infrastructure}
-    networks:
-      - ai-net
+  # ── ntfy — EXTERNAL (ntfy.sh SaaS) ────────
+  # ntfy notifications route through https://ntfy.sh.
+  # The MCP Hub connects through mcp_servers/ntfy/adapter.py (HTTP bridge).
+  # This adapter is loaded by Hub discovery — no separate container needed.
 
-  # ── Cloudflare Tunnel ────────────────────
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: ai-cloudflared
-    restart: unless-stopped
-    command: tunnel run
-    volumes:
-      - ./cloudflare/tunnel-config.yaml:/etc/cloudflared/config.yaml:ro
-    networks:
-      - ai-net
-    # Configure tunnel token in cloudflare/tunnel-config.yaml before enabling
+  # ── Cloudflare Tunnel (Reserved) ──────────
+  # Uncomment when CF_TUNNEL_TOKEN is configured.
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   container_name: ai-cloudflared
+  #   restart: unless-stopped
+  #   command: tunnel run
+  #   environment:
+  #     - TUNNEL_TOKEN=${CF_TUNNEL_TOKEN}
+  #   networks:
+  #     - ai-net
 
 volumes:
   caddy_data:

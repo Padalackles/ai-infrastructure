@@ -28,21 +28,21 @@ cp .env.example .env
 # CF_API_TOKEN=...
 # CF_ZONE_ID=...
 
-# ── 3. Build Docker images ───────────────────────────────────
-echo "[3/6] Building Docker images..."
-docker compose build
+# ── 3. Stop and remove old services (handle removed containers) ──
+echo "[3/6] Stopping old services..."
+docker compose down --remove-orphans 2>/dev/null || true
 
-# ── 4. Start services ────────────────────────────────────────
-echo "[4/6] Starting services..."
-docker compose up -d
+# ── 4. Build and start ───────────────────────────────────────
+echo "[4/6] Building and starting services..."
+docker compose up -d --build
 
 # ── 5. Wait for healthy ──────────────────────────────────────
 echo "[5/6] Waiting for services to be healthy..."
 sleep 5
 docker compose ps
 
-# ── 6. Quick health check ────────────────────────────────────
-echo "[6/6] Quick health check..."
+# ── 6. Verify ─────────────────────────────────────────────────
+echo "[6/6] Verifying endpoints..."
 curl -s http://localhost:8080/health | head -c 200
 echo ""
 curl -s http://localhost:8080/status | head -c 200

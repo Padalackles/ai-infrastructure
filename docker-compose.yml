@@ -41,6 +41,7 @@ services:
       - NTFY_SERVER=${NTFY_SERVER:-https://ntfy.sh}
       - NTFY_TOPIC=${NTFY_TOPIC:-ai-infrastructure}
       - OMBRE_URL=${OMBRE_URL:-http://45.76.169.98:8000/mcp}
+      - HUB_EXPOSE_INTERNAL_TOOLS=${HUB_EXPOSE_INTERNAL_TOOLS:-false}
       - OMBRE_TIMEOUT=${OMBRE_TIMEOUT:-10}
     networks:
       - ai-net

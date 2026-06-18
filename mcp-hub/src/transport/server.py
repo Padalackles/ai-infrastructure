@@ -51,6 +51,8 @@ mcp = FastMCP(
                  "Routes tool calls to registered MCP service plugins.",
     stateless_http=True,
     json_response=True,
+    debug=True,
+    log_level="DEBUG",
     streamable_http_path="/",
     transport_security=TransportSecuritySettings(
         enable_dns_rebinding_protection=False,  # behind Caddy/Cloudflare

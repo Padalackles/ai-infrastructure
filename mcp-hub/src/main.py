@@ -45,6 +45,12 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger("mcp-hub")
+mcp_logger = logging.getLogger("mcp-hub.transport")
+
+# Enable DEBUG logging for MCP SDK protocol tracing
+for _name in ("mcp", "mcp.server", "mcp.server.streamable_http",
+              "mcp.server.lowlevel", "mcp.server.fastmcp"):
+    logging.getLogger(_name).setLevel(logging.DEBUG)
 
 
 # ── Lifecycle ───────────────────────────────────────────────────
@@ -163,6 +169,22 @@ class MCPProxy:
         self.app = app
         self.mcp_app = mcp_app
 
+    @staticmethod
+    def _log_request(scope: Scope) -> None:
+        method = scope.get("method", "?")
+        path = scope.get("path", "?")
+        headers = dict(scope.get("headers", []))
+        # Mask Authorization token
+        auth = headers.get(b"authorization", b"").decode()
+        if auth.startswith("Bearer "):
+            token = auth[7:]
+            auth = f"Bearer {token[:8]}..."
+        mcp_logger.debug("MCP ← %s %s  Authorization=%s", method, path, auth or "(none)")
+
+    @staticmethod
+    def _log_response(status: int) -> None:
+        mcp_logger.debug("MCP → %d", status)
+
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
@@ -173,10 +195,13 @@ class MCPProxy:
             await self.app(scope, receive, send)
             return
 
+        self._log_request(scope)
+
         # Auth check before forwarding
         auth_error = _check_auth(scope)
         if auth_error is not None:
             status, message = auth_error
+            self._log_response(status)
             body = (
                 f'{{"jsonrpc":"2.0","id":null,'
                 f'"error":{{"code":-32003,"message":"Unauthorized: {message}"}}}}'
@@ -195,12 +220,24 @@ class MCPProxy:
             })
             return
 
+        # Wrap send to capture the response status code
+        _status = 0
+
+        async def _send(message: dict) -> None:
+            nonlocal _status
+            if message["type"] == "http.response.start":
+                _status = message["status"]
+                self._log_response(_status)
+            elif message["type"] == "http.response.body":
+                pass  # don't log body chunks
+            await send(message)
+
         # Rewrite path so FastMCP sees "/" (its internal streamable_http_path)
         scope = dict(scope)
         scope["path"] = "/"
         scope["raw_path"] = b"/"
 
-        await self.mcp_app(scope, receive, send)
+        await self.mcp_app(scope, receive, _send)
 
 
 # Wrap FastAPI with the MCP proxy

@@ -1,7 +1,7 @@
-"""Ntfy Adapter — HTTP bridge to the external ntfy.sh API.
+"""Notification MCP Adapter — sends push notifications via curl to ntfy.sh.
 
-Receives Hub calls → converts to HTTP requests → calls ntfy.sh API.
-Does NOT implement notification logic. Pure integration layer.
+Executes curl on the host system to deliver notifications.  All
+configuration is environment-driven: NTFY_SERVER, NTFY_TOPIC.
 """
 
 from __future__ import annotations
@@ -9,96 +9,139 @@ from __future__ import annotations
 import json
 import logging
 import os
-from typing import Any
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+import subprocess
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_NTFY_URL = os.getenv("NTFY_BASE_URL", "https://ntfy.sh")
-DEFAULT_TOPIC = os.getenv("NTFY_TOPIC", "ai-infrastructure")
+NTFY_SERVER = os.getenv("NTFY_SERVER", "https://ntfy.sh")
+NTFY_TOPIC = os.getenv("NTFY_TOPIC", "ai-infrastructure")
+DEFAULT_TIMEOUT = 10  # seconds
 
 
-class NtfyAdapter:
-    """Push notification adapter.
+def _build_command(
+    title: str,
+    message: str,
+    priority: str = "default",
+    tags: str = "",
+) -> list[str]:
+    """Build the curl command line for ntfy.sh."""
+    cmd = ["curl", "-s", "-X", "POST"]
+    if title:
+        cmd += ["-H", f"Title: {title}"]
+    if priority != "default":
+        cmd += ["-H", f"Priority: {priority}"]
+    if tags:
+        cmd += ["-H", f"Tags: {tags}"]
+    cmd += ["-d", message]
+    cmd.append(f"{NTFY_SERVER}/{NTFY_TOPIC}")
+    return cmd
 
-    Forwards notifications to ntfy.sh API by default.
-    Falls back to stdout logging if HTTP send fails.
+
+async def send(
+    message: str,
+    title: str = "Claude",
+    priority: str = "default",
+    tags: str = "",
+) -> dict:
+    """Send a push notification via ntfy.sh using curl.
+
+    Args:
+        message:  Notification body (required, non-empty).
+        title:    Notification title.
+        priority: ntfy priority: default, min, low, high, urgent.
+        tags:     Comma-separated tags.
+
+    Returns:
+        Structured JSON result.
     """
-
-    def __init__(
-        self,
-        base_url: str | None = None,
-        topic: str | None = None,
-    ) -> None:
-        self._base_url: str = base_url or DEFAULT_NTFY_URL
-        self._topic: str = topic or DEFAULT_TOPIC
-
-    # ── Properties ──────────────────────────────────────────────
-
-    @property
-    def endpoint(self) -> str:
-        return self._base_url
-
-    @property
-    def topic(self) -> str:
-        return self._topic
-
-    # ── Health ──────────────────────────────────────────────────
-
-    async def health(self) -> dict[str, Any]:
-        """Ntfy is always healthy — no external dependency."""
-        return {"status": "ok", "endpoint": self.endpoint, "topic": self._topic}
-
-    # ── Service info ────────────────────────────────────────────
-
-    async def info(self) -> dict[str, Any]:
-        """Return service metadata."""
+    # Validate
+    if not message or not message.strip():
         return {
-            "name": "ntfy",
-            "version": "0.1.0",
-            "endpoint": self.endpoint,
-            "topic": self._topic,
+            "success": False,
+            "error": "message is required and must be non-empty",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "provider": "ntfy",
+        }
+    if not NTFY_TOPIC or NTFY_TOPIC == "ai-infrastructure":
+        logger.warning("NTFY_TOPIC not configured — using default 'ai-infrastructure'")
+
+    cmd = _build_command(title, message, priority, tags)
+    logger.info("ntfy curl: %s", " ".join(f'"{c}"' if " " in c else c for c in cmd))
+
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=DEFAULT_TIMEOUT,
+        )
+    except subprocess.TimeoutExpired:
+        logger.error("ntfy curl timed out after %ds", DEFAULT_TIMEOUT)
+        return {
+            "success": False,
+            "error": f"curl timed out after {DEFAULT_TIMEOUT}s",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "provider": "ntfy",
+        }
+    except FileNotFoundError:
+        logger.error("curl not found on system PATH")
+        return {
+            "success": False,
+            "error": "curl executable not found on this system",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "provider": "ntfy",
+        }
+    except Exception as exc:
+        logger.exception("ntfy curl unexpected error")
+        return {
+            "success": False,
+            "error": str(exc),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "provider": "ntfy",
         }
 
-    # ── Send notification ───────────────────────────────────────
-
-    async def send(self, title: str, message: str) -> dict[str, Any]:
-        """Send a push notification.
-
-        If NTFY_BASE_URL is configured, forwards via HTTP to ntfy.sh.
-        Otherwise, logs to stdout.
-        """
-        if self._base_url:
-            return await self._send_http(title, message)
-        return self._send_stdout(title, message)
-
-    def _send_stdout(self, title: str, message: str) -> dict[str, Any]:
-        """Log notification to stdout."""
-        logger.info("ntfy notification — title: %s, message: %s", title, message)
+    if result.returncode != 0:
+        logger.error("ntfy curl failed (rc=%d): %s", result.returncode, result.stderr)
         return {
-            "method": "stdout",
-            "title": title,
-            "message": message,
-            "status": "sent",
+            "success": False,
+            "error": f"curl exited {result.returncode}: {result.stderr.strip()}",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "provider": "ntfy",
         }
 
-    async def _send_http(self, title: str, message: str) -> dict[str, Any]:
-        """Forward notification to ntfy.sh via HTTP."""
-        url = f"{self._base_url}/{self._topic}"
-        data = json.dumps({"title": title, "message": message}).encode()
-        req = Request(url, data=data, headers={"Content-Type": "application/json"})
-        try:
-            with urlopen(req, timeout=5) as resp:
-                return {
-                    "method": "http",
-                    "url": url,
-                    "status": f"sent ({resp.status})",
-                    "title": title,
-                    "message": message,
-                }
-        except Exception as exc:
-            logger.error("ntfy HTTP send failed: %s", exc)
-            # Fall back to stdout
-            self._send_stdout(title, message)
-            return {"method": "stdout", "title": title, "message": message, "status": "sent (http failed, fallback to stdout)"}
+    # Parse ntfy response
+    response_body = result.stdout.strip()
+    try:
+        ntfy_data = json.loads(response_body)
+    except json.JSONDecodeError:
+        ntfy_data = {"raw": response_body}
+
+    logger.info("ntfy sent successfully — id=%s", ntfy_data.get("id", "?"))
+
+    return {
+        "success": True,
+        "message": message[:100],
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "provider": "ntfy",
+        "ntfy_response": ntfy_data,
+    }
+
+
+async def health() -> dict:
+    """Return service health status."""
+    return {
+        "status": "ok",
+        "server": NTFY_SERVER,
+        "topic": NTFY_TOPIC,
+    }
+
+
+async def info() -> dict:
+    """Return service metadata."""
+    return {
+        "name": "ntfy",
+        "version": "0.2.0",
+        "server": NTFY_SERVER,
+        "topic": NTFY_TOPIC,
+    }

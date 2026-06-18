@@ -4,12 +4,12 @@
 # Default: https://ntfy.sh, topic: ai-infrastructure
 
 name: ntfy
-version: "0.1.0"
+version: "0.2.0"
 class: NtfyServer
-description: External push notification service — ntfy.sh API integration
+description: Push notification service — ntfy.sh via curl on VPS host
 type: external_service
 health_endpoint: /health
 tools:
+  - notify.send
   - ntfy_health
   - ntfy_info
-  - ntfy_send

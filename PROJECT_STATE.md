@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.3.0
-**Last Updated:** 2026-06-18 — Claude Web Connector connected
+**Version:** v0.3.1
+**Last Updated:** 2026-06-19 — MCP Tool 命名修复 + 诊断日志
 
 ---
 
@@ -42,9 +42,13 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-011 | ✅ | Remote MCP Transport — protocol validated, Claude Desktop Ready |
 | Task-012 | ✅ | Domain + HTTPS + Cloudflare — deployed at raven-victor.click |
 | Task-013 | ✅ | Claude Desktop End-to-End Integration (12/12 tests passed) |
-| Task-014 | ⬜ | Real ntfy Notification Test |
+| Task-014 | ✅ | Real ntfy Notification Test — notify_send verified via Hub |
 | Task-015 | ⬜ | Docker Production |
-| Task-016 | 🟡 | Production Hardening (MCP Auth ✅, remaining items in progress) |
+| Task-016 | 🟡 | Production Hardening (MCP Auth ✅, Tool naming ✅, diagnostics ✅) |
+| Task-017 | ✅ | MCP Tool 诊断 — 排查 breath/trace 消失问题，追溯全链路 |
+| Task-018 | ✅ | 修复 notify.send → notify_send（`.` 违反 ^[a-zA-Z0-9_-]{1,64}$） |
+| Task-019 | ✅ | 隐藏内部 Tool — ExampleServer 复用 HUB_EXPOSE_INTERNAL_TOOLS |
+| Task-020 | ✅ | 诊断日志 — 4 处临时日志 + TROUBLESHOOTING_MCP_TOOLS.md |
 
 ---
 
@@ -52,9 +56,9 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-014 |
+| **Task ID** | Task-015 |
 | **Status** | ⬜ Planned |
-| **Description** | Real ntfy Notification Test |
+| **Description** | Docker Production — optimize docker-compose for production deployment |
 
 ---
 
@@ -72,7 +76,7 @@ mcp-hub/src/
 ├── transport/           JSON-RPC 2.0 stack (server, handlers)
 ├── models/              ServiceInfo, PluginManifest, HubState, RuntimeContext
 ├── api/                 REST endpoints (/health, /status, /tools)
-├── core/                EventBus
+├── core/                EventBus, RemoteMCPClient, HubState, Auth, Audit, Metrics
 └── utils/               generate_id() helpers
 ```
 
@@ -88,6 +92,11 @@ mcp-hub/src/
 6. Task-004 Review — Router→handlers, Runtime, Loader, unified dirs
 7. Task-002 Refactor — Repository architecture alignment
 8. Task-Documentation-Refinement — PROJECT_STATE, CLAUDE, DECISIONS
+9. Task-014 — Real ntfy Notification Test (notify_send verified via Hub)
+10. Task-017 — MCP Tool 诊断（确认 Hub 层无过滤，Ombre 6 tool 全部在线）
+11. Task-018 — 修复 Tool 命名（notify.send → notify_send）
+12. Task-019 — 隐藏内部 Tool（ExampleServer 复用 HUB_EXPOSE_INTERNAL_TOOLS）
+13. Task-020 — 诊断日志 + TROUBLESHOOTING_MCP_TOOLS.md
 
 ---
 
@@ -131,21 +140,27 @@ mcp-hub/src/
 | REST endpoints | `mcp-hub/src/api/routes.py` |
 | Configuration | `mcp-hub/src/config/` |
 | Shared models | `mcp-hub/src/models/` |
-| Ombre MCP Docker build context | `mcp_servers/ombre/Dockerfile` |
+| RemoteMCPClient (Ombre bridge) | `mcp-hub/src/core/remote_client.py` |
+| Audit logging | `mcp-hub/src/core/observability/audit.py` |
+| Request context (contextvars) | `mcp-hub/src/core/request_context.py` |
+| MCP Auth (Bearer Token) | Integrated in `mcp-hub/src/main.py` (MCPProxy) |
+| Diagnostic logging (temporary) | `main.py`, `transport/server.py`, `mcp_servers/{ombre,ntfy}/server.py` |
+| MCP Tool naming compliance | `notify.send` → `notify_send` |
+| Internal tool hiding | `HUB_EXPOSE_INTERNAL_TOOLS` controls ExampleServer + HubServer |
 | Docker Compose | `docker-compose.yml` |
-| MCP Auth (Bearer Token) | `mcp-hub/src/core/auth.py` |
 | Unit tests | `mcp-hub/tests/` (166 tests) |
 
 ## Not Yet Implemented
 
 | Capability | Target |
 |---|---|
-| Claude Desktop ↔ Hub MCP wiring | ✅ Completed (Task-013) |
-| Concrete MCP Servers (ntfy, GitHub, Filesystem) | Task-014+ |
-| Formal MCP Registry (manifests, enable/disable) | Future |
-| Authentication / token validation | ✅ Implemented (Bearer Token, Task-016) |
+| GitHub MCP Server | Task-015+ |
+| Filesystem MCP Server | Task-015+ |
+| Docker Production optimization | Task-015 |
 | Health-check loop | Future |
 | Remote server adapters (HTTP/SSE/WebSocket) | Future |
+| Prometheus / Grafana metrics | Future |
+| CI/CD pipeline | Future |
 
 ---
 
@@ -156,8 +171,8 @@ mcp-hub/src/
 | MCP Hub (Gateway) | ✅ Runtime |
 | Caddy | ✅ Running (Let's Encrypt TLS) |
 | Cloudflare | ✅ DNS + Proxy |
-| Ombre MCP | ✅ External (45.76.169.98:8000) |
-| ntfy MCP | ✅ External (ntfy.sh) |
+| Ombre MCP | ✅ External (45.76.169.98:8000) — 6 tools |
+| ntfy MCP | ✅ External (ntfy.sh) — 3 tools |
 | Filesystem MCP | Reserved |
 | GitHub MCP | Reserved |
 
@@ -170,17 +185,18 @@ mcp-hub/src/
 | Documentation | ✅ Consistent |
 | Architecture | ✅ Stable Core / Extensible Service Layer |
 | Architecture Audit | ✅ Pre-deployment check passed (2026-06-18) |
-| Tests | ✅ 6 test files (lifecycle, discovery, transport, tools) |
+| Tests | ✅ 6 test files (lifecycle, discovery, transport, tools, auth, ntfy) |
 | GitHub Sync | ✅ Up to date |
 | No duplicate docs | ✅ Single source of truth per concern |
 | CHANGELOG | ✅ Created |
+| Troubleshooting doc | ✅ `docs/TROUBLESHOOTING_MCP_TOOLS.md` |
 
 ## Last Commit
 
 | Field | Value |
 |---|---|
-| **Hash** | `01c9e55` |
-| **Summary** | feat: add Bearer Token authentication to POST /mcp endpoint |
+| **Hash** | `ead6473` |
+| **Summary** | docs: add MCP Tool troubleshooting investigation record |
 
 ---
 
@@ -191,4 +207,4 @@ When resuming this project:
 1. Read README.md
 2. Read PROJECT_STATE.md
 3. Read ARCHITECTURE.md
-4. Continue from **Task-012**
+4. Continue from **Task-015** — Docker Production

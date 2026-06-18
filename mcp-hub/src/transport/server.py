@@ -13,7 +13,6 @@ start and stop together.
 from __future__ import annotations
 
 import logging
-import os
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
@@ -43,21 +42,6 @@ def _get_runtime() -> Any:
     return _runtime_ref
 
 
-# ── Bearer Token Verifier ────────────────────────────────────────
-
-
-def _get_configured_token() -> str | None:
-    token = os.getenv("MCP_HUB_AUTH_TOKEN", "").strip()
-    return token if token else None
-
-
-async def _verify_token(access_token: str) -> bool:
-    configured = _get_configured_token()
-    if configured is None:
-        return True
-    return access_token == configured
-
-
 # ── FastMCP Instance ─────────────────────────────────────────────
 
 mcp = FastMCP(
@@ -67,7 +51,6 @@ mcp = FastMCP(
     stateless_http=True,
     json_response=True,
     streamable_http_path="/",
-    **(dict(token_verifier=_verify_token) if _get_configured_token() else {}),
 )
 
 _srv = mcp._mcp_server

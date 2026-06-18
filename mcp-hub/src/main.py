@@ -26,7 +26,7 @@ from __future__ import annotations
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import Response
 
 from src.config import load_config
@@ -118,6 +118,7 @@ app = FastAPI(
 )
 
 from src.api.routes import router as api_router  # noqa: E402
+from src.core.auth import verify_bearer_token  # noqa: E402
 
 app.include_router(api_router)
 
@@ -125,7 +126,10 @@ app.include_router(api_router)
 # ── /mcp Route (passthrough to FastMCP Starlette ASGI app) ──────
 
 @app.api_route("/mcp", methods=["GET", "POST", "DELETE", "OPTIONS", "HEAD", "PUT", "PATCH"])
-async def mcp_gateway(request: Request) -> Response:
+async def mcp_gateway(
+    request: Request,
+    _auth: None = Depends(verify_bearer_token),
+) -> Response:
     """Forward all /mcp traffic to the FastMCP Streamable HTTP app.
 
     Rewrites the ASGI scope path from /mcp to / so FastMCP's internal

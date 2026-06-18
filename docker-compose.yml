@@ -16,13 +16,15 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN:-raven-victor.click}
+      - CADDY_ACME_EMAIL=${CADDY_ACME_EMAIL:-admin@raven-victor.click}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     networks:
       - ai-net
-    # Reverse proxies to mcp-hub:8080. Cloudflare tunnel upstream configured separately.
 
   # ── MCP Hub — System Core (Gateway) ───────
   mcp-hub:

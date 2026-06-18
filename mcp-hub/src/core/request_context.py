@@ -12,7 +12,7 @@ Usage:
     # In any downstream module:
     ctx = RequestContext.current()
     ctx.request_id                  # "a1b2c3d4e5f6"
-    ctx.set("tool", "notify.send")
+    ctx.set("tool", "notify_send")
 """
 
 from __future__ import annotations

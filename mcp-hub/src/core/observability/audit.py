@@ -73,7 +73,7 @@ def record(
 
     Args:
         plugin:      MCP service name (e.g. "ombre", "ntfy").
-        tool:        Tool name (e.g. "hold", "notify.send").
+        tool:        Tool name (e.g. "hold", "notify_send").
         status:      "success" or "failure".
         duration_ms: Wall-clock time in milliseconds.
         error_type:  Python exception class name on failure, or "".

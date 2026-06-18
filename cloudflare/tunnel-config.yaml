@@ -1,8 +1,15 @@
 # ──────────────────────────────────────────
-# Cloudflare Tunnel — Configuration
+# Cloudflare Tunnel (optional)
 # ──────────────────────────────────────────
+#
+# Current deployment uses Caddy with direct HTTPS (ports 80/443 exposed).
+# This configuration is reserved for a future Cloudflare Tunnel deployment.
+#
+# To enable:
+# 1. Uncomment the cloudflared service in docker-compose.yml
+# 2. Set CF_TUNNEL_TOKEN
+# 3. Configure ingress rules as needed
 
-# TODO: replace with actual tunnel token and ingress rules
 # tunnel: <tunnel-uuid>
 # credentials-file: /etc/cloudflared/<tunnel-uuid>.json
 

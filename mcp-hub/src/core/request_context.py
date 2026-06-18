@@ -36,7 +36,7 @@ class RequestContext:
         tool         — tool name (set by handler)
     """
 
-    __slots__ = ("request_id", "start_time", "_extra")
+    __slots__ = ("request_id", "start_time", "_extra", "_token")
 
     def __init__(self, request_id: str | None = None) -> None:
         self.request_id = request_id or uuid.uuid4().hex[:12]
@@ -96,6 +96,7 @@ class _SentinelContext(RequestContext):
         self.request_id = ""
         self.start_time = 0.0
         self._extra = {}
+        self._token = None  # type: ignore[assignment]
 
     def __enter__(self) -> "RequestContext":
         return self

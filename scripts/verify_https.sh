@@ -1,6 +1,6 @@
 #!/bin/bash
 # verify_https.sh — MCP Hub HTTPS validation
-# Usage: DOMAIN=mcp-hub.example.com ./scripts/verify_https.sh
+# Usage: DOMAIN=raven-victor.click ./scripts/verify_https.sh
 
 set -e
 

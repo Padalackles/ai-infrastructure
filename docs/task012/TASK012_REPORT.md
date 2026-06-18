@@ -43,8 +43,8 @@ MCP Hub (:8080)
 
 ```bash
 # 1. Set environment
-export DOMAIN=your-domain.com
-export CADDY_ACME_EMAIL=admin@your-domain.com
+export DOMAIN=raven-victor.click
+export CADDY_ACME_EMAIL=admin@raven-victor.click
 
 # 2. Start services
 docker compose up -d

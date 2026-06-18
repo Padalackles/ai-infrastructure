@@ -51,7 +51,7 @@ cloudflared tunnel login
 cloudflared tunnel create mcp-hub-tunnel
 
 # Configure DNS
-cloudflared tunnel route dns mcp-hub-tunnel mcp-hub.example.com
+cloudflared tunnel route dns mcp-hub-tunnel raven-victor.click
 
 # Run tunnel
 cloudflared tunnel run mcp-hub-tunnel
@@ -74,7 +74,7 @@ cloudflared:
 ## Verification
 
 ```bash
-curl -I https://mcp-hub.example.com/health
+curl -I https://raven-victor.click/health
 # HTTP/2 200
 # cf-ray: ... (Cloudflare proxy header)
 ```

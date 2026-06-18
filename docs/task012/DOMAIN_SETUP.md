@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- A registered domain name (e.g., `mcp-hub.example.com`)
+- A registered domain name (e.g., `raven-victor.click`)
 - DNS managed by Cloudflare (recommended) or any provider
 
 ## DNS Configuration
@@ -32,7 +32,7 @@ TTL: 3600
 
 ```bash
 # Check DNS resolution
-dig mcp-hub.example.com
+dig raven-victor.click
 
 # Should return your VPS IP
 ```

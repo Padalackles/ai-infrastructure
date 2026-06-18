@@ -12,8 +12,8 @@ Auto HTTPS via Let's Encrypt. Proxies all traffic to `mcp-hub:8080`.
 ## Usage
 
 ```bash
-export DOMAIN=your-domain.com
-export CADDY_ACME_EMAIL=admin@your-domain.com
+export DOMAIN=raven-victor.click
+export CADDY_ACME_EMAIL=admin@raven-victor.click
 docker compose up -d caddy
 ```
 

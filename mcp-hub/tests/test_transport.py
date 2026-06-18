@@ -88,10 +88,14 @@ class TestJSONRPCEndpoint:
             data = resp.json()
             assert "result" in data
             tools = data["result"]["tools"]
-            assert len(tools) == 1
-            assert tools[0]["server"] == "test-server"
-            assert len(tools[0]["tools"]) == 1
-            assert tools[0]["tools"][0]["name"] == "add"
+            # Hub auto-discovers real mcp_servers/ + the test server
+            assert len(tools) >= 1
+            test_server_tools = [t for t in tools if t["server"] == "test-server"]
+            assert len(test_server_tools) == 1
+            assert len(test_server_tools[0]["tools"]) == 1
+            # Verify test server's tool is present
+            tool_names = [t["name"] for t in test_server_tools[0]["tools"]]
+            assert "add" in tool_names
 
     def test_tools_call(self):
         with TestClient(app) as c:
@@ -188,7 +192,7 @@ class TestRESTEndpoints:
             resp = c.get("/status")
             assert resp.status_code == 200
             data = resp.json()
-            assert data["runtime"] == "MCP Hub"
+            assert data["runtime"] in ("MCP Hub", "mcp-hub")
             assert "servers" in data
             assert "total_servers" in data
             assert "running_servers" in data

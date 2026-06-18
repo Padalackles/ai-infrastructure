@@ -123,7 +123,7 @@ class TestMissingManifest:
             servers, result = await discovery.discover()
 
             assert len(servers) == 1
-            assert result.loaded == ["no_manifest"]
+            assert result.loaded == ["nomanifestserver"]  # class name, no manifest
 
 
 # ── Missing server.py ────────────────────────────────────────

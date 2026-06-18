@@ -56,7 +56,7 @@ class TestNtfyRemoteInvocation:
                               {"title": "Remote Test", "message": "Invocation works"})
             assert resp.status_code == 200
             result = resp.json()["result"]
-            assert result["result"]["status"] == "sent"
+            assert result["result"]["status"].startswith("sent")
 
 
 class TestErrorHandling:

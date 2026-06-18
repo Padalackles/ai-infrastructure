@@ -103,12 +103,61 @@ Tools are auto-discovered from all registered MCP servers — no hardcoded names
 
 ---
 
+## Local Development Environment
+
+### Requirements
+
+- **Python 3.12+** (winget or python.org installer; NOT Microsoft Store)
+- **Git Bash** or similar POSIX shell
+- Virtual environment (recommended)
+
+> **Windows note:** The Microsoft Store Python stub (`%LOCALAPPDATA%\Microsoft\WindowsApps\python.exe`) is a redirector, not a real interpreter. Install from [python.org](https://www.python.org/downloads/) or via `winget install Python.Python.3.13`.
+
+### Python Installation Detection
+
+The Claude Code shell resolves `python` as follows:
+
+| Priority | Path | Status |
+|---|---|---|
+| 1 | `<repo>/.venv/Scripts/python.exe` | Recommended — project venv |
+| 2 | `%LOCALAPPDATA%\Programs\Python\Python3XX\python.exe` | winget / python.org (real) |
+| 3 | `%LOCALAPPDATA%\Microsoft\WindowsApps\python.exe` | ❌ Microsoft Store redirector — DO NOT USE |
+
+### Setup
+
+```bash
+# 1. Create a virtual environment in the project
+python -m venv .venv
+
+# 2. Activate
+source .venv/Scripts/activate  # Git Bash
+
+# 3. Install dependencies
+cd mcp-hub
+pip install -r requirements.txt
+pip install pytest pytest-asyncio httpx
+
+# 4. Run tests
+PYTHONPATH="src:.." pytest tests/ -v
+```
+
+### Current Environment
+
+| Tool | Version |
+|---|---|
+| Python | 3.13.12 |
+| pip | 25.1.1 |
+| pytest | 9.1.0 |
+| uvicorn | 0.49.0 |
+
+---
+
 ## Quick Start
 
 ```bash
 cd mcp-hub
 pip install -r requirements.txt
-uvicorn src.main:app --reload
+PYTHONPATH="src:.." uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
 ```

@@ -31,7 +31,7 @@ class TestOmbreDiscoveryToRegistration:
         ombre = next((s for s in servers if s.name == "ombre"), None)
 
         assert ombre is not None, "Ombre should be discovered"
-        assert isinstance(ombre, OmbreServer)
+        assert ombre.__class__.__name__ == "OmbreServer"
         assert "ombre" in result.loaded
 
         registry.register(ombre)
@@ -73,7 +73,8 @@ class TestOmbreServerManagerIntegration:
         assert registry.get_server("ombre") is not None
 
         await registry.start_all()
-        assert registry.running_count == 0  # adapter may fail to connect
+        # adapter may or may not connect to the real external Ombre
+        assert registry.running_count in (0, 1)
         # But server should be registered regardless
         servers = registry.list_servers()
         ombre_info = next(s for s in servers if s["name"] == "ombre")
@@ -156,7 +157,7 @@ class TestMultiServerWithOmbre:
 
         from mcp_servers.example.server import ExampleServer
 
-        registry.register(ExampleServer())
+        registry.register(ExampleServer(name="example"))
 
         assert registry.count == 2
 

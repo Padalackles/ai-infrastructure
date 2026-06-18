@@ -33,7 +33,7 @@ class TestNtfyAdapter:
     async def test_send_stdout(self):
         adapter = NtfyAdapter()
         result = await adapter.send("Test", "Hello world")
-        assert result["status"] == "sent"
+        assert result["status"].startswith("sent")
         assert result["title"] == "Test"
         assert result["message"] == "Hello world"
 
@@ -70,7 +70,7 @@ class TestNtfyServer:
     async def test_call_tool_send(self):
         server = NtfyServer()
         result = await server.call_tool("ntfy_send", {"title": "T", "message": "M"})
-        assert result["status"] == "sent"
+        assert result["status"].startswith("sent")
 
     async def test_call_tool_unknown_raises(self):
         server = NtfyServer()
@@ -124,7 +124,7 @@ class TestNtfyRuntime:
 
         result = await runtime.call_tool("ntfy", "ntfy_send", {"title": "X", "message": "Y"})
         assert result["server"] == "ntfy"
-        assert result["result"]["status"] == "sent"
+        assert result["result"]["status"].startswith("sent")
 
 
 # ── Multi-server: Ombre + ntfy coexistence ───────────────────

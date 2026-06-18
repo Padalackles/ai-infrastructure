@@ -11,7 +11,9 @@ Startup pipeline:
         ↓
     Initialize Runtime
         ↓
-    Start Transport
+    Bind Runtime + Start FastMCP Transport
+        ↓
+    Start Services
         ↓
     Hub Ready
 
@@ -24,14 +26,15 @@ from __future__ import annotations
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import Response
 
 from src.config import load_config
 from src.core.events import EventBus
 from src.loader.discovery import Discovery
 from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
-from src.transport.router import Router
+from src.transport.server import _mcp_asgi, set_runtime, start_mcp, stop_mcp
 
 # ── Logging ─────────────────────────────────────────────────────
 
@@ -78,10 +81,10 @@ async def lifespan(app: FastAPI):
     app.state.runtime = runtime
     logger.info("Runtime Initialized")
 
-    # ── 6. Start Transport ────────────────────────────────────────
-    router = Router(runtime)
-    app.state.router = router
-    logger.info("Transport Ready")
+    # ── 6. Bind Runtime + Start FastMCP Transport ─────────────────
+    set_runtime(runtime)
+    await start_mcp(app.state)
+    logger.info("Transport Ready (FastMCP Streamable HTTP)")
 
     # ── 7. Start Services ─────────────────────────────────────────
     await runtime.start_all()
@@ -99,6 +102,7 @@ async def lifespan(app: FastAPI):
     # ── Shutdown ──────────────────────────────────────────────────
     logger.info("Stopping Services...")
     await runtime.stop_all()
+    await stop_mcp(app.state)
     logger.info("Exit.")
 
 
@@ -114,7 +118,52 @@ app = FastAPI(
 )
 
 from src.api.routes import router as api_router  # noqa: E402
-from src.transport.server import router as transport_router  # noqa: E402
 
 app.include_router(api_router)
-app.include_router(transport_router)
+
+
+# ── /mcp Route (passthrough to FastMCP Starlette ASGI app) ──────
+
+@app.api_route("/mcp", methods=["GET", "POST", "DELETE", "OPTIONS", "HEAD", "PUT", "PATCH"])
+async def mcp_gateway(request: Request) -> Response:
+    """Forward all /mcp traffic to the FastMCP Streamable HTTP app.
+
+    Rewrites the ASGI scope path from /mcp to / so FastMCP's internal
+    routing (streamable_http_path="/") matches.
+    """
+    scope = dict(request.scope)
+    scope["path"] = "/"
+    scope["raw_path"] = b"/"
+
+    status_code = 200
+    response_headers: list[tuple[bytes, bytes]] = []
+    body_chunks: list[bytes] = []
+
+    async def receive() -> dict:
+        return {
+            "type": "http.request",
+            "body": await request.body(),
+            "more_body": False,
+        }
+
+    async def send(message: dict) -> None:
+        nonlocal status_code, response_headers
+        if message["type"] == "http.response.start":
+            status_code = message["status"]
+            response_headers = message.get("headers", [])
+        elif message["type"] == "http.response.body":
+            body_chunks.append(message.get("body", b""))
+
+    await _mcp_asgi(scope, receive, send)
+
+    plain_headers = {}
+    for k, v in response_headers:
+        key = k.decode() if isinstance(k, bytes) else k
+        val = v.decode() if isinstance(v, bytes) else v
+        plain_headers[key] = val
+
+    return Response(
+        content=b"".join(body_chunks),
+        status_code=status_code,
+        headers=plain_headers,
+    )

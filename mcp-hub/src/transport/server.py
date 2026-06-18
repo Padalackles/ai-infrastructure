@@ -1,62 +1,166 @@
-"""Transport server — FastAPI route that accepts JSON-RPC 2.0 requests.
+"""Transport layer — FastMCP Streamable HTTP bridge.
 
-This is the wire entry point for Claude Desktop (or any MCP client).
-All business logic lives in the Router; this module handles HTTP concerns only.
+Replaces the hand-written JSON-RPC transport with the official MCP Python SDK.
+The FastMCP instance is embedded into FastAPI via a thin ASGI wrapper that
+proxies /mcp requests directly to FastMCP's Starlette app.
 
-Authentication is enforced via the verify_bearer_token dependency when
-MCP_HUB_AUTH_TOKEN is configured. REST endpoints are never authenticated.
+Lifespan management: FastMCP's Starlette app has its own lifespan that
+initializes the session manager's anyio task group.  We merge these
+lifespans so both FastAPI (for Hub services) and FastMCP (for MCP sessions)
+start and stop together.
 """
 
 from __future__ import annotations
 
-import json
 import logging
+import os
 from typing import Any
 
-from fastapi import APIRouter, Depends, Request
-
-from src.core.auth import verify_bearer_token
-from src.transport.jsonrpc import build_parse_error, parse_request
-from src.transport.response import JSONRPCErrorResponse
+from mcp.server.fastmcp import FastMCP
+from mcp.types import (
+    CallToolRequest,
+    CallToolResult,
+    ListToolsRequest,
+    ListToolsResult,
+    TextContent,
+    Tool,
+)
 
 logger = logging.getLogger("transport")
 
-router = APIRouter()
+# Lazy reference — set by main.py lifespan before any MCP request arrives
+_runtime_ref: Any = None
 
 
-@router.post("/mcp")
-async def mcp_endpoint(
-    request: Request,
-    _auth: None = Depends(verify_bearer_token),
-) -> dict[str, Any]:
-    """Accept a JSON-RPC 2.0 request and return a response.
+def set_runtime(runtime) -> None:
+    global _runtime_ref
+    _runtime_ref = runtime
 
-    Request body format:
-        {"jsonrpc": "2.0", "id": 1, "method": "...", "params": {...}}
 
-    The response is always a JSON-RPC 2.0 response or error object.
-    Notifications (requests without an id) return HTTP 202 with no body.
-    """
-    # Parse raw body
+def _get_runtime() -> Any:
+    if _runtime_ref is None:
+        raise RuntimeError("Runtime not yet initialized")
+    return _runtime_ref
+
+
+# ── Bearer Token Verifier ────────────────────────────────────────
+
+
+def _get_configured_token() -> str | None:
+    token = os.getenv("MCP_HUB_AUTH_TOKEN", "").strip()
+    return token if token else None
+
+
+async def _verify_token(access_token: str) -> bool:
+    configured = _get_configured_token()
+    if configured is None:
+        return True
+    return access_token == configured
+
+
+# ── FastMCP Instance ─────────────────────────────────────────────
+
+mcp = FastMCP(
+    name="mcp-hub",
+    instructions="MCP Hub — central orchestration gateway. "
+                 "Routes tool calls to registered MCP service plugins.",
+    stateless_http=True,
+    json_response=True,
+    streamable_http_path="/",
+    **(dict(token_verifier=_verify_token) if _get_configured_token() else {}),
+)
+
+_srv = mcp._mcp_server
+
+
+# ── tools/list ───────────────────────────────────────────────────
+
+
+@_srv.list_tools()
+async def _list_tools(req: ListToolsRequest) -> ListToolsResult:
+    runtime = _get_runtime()
+    aggregated = await runtime.list_tools()
+    tools: list[Tool] = []
+
+    for entry in aggregated.get("tools", []):
+        for tool_def in entry.get("tools", []):
+            tools.append(Tool(
+                name=tool_def["name"],
+                description=tool_def.get("description", ""),
+                inputSchema=tool_def.get(
+                    "inputSchema", {"type": "object", "properties": {}}),
+            ))
+
+    logger.info("tools/list — %d tools", len(tools))
+    return ListToolsResult(tools=tools)
+
+
+# ── tools/call ───────────────────────────────────────────────────
+
+
+@_srv.call_tool()
+async def _call_tool(name: str, arguments: dict) -> list[TextContent]:
+    runtime = _get_runtime()
+
+    logger.info("tools/call — %s(%s)", name, arguments)
+
     try:
-        body = await request.json()
-    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
-        error = build_parse_error(str(exc))
-        logger.warning("PARSE_ERROR %s", exc)
-        # id is unknown for parse errors
-        return error.model_dump(exclude_none=True)
+        server_name = await runtime.find_tool_server(name)
+        if not server_name:
+            return [TextContent(
+                type="text",
+                text=f"Tool not found on any server: {name}",
+            )]
 
-    # Parse and validate the JSON-RPC request
-    parsed = parse_request(body)
-    if isinstance(parsed, JSONRPCErrorResponse):
-        return parsed.model_dump(exclude_none=True)
+        result = await runtime.call_tool(server_name, name, arguments or {})
+        inner = result.get("result", result)
 
-    # Route to the dispatcher
-    hub_router = request.app.state.router
-    response = await hub_router.route(parsed)
+        return [TextContent(type="text", text=str(inner))]
+    except Exception as exc:
+        logger.exception("tools/call failed — %s", name)
+        return [TextContent(type="text", text=str(exc))]
 
-    # Notifications get a minimal response (not sent per spec)
-    if parsed.is_notification:
-        return {}
 
-    return response.model_dump(exclude_none=True)
+# ── ASGI wrapper — merges FastMCP Starlette app lifespan ─────────
+
+#
+# FastMCP.streamable_http_app() returns a Starlette app whose lifespan
+# calls session_manager.run() (the anyio task group).  FastAPI does NOT
+# invoke sub-app lifespans.  This wrapper merges the two lifespans so
+# the session manager starts when FastAPI starts and stops when FastAPI
+# stops — without manually entering fragile context managers.
+#
+
+_fastmcp_starlette = mcp.streamable_http_app()
+
+# Snapshot the original lifespan so we can invoke it from FastAPI's lifespan.
+_fastmcp_lifespan = _fastmcp_starlette.router.lifespan_context
+
+
+async def start_mcp(app_state) -> None:
+    """Enter the FastMCP Starlette lifespan from FastAPI's lifespan.
+
+    This is the clean integration point — we call the Starlette app's
+    lifespan, which internally calls session_manager.run(), creating
+    the task group.  The anyio task group stays alive as long as the
+    context manager is active.
+    """
+    # Starlette lifespan expects (app) → async context manager
+    ctx = _fastmcp_lifespan(_fastmcp_starlette)
+    await ctx.__aenter__()
+    # Store on app.state so stop_mcp can access it
+    app_state._fastmcp_lifespan_ctx = ctx
+    logger.info("FastMCP session manager started")
+
+
+async def stop_mcp(app_state) -> None:
+    """Exit the FastMCP Starlette lifespan."""
+    ctx = getattr(app_state, "_fastmcp_lifespan_ctx", None)
+    if ctx is not None:
+        await ctx.__aexit__(None, None, None)
+        logger.info("FastMCP session manager stopped")
+
+
+# ── Public ASGI app for mount / route passthrough ────────────────
+
+_mcp_asgi = _fastmcp_starlette

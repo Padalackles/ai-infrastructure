@@ -53,15 +53,8 @@ def _get_logger() -> logging.Logger:
         maxBytes=_AUDIT_MAX_BYTES,
         backupCount=_AUDIT_BACKUP_COUNT,
     )
-    handler.setFormatter(
-        logging.Formatter(
-            json.dumps({
-                "ts": "%(asctime)s",
-                "level": "%(levelname)s",
-                "msg": "%(message)s",
-            })
-        )
-    )
+    # Passthrough formatter — audit.record() already outputs valid JSON
+    handler.setFormatter(logging.Formatter("%(message)s"))
     _audit_logger.addHandler(handler)
     return _audit_logger
 

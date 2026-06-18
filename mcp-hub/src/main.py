@@ -171,20 +171,49 @@ class MCPProxy:
         self.mcp_app = mcp_app
 
     @staticmethod
-    def _log_request(scope: Scope) -> None:
-        method = scope.get("method", "?")
-        path = scope.get("path", "?")
-        headers = dict(scope.get("headers", []))
-        # Mask Authorization token
-        auth = headers.get(b"authorization", b"").decode()
-        if auth.startswith("Bearer "):
-            token = auth[7:]
-            auth = f"Bearer {token[:8]}..."
-        mcp_logger.debug("MCP ← %s %s  Authorization=%s", method, path, auth or "(none)")
+    def _log_request(scope: Scope) -> dict:
+        """Log all HTTP request details. Returns a dict for reuse in auth failure logs."""
+        headers = {k.decode().lower(): v.decode() for k, v in scope.get("headers", [])}
+        info = {
+            "method": scope.get("method", "?"),
+            "path": scope.get("path", "?"),
+            "query": scope.get("query_string", b"").decode(),
+            "has_auth": "authorization" in headers,
+            "auth_prefix": "",
+            "content_type": headers.get("content-type", "(none)"),
+            "accept": headers.get("accept", "(none)"),
+            "user_agent": headers.get("user-agent", "(none)"),
+            "content_length": headers.get("content-length", "(none)"),
+        }
+        # Check Authorization without printing token
+        auth_val = headers.get("authorization", "")
+        if auth_val.startswith("Bearer "):
+            info["auth_prefix"] = f"Bearer {auth_val[7:8]}***[{len(auth_val)-7} chars]"
+        elif auth_val:
+            info["auth_prefix"] = f"{auth_val[:6]}*** (not Bearer)"
+        mcp_logger.debug(
+            "MCP ← %s %s%s  UA=%s  Accept=%s  Content-Type=%s  Content-Length=%s  Authorization=%s",
+            info["method"], info["path"],
+            f"?{info['query']}" if info["query"] else "",
+            info["user_agent"], info["accept"], info["content_type"],
+            info["content_length"],
+            info["auth_prefix"] if info["has_auth"] else "(none)",
+        )
+        return info
 
     @staticmethod
     def _log_response(status: int) -> None:
         mcp_logger.debug("MCP → %d", status)
+
+    @staticmethod
+    def _log_auth_failure(info: dict, status: int, message: str) -> None:
+        mcp_logger.warning(
+            "AUTH DENIED → %d  method=%s path=%s  has_auth=%s auth=%s  UA=%s  Content-Length=%s  reason=%s",
+            status, info["method"], info["path"],
+            info["has_auth"], info["auth_prefix"] or "(none)",
+            info["user_agent"], info["content_length"],
+            message,
+        )
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
@@ -196,13 +225,13 @@ class MCPProxy:
             await self.app(scope, receive, send)
             return
 
-        self._log_request(scope)
+        req_info = self._log_request(scope)
 
         # Auth check before forwarding
         auth_error = _check_auth(scope)
         if auth_error is not None:
             status, message = auth_error
-            self._log_response(status)
+            self._log_auth_failure(req_info, status, message)
             body = (
                 f'{{"jsonrpc":"2.0","id":null,'
                 f'"error":{{"code":-32003,"message":"Unauthorized: {message}"}}}}'

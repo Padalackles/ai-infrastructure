@@ -1,32 +1,76 @@
 # Claude Desktop — Remote MCP Configuration
 
-Connect Claude Desktop to the MCP Hub at `https://raven-victor.click/mcp`.
+Connect Claude Desktop / Claude Web to the MCP Hub at `https://raven-victor.click/mcp`.
 
 ## Architecture
 
 ```
-Claude Desktop (local)
-    │  HTTPS + Bearer Token
+Claude (Desktop / Web)
+    │  HTTPS
     ▼
-MCP Hub Gateway (VPS: raven-victor.click)
+Cloudflare (DNS + DDoS, SSL Full strict)
+    │  HTTPS :443
+    ▼
+Caddy (Reverse Proxy + Let's Encrypt TLS)
+    │  HTTP :8080
+    ▼
+MCP Hub (FastAPI + FastMCP Streamable HTTP)
     │
     ├── Ombre  ──HTTP──► 45.76.169.98:8000  (long-term memory)
     ├── ntfy   ──HTTP──► ntfy.sh             (push notifications)
     └── example                              (test server)
 ```
 
-## Configuration File
+---
 
-### macOS
-`~/Library/Application Support/Claude/claude_desktop_config.json`
+## Authentication
 
-### Windows
-`%APPDATA%\Claude\claude_desktop_config.json`
+### Current: `AUTH_MODE=none` (default)
 
-### Linux
-`~/.config/Claude/claude_desktop_config.json`
+Claude Web Connector does **not** support custom HTTP headers (Bearer Token).
+Setting `MCP_HUB_AUTH_TOKEN=` (empty) disables authentication so Claude Web
+can connect directly. Security relies on:
 
-## Configuration
+- HTTPS (Let's Encrypt + Cloudflare Full strict)
+- Domain obscurity
+- Cloudflare WAF / Rate Limiting (recommended)
+- Cloudflare Access / IP whitelist (future option)
+
+### Future: `AUTH_MODE=bearer`
+
+When MCP clients add Bearer Token support, set `MCP_HUB_AUTH_TOKEN=<token>`
+in `.env`. The Hub will enforce `Authorization: Bearer <token>` on all
+`POST /mcp` requests. Claude Desktop (local app) already supports custom
+headers; only Claude Web is restricted.
+
+### Future: `AUTH_MODE=oauth`
+
+Full OAuth 2.0 flow via FastMCP's built-in `AuthSettings`. Requires:
+- OAuth provider (e.g., Auth0, Google)
+- `issuer_url` + `resource_server_url` configuration
+- Client registration
+
+---
+
+## Claude Web — Add Custom Connector
+
+1. Open Claude Web → **Settings** → **Connectors**
+2. Click **Add Custom Connector**
+3. Fill in:
+   - **Name:** `MCP Hub`
+   - **Remote MCP Server URL:** `https://raven-victor.click/mcp`
+4. Leave OAuth fields blank
+5. Click **Connect**
+
+> **Note:** Claude Web's "Add Custom Connector" beta currently only supports
+> unauthenticated or OAuth connections. Bearer Token is not available as an
+> input field. If you need authenticated access, use Claude Desktop instead.
+
+## Claude Desktop — Configuration
+
+Configuration file:
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 
 ```json
 {
@@ -43,15 +87,11 @@ MCP Hub Gateway (VPS: raven-victor.click)
 }
 ```
 
-Replace `YOUR_TOKEN_HERE` with the value of `MCP_HUB_AUTH_TOKEN` from the VPS `.env` file.
-
-> **Note:** Claude Desktop MCP transport format may vary by version.
-> The MCP Hub exposes a standard JSON-RPC 2.0 endpoint compatible with any
-> MCP client supporting HTTP transport with custom headers.
+Replace `YOUR_TOKEN_HERE` with the value of `MCP_HUB_AUTH_TOKEN` from `.env`.
 
 ## Available Tools
 
-After connection, Claude Desktop discovers these tools automatically:
+After connection, Claude discovers these tools automatically:
 
 | Tool | Server | Description |
 |---|---|---|
@@ -63,25 +103,12 @@ After connection, Claude Desktop discovers these tools automatically:
 | `ntfy_info` | ntfy | Get ntfy service metadata |
 | `ntfy_send` | ntfy | Send a push notification |
 
-## Verification
-
-After configuring Claude Desktop, restart it and verify:
-
-```bash
-# From CLI (if available):
-curl -sk -X POST https://raven-victor.click/mcp \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-```
-
-Claude Desktop should list all 7 tools across 3 servers.
-
 ## Troubleshooting
 
 | Symptom | Check |
 |---|---|
 | Connection refused | Verify network access to `raven-victor.click:443` |
-| HTTP 401 | Token is missing or incorrect |
+| HTTP 401 | Token is missing or incorrect (set `MCP_HUB_AUTH_TOKEN=` to disable) |
 | No tools listed | Hub is running (`docker compose ps`) |
 | Tool call fails | Check server-specific logs (`docker compose logs mcp-hub`) |
+| Claude Web: "Couldn't register" | Auth is enabled — clear `MCP_HUB_AUTH_TOKEN` in `.env` |

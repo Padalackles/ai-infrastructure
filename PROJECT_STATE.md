@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.1.0
-**Last Updated:** 2026-06-18 (deployed to production)
+**Version:** v0.3.0
+**Last Updated:** 2026-06-18 — Claude Web Connector connected
 
 ---
 

@@ -4,6 +4,28 @@ All notable changes to the MCP Hub project.
 
 ---
 
+## [v0.3.0] — 2026-06-18 (Claude Web Connected)
+
+### First End-to-End Closed Loop
+
+Claude Web Connector successfully connected to MCP Hub. This is the first
+version where Claude (the AI) can discover and invoke tools through the Hub
+over the standard MCP Streamable HTTP protocol.
+
+- **Claude Web Connector** connected to `https://raven-victor.click/mcp`
+- Auth mode: `none` (Claude Web has no Bearer Token input field)
+- Protocol: MCP Streamable HTTP 2024-11-05 (via FastMCP 1.28.0)
+- Transport: ASGI middleware proxy (zero-buffer SSE passthrough)
+- 7 tools across 3 servers auto-discovered
+- DEBUG protocol logging active (request/response dump)
+- `docs/CLAUDE_DESKTOP_SETUP.md`: documented AUTH_MODE=none/bearer/oauth
+
+### Tag
+
+`v0.3.0` — MCP Hub successfully connected with Claude Connector
+
+---
+
 ## [v0.1.0] — 2026-06-18 (Production Deployed)
 
 ### Task-016 — MCP Auth (Bearer Token) ✅

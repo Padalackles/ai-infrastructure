@@ -38,6 +38,10 @@ services:
       - ./mcp_servers:/app/mcp_servers:ro
     environment:
       - MCP_HUB_AUTH_TOKEN=${MCP_HUB_AUTH_TOKEN}
+      - NTFY_SERVER=${NTFY_SERVER:-https://ntfy.sh}
+      - NTFY_TOPIC=${NTFY_TOPIC:-ai-infrastructure}
+      - OMBRE_URL=${OMBRE_URL:-http://45.76.169.98:8000/mcp}
+      - OMBRE_TIMEOUT=${OMBRE_TIMEOUT:-10}
     networks:
       - ai-net
 

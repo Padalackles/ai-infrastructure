@@ -8,15 +8,10 @@ from __future__ import annotations
 
 import os
 
-from src.core.remote_client import RemoteMCPClient
+from src.core.remote_client import CONNECTED, DISCONNECTED, RemoteMCPClient
 
 DEFAULT_OMBRE_URL = os.getenv("OMBRE_URL", "http://45.76.169.98:8000/mcp")
 DEFAULT_TIMEOUT = float(os.getenv("OMBRE_TIMEOUT", "10"))
-
-# Re-export for backward compatibility
-CONNECTED = "CONNECTED"
-CONNECTING = "CONNECTING"
-DISCONNECTED = "DISCONNECTED"
 
 
 class OmbreMCPClient(RemoteMCPClient):

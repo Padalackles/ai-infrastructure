@@ -29,7 +29,6 @@ from mcp.client.streamable_http import streamablehttp_client
 
 logger = logging.getLogger(__name__)
 
-CONNECTING = "CONNECTING"
 CONNECTED = "CONNECTED"
 DISCONNECTED = "DISCONNECTED"
 
@@ -87,7 +86,6 @@ class RemoteMCPClient:
         Performs: streamable HTTP handshake → initialize → tools/list.
         Caches discovered tools in self.tools.
         """
-        self._state = CONNECTING
         logger.info("%s MCP client connecting to %s", self._label, self._url)
 
         try:

@@ -22,7 +22,7 @@ services:
       - caddy_config:/config
     networks:
       - ai-net
-    # TODO: configure for Cloudflare tunnel upstream
+    # Reverse proxies to mcp-hub:8080. Cloudflare tunnel upstream configured separately.
 
   # ── MCP Hub — System Core (Gateway) ───────
   mcp-hub:
@@ -43,52 +43,51 @@ services:
   # MCP Services
   # ──────────────────────────────────────────
 
-  # ── GitHub MCP Server ────────────────────
-  github-mcp:
-    build: ./mcp_servers/github
-    container_name: ai-github-mcp
-    restart: unless-stopped
-    environment:
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - GITHUB_OWNER=${GITHUB_OWNER}
-    networks:
-      - ai-net
-    # TODO: implement
+  # ── GitHub MCP Server (Reserved) ──────────
+  # Reserved — not yet implemented. Uncomment when Task-014+ adds source.
+  # github-mcp:
+  #   build: ./mcp_servers/github
+  #   container_name: ai-github-mcp
+  #   restart: unless-stopped
+  #   environment:
+  #     - GITHUB_TOKEN=${GITHUB_TOKEN}
+  #     - GITHUB_OWNER=${GITHUB_OWNER}
+  #   networks:
+  #     - ai-net
 
-  # ── Filesystem MCP Server ────────────────
-  filesystem-mcp:
-    build: ./mcp_servers/filesystem
-    container_name: ai-filesystem-mcp
-    restart: unless-stopped
-    volumes:
-      - ${MCP_FS_ROOT:-./data}:/data
-    networks:
-      - ai-net
-    # TODO: implement
+  # ── Filesystem MCP Server (Reserved) ──────
+  # Reserved — not yet implemented. Uncomment when Task-014+ adds source.
+  # filesystem-mcp:
+  #   build: ./mcp_servers/filesystem
+  #   container_name: ai-filesystem-mcp
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ${MCP_FS_ROOT:-./data}:/data
+  #   networks:
+  #     - ai-net
 
   # ── Ombre MCP Server ─────────────────────
+  # External Ombre deployment (adapter implemented — Task-009)
   ombre-mcp:
     build: ./mcp_servers/ombre
     container_name: ai-ombre-mcp
     restart: unless-stopped
     environment:
-      - OMBRE_API_URL=${OMBRE_API_URL}
-      - OMBRE_API_KEY=${OMBRE_API_KEY}
+      - OMBRE_ENDPOINT=${OMBRE_ENDPOINT:-http://45.76.169.98:8000}
     networks:
       - ai-net
-    # TODO: implement
 
   # ── ntfy MCP Server ──────────────────────
+  # ntfy.sh push notifications (adapter implemented — Task-010)
   ntfy-mcp:
     build: ./mcp_servers/ntfy
     container_name: ai-ntfy-mcp
     restart: unless-stopped
     environment:
-      - NTFY_BASE_URL=${NTFY_BASE_URL}
-      - NTFY_TOPIC=${NTFY_TOPIC}
+      - NTFY_BASE_URL=${NTFY_BASE_URL:-https://ntfy.sh}
+      - NTFY_TOPIC=${NTFY_TOPIC:-ai-infrastructure}
     networks:
       - ai-net
-    # TODO: implement
 
   # ── Cloudflare Tunnel ────────────────────
   cloudflared:
@@ -100,7 +99,7 @@ services:
       - ./cloudflare/tunnel-config.yaml:/etc/cloudflared/config.yaml:ro
     networks:
       - ai-net
-    # TODO: configure tunnel token and ingress rules
+    # Configure tunnel token in cloudflare/tunnel-config.yaml before enabling
 
 volumes:
   caddy_data:

@@ -19,10 +19,10 @@ class BaseMCPServer(ABC):
     """Abstract base for every MCP server.
 
     Subclasses:
-      - OmbreServer   (future)
-      - NtfyServer    (future)
-      - GithubServer  (future)
-      - FilesystemServer (future)
+      - OmbreServer        (implemented — Task-009)
+      - NtfyServer         (implemented — Task-010)
+      - GithubServer       (reserved)
+      - FilesystemServer   (reserved)
 
     Lifecycle (called by ServerManager):
         initialize()

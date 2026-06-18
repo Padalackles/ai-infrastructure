@@ -20,4 +20,4 @@ docker compose up -d caddy
 Caddy automatically:
 1. Obtains Let's Encrypt certificate for `$DOMAIN`
 2. Redirects HTTP → HTTPS
-3. Proxies `/$DOMAIN/mcp` → `mcp-hub:8080`
+3. Proxies `/mcp`, `/health`, `/status`, `/tools` → `mcp-hub:8080`

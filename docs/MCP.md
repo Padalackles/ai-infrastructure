@@ -63,7 +63,7 @@ Claude Desktop
 
 ### Status
 
-✅ Planned
+⬜ Reserved — not yet implemented
 
 ### Future
 
@@ -95,7 +95,7 @@ Claude Desktop
 
 ### Status
 
-⬜ Not Installed
+⬜ Reserved — not yet implemented
 
 ### Future
 
@@ -117,17 +117,18 @@ Provide long-term AI memory.
 
 ### Permission
 
-Local database
+External deployment (45.76.169.98:8000)
 
 ### Communication
 
 Claude Desktop
 → MCP Hub
-→ Ombre
+→ Ombre Adapter (HTTP)
+→ External Ombre Deployment
 
 ### Status
 
-⬜ Planned
+✅ Integrated (Task-009) — Hub adapter complete. External Ombre deployment is independent.
 
 ### Future
 
@@ -154,11 +155,12 @@ Configured ntfy topic
 
 Claude Desktop
 → MCP Hub
-→ ntfy
+→ ntfy Adapter (HTTP)
+→ ntfy.sh API
 
 ### Status
 
-⬜ Planned
+✅ Integrated (Task-010) — Hub adapter complete. Notifications route via ntfy.sh.
 
 ## Browser MCP
 

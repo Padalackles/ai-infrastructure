@@ -9,7 +9,25 @@
 
 1. Go to Cloudflare Dashboard → SSL/TLS
 2. Set encryption mode to **Full** or **Full (strict)**
+   - **Full**: Encrypts end-to-end but tolerates self-signed origin certs
+   - **Full (strict)**: Requires a valid CA-signed cert on the origin (Caddy provides this via Let's Encrypt)
 3. Edge Certificates: ensure **Always Use HTTPS** is ON
+4. Enable **Automatic HTTPS Rewrites** to fix mixed-content URLs
+
+## HTTPS-Only Enforcement
+
+1. Go to Cloudflare Dashboard → SSL/TLS → Edge Certificates
+2. Turn ON **Always Use HTTPS** — redirects all HTTP to HTTPS
+3. Optionally enable **HTTP Strict Transport Security (HSTS)**:
+   - Status: ON
+   - Max Age: 6 months (recommended starting point)
+   - Include subdomains: ON
+   - Preload: OFF (until verified stable)
+
+These settings ensure:
+- All HTTP requests are redirected to HTTPS (301)
+- Browsers and clients cache the HTTPS redirect
+- Mixed content is automatically upgraded
 
 ## DNS Proxy
 

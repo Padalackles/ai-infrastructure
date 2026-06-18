@@ -41,7 +41,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-010 | ✅ | ntfy External Service Integration — via ntfy.sh API |
 | Task-011 | ✅ | Remote MCP Transport — protocol validated, Claude Desktop Ready |
 | Task-012 | ✅ | Domain + HTTPS + Cloudflare — deployed at raven-victor.click |
-| Task-013 | ⬜ | Claude Desktop Remote Connection |
+| Task-013 | ✅ | Claude Desktop End-to-End Integration (12/12 tests passed) |
 | Task-014 | ⬜ | Real ntfy Notification Test |
 | Task-015 | ⬜ | Docker Production |
 | Task-016 | 🟡 | Production Hardening (MCP Auth ✅, remaining items in progress) |
@@ -52,9 +52,9 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-013 |
+| **Task ID** | Task-014 |
 | **Status** | ⬜ Planned |
-| **Description** | Claude Desktop Remote Connection |
+| **Description** | Real ntfy Notification Test |
 
 ---
 
@@ -140,7 +140,7 @@ mcp-hub/src/
 
 | Capability | Target |
 |---|---|
-| Claude Desktop ↔ Hub MCP wiring | Task-013 |
+| Claude Desktop ↔ Hub MCP wiring | ✅ Completed (Task-013) |
 | Concrete MCP Servers (ntfy, GitHub, Filesystem) | Task-014+ |
 | Formal MCP Registry (manifests, enable/disable) | Future |
 | Authentication / token validation | ✅ Implemented (Bearer Token, Task-016) |

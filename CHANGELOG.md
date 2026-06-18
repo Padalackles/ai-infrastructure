@@ -16,6 +16,17 @@ All notable changes to the MCP Hub project.
 - `tests/test_auth.py`: 9 tests covering all scenarios
 - Total: 166 tests passing
 
+### Task-013 — Claude Desktop End-to-End Integration ✅
+
+- 12/12 end-to-end tests passed over HTTPS + Bearer Token
+- Verified: initialize, tools/list, tools/call (global + server-scoped)
+- Ombre: health (CONNECTED), status — external deployment reachable
+- ntfy: health (ok), info, send (200) — real push notification sent
+- example: ping (pong) — Hub pipeline fully functional
+- Claude Desktop config guide: `docs/CLAUDE_DESKTOP_SETUP.md`
+- E2E report: `docs/task013/E2E_REPORT.md`
+- Zero Core changes — Hub architecture stable throughout
+
 ### Task-012 — Domain + HTTPS + Cloudflare ✅
 
 **Domain:** `raven-victor.click`  

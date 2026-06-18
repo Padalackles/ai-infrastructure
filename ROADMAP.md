@@ -50,7 +50,12 @@ MCP server integrations through Hub adapters:
 
 Wire Claude Desktop to the MCP Hub via JSON-RPC / MCP protocol. End-to-end tool invocation.
 
-**Status:** Planned (Task-011)
+**Status:** ✅ Completed (Task-011 Transport + Task-013 E2E Integration)
+- HTTPS endpoint: `https://raven-victor.click/mcp`
+- Bearer Token authentication
+- 12/12 end-to-end tests passed
+- 8 tools across 3 servers (example, ntfy, ombre)
+- Claude Desktop config guide: `docs/CLAUDE_DESKTOP_SETUP.md`
 
 ---
 

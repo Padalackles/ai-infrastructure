@@ -2,6 +2,9 @@
 
 This is the wire entry point for Claude Desktop (or any MCP client).
 All business logic lives in the Router; this module handles HTTP concerns only.
+
+Authentication is enforced via the verify_bearer_token dependency when
+MCP_HUB_AUTH_TOKEN is configured. REST endpoints are never authenticated.
 """
 
 from __future__ import annotations
@@ -10,8 +13,9 @@ import json
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 
+from src.core.auth import verify_bearer_token
 from src.transport.jsonrpc import build_parse_error, parse_request
 from src.transport.response import JSONRPCErrorResponse
 
@@ -21,7 +25,10 @@ router = APIRouter()
 
 
 @router.post("/mcp")
-async def mcp_endpoint(request: Request) -> dict[str, Any]:
+async def mcp_endpoint(
+    request: Request,
+    _auth: None = Depends(verify_bearer_token),
+) -> dict[str, Any]:
     """Accept a JSON-RPC 2.0 request and return a response.
 
     Request body format:

@@ -18,5 +18,12 @@ services:
     enabled: true
     endpoint: "${OMBRE_ENDPOINT:-http://45.76.169.98:8000}"
 
+auth:
+  # Bearer Token authentication for POST /mcp.
+  # Set MCP_HUB_AUTH_TOKEN in the environment to enable.
+  # If not set or empty, auth is skipped (local dev mode).
+  # REST endpoints (/health, /status, /tools) are always public.
+  enabled: "${MCP_HUB_AUTH_TOKEN:-}"  # empty = disabled
+
 logging:
   level: "INFO"

@@ -8,7 +8,7 @@ Connect Claude Desktop / Claude Web to the MCP Hub at `https://raven-victor.clic
 Claude (Desktop / Web)
     │  HTTPS
     ▼
-Cloudflare (DNS + DDoS, SSL Full strict)
+Cloudflare (DNS only)
     │  HTTPS :443
     ▼
 Caddy (Reverse Proxy + Let's Encrypt TLS)
@@ -16,9 +16,8 @@ Caddy (Reverse Proxy + Let's Encrypt TLS)
     ▼
 MCP Hub (FastAPI + FastMCP Streamable HTTP)
     │
-    ├── Ombre  ──HTTP──► 45.76.169.98:8000  (long-term memory)
-    ├── ntfy   ──HTTP──► ntfy.sh             (push notifications)
-    └── example                              (test server)
+    ├── Ombre  ──HTTP──► 45.76.169.98:8000  (long-term memory, 6 tools)
+    └── ntfy   ──HTTP──► ntfy.sh             (push notifications, 3 tools)
 ```
 
 ---
@@ -31,9 +30,9 @@ Claude Web Connector does **not** support custom HTTP headers (Bearer Token).
 Setting `MCP_HUB_AUTH_TOKEN=` (empty) disables authentication so Claude Web
 can connect directly. Security relies on:
 
-- HTTPS (Let's Encrypt + Cloudflare Full strict)
+- HTTPS (Let's Encrypt via Caddy)
 - Domain obscurity
-- Cloudflare WAF / Rate Limiting (recommended)
+- Cloudflare WAF / Rate Limiting (optional, via Cloudflare dashboard)
 - Cloudflare Access / IP whitelist (future option)
 
 ### Future: `AUTH_MODE=bearer`

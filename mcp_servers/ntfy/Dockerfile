@@ -1,11 +1,14 @@
 # ── ntfy MCP Server — Environment ──────────
-FROM node:20-alpine
+# Reserved — ntfy is an external SaaS service (ntfy.sh).
+# The Hub connects via mcp_servers/ntfy/adapter.py (Python HTTP bridge).
+# This Dockerfile is reserved for future standalone containerization.
+FROM python:3.12-alpine
 
 WORKDIR /app
-# TODO: add package.json and source code
-# COPY package.json package-lock.json ./
-# RUN npm ci
+# Reserved — source code lives in sibling .py files (loaded by Hub discovery).
+# COPY requirements.txt ./
+# RUN pip install -r requirements.txt
 # COPY . .
 
-EXPOSE 3000
-CMD ["echo", "ntfy MCP — not yet implemented"]
+EXPOSE 8080
+CMD ["echo", "ntfy MCP — adapter loaded by Hub, not containerized yet"]

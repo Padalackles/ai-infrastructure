@@ -3,7 +3,7 @@
 # ──────────────────────────────────────────
 
 server:
-  url: "${NTFY_BASE_URL:-https://ntfy.sh}"
+  url: "${NTFY_SERVER:-https://ntfy.sh}"
 
 notification:
   default_topic: "${NTFY_TOPIC:-ai-infrastructure}"

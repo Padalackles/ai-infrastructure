@@ -18,8 +18,12 @@ else
     echo ".env already exists, skipping."
 fi
 
-# TODO: Cloudflare tunnel setup
-# TODO: Caddy certificate bootstrap
-# TODO: MCP Hub auth token generation
+# TODO: Cloudflare tunnel setup (optional — reserved)
+# Caddy auto-obtains Let's Encrypt certs on first run — no manual bootstrap needed.
+# Generate a secure auth token if not already present:
+if ! grep -q "^MCP_HUB_AUTH_TOKEN=.\{32,\}" .env 2>/dev/null; then
+    echo "MCP_HUB_AUTH_TOKEN=$(openssl rand -hex 32)" >> .env
+    echo "Generated MCP_HUB_AUTH_TOKEN in .env"
+fi
 
 echo "Setup complete. Run: docker compose up -d"

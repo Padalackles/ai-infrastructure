@@ -2,7 +2,7 @@
 
 **Status:** 🟡 In Progress
 **Version:** v0.3.1
-**Last Updated:** 2026-06-19 — MCP Tool 命名修复 + 诊断日志
+**Last Updated:** 2026-06-19 — Documentation Freeze (全仓库一致性收尾)
 
 ---
 
@@ -21,7 +21,10 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 
 ## Current Phase
 
-**Phase 2 — MCP Hub Gateway** (see ROADMAP.md)
+**Phase 6 — Production Hardening** (see ROADMAP.md)
+
+- Phase 1–5: ✅ Complete (Infrastructure → Gateway → Registry → Services → Claude Desktop)
+- Phase 6: 🟡 In Progress — Docker Production, auth, diagnostics, docs
 
 ---
 
@@ -197,8 +200,8 @@ mcp-hub/src/
 
 | Field | Value |
 |---|---|
-| **Hash** | `19ad210` |
-| **Summary** | docs: screen and fix all docs/ for accuracy — tool names, status, env vars, architecture |
+| **Hash** | `508ceec` |
+| **Summary** | Documentation Freeze — 全仓过期关键词清理, README统一, 配置一致性 |
 
 ---
 

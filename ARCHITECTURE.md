@@ -132,16 +132,16 @@ MCP Server        (mcp_servers/)             ← concrete implementation
 |---|---|
 | `mcp-hub` | MCP Hub (orchestration core) |
 | `caddy` | Reverse proxy + automatic TLS |
-| `cloudflared` | Cloudflare Tunnel |
+| `cloudflared` | Cloudflare Tunnel (reserved) |
 
 ### MCP Services (docker-compose.yml)
 
 | Service | Purpose |
 |---|---|
-| `ombre-mcp` | Ombre MCP Server |
-| `ntfy-mcp` | ntfy MCP Server |
-| `github-mcp` | GitHub MCP Server |
-| `filesystem-mcp` | Filesystem MCP Server |
+| `github-mcp` | GitHub MCP Server (reserved) |
+| `filesystem-mcp` | Filesystem MCP Server (reserved) |
+
+Ombre and ntfy are **external services** integrated via Hub-loaded Python adapters — they do not run as separate Docker containers. See `mcp_servers/ombre/` and `mcp_servers/ntfy/`.
 
 ---
 

@@ -12,7 +12,7 @@ Build an **MCP Hub** that connects Claude Desktop to multiple MCP services throu
 
 Deployable foundation: Docker Compose, Caddy reverse proxy, Cloudflare Tunnel.
 
-**Status:** Planned
+**Status:** ✅ Deployed — Docker Compose + Caddy active; Cloudflare Tunnel reserved
 
 ---
 
@@ -28,7 +28,7 @@ Central orchestration runtime: ServerManager, Discovery, JSON-RPC transport, Rou
 
 Formal MCP registry with per-service manifests. Enable/disable services. Lifecycle management.
 
-**Status:** Design complete (see `docs/REGISTRY.md`)
+**Status:** ✅ Implemented — ServerManager + manifest discovery (see `docs/REGISTRY.md`)
 
 ---
 

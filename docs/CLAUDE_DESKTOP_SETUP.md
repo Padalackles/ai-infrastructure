@@ -35,12 +35,12 @@ can connect directly. Security relies on:
 - Cloudflare WAF / Rate Limiting (optional, via Cloudflare dashboard)
 - Cloudflare Access / IP whitelist (future option)
 
-### Future: `AUTH_MODE=bearer`
+### Optional: `AUTH_MODE=bearer` (implemented)
 
-When MCP clients add Bearer Token support, set `MCP_HUB_AUTH_TOKEN=<token>`
-in `.env`. The Hub will enforce `Authorization: Bearer <token>` on all
-`POST /mcp` requests. Claude Desktop (local app) already supports custom
-headers; only Claude Web is restricted.
+Set `MCP_HUB_AUTH_TOKEN=<token>` in `.env` to enable Bearer Token
+authentication. The Hub enforces `Authorization: Bearer <token>` on all
+`POST /mcp` requests. Claude Desktop (local app) supports custom headers;
+Claude Web does not — leave `MCP_HUB_AUTH_TOKEN=` empty for Web access.
 
 ### Future: `AUTH_MODE=oauth`
 

@@ -5,7 +5,7 @@ Push notification service — self-contained MCP server.
 ## Status
 
 No external deployment required. Health always returns `ok`.
-Optional HTTP forwarding to ntfy.sh via `NTFY_BASE_URL` env var.
+Optional HTTP forwarding to ntfy.sh via `NTFY_SERVER` env var.
 
 ## Files
 
@@ -27,6 +27,6 @@ Optional HTTP forwarding to ntfy.sh via `NTFY_BASE_URL` env var.
 
 ```bash
 # Optional: forward to ntfy.sh
-export NTFY_BASE_URL=https://ntfy.sh
-export NTFY_TOPIC=mcp-hub
+export NTFY_SERVER=https://ntfy.sh
+export NTFY_TOPIC=ai-infrastructure
 ```

@@ -12,6 +12,8 @@ hub:
   version: "0.1.0"
   capabilities:
     tools: {}
+  # Set HUB_EXPOSE_INTERNAL_TOOLS=true to enable hub.debug.* tools
+  expose_internal_tools: "${HUB_EXPOSE_INTERNAL_TOOLS:-false}"
 
 services:
   ombre:

@@ -1,154 +1,111 @@
 # MCP Hub
 
-An **MCP Hub** deployed on a VPS — not an AI application, not a chatbot.
+**AI Infrastructure should be invisible.**
 
-The Hub connects **Claude Desktop** (the user's AI interface) to multiple **MCP services** through the Model Context Protocol.
-
-```
-Claude Desktop        ← runs locally
-     │
-     │  JSON-RPC / MCP
-     ▼
-MCP Hub (Gateway)     ← runs on VPS
-     │
-     ├── Ombre MCP         (long-term memory)
-     ├── ntfy MCP          (push notifications)
-     ├── Filesystem MCP    (file operations)
-     ├── GitHub MCP        (repository management)
-     ├── Browser MCP       (web interaction)
-     └── Future MCPs
-```
-
-> **Ombre Status:** Ombre is an existing external MCP-compatible long-term memory service, deployed at `http://45.76.169.98:8000`. This repository builds the MCP Hub — it does **not** reimplement Ombre. The Hub connects to Ombre through an HTTP adapter (`mcp_servers/ombre/server.py`).
+Claude interacts with capabilities, never with infrastructure.
+Every architectural decision must reduce reasoning overhead while
+increasing available capabilities.
 
 ---
 
 ## Design Principles
 
+### Principle 0 — Capability-Oriented Architecture
+
+The Hub exists to expose **capabilities**, not infrastructure.
+
+Claude should reason about:
+- memory, browser, github, notification, filesystem
+
+Claude should **never** reason about:
+- plugins, routing, registry, authentication, metrics, logging, service lifecycle
+
+Infrastructure is an implementation detail.
+
+### Principle 1 — Infrastructure Invisibility
+
+Claude sees only business tools. The Hub's internal state (health, metrics,
+service lists, uptime) is for operators, never for LLM reasoning.
+
+Default: zero hub.* tools exposed.  
+Development: `HUB_EXPOSE_INTERNAL_TOOLS=true` enables hub.debug.* tools.
+
+### Principle 2 — Token Efficiency
+
+Every design decision should reduce context usage.
+
+- Fewer MCP tools
+- Concise responses
+- No infrastructure metadata
+- No redundant explanations
+
+The Hub should maximize capability while minimizing token consumption.
+
+### Principle 3 — Composable MCP Services
+
 - **MCP First** — Every capability is an MCP service. Nothing is baked into the Core.
 - **Gateway, not Application** — The Hub routes requests; servers implement behavior.
 - **Plugin Architecture** — Adding a new MCP service requires zero Core changes.
-- **Docker is Deployment Only** — The architecture is defined in code, not in containers.
+
+### Principle 4 — Internal Observability
+
+Logging, metrics, diagnostics, and error tracking happen internally.
+Claude should not spend context window understanding infrastructure.
+
+- Structured JSON logs → `logs/hub.log`
+- Audit trail → `logs/audit.log`
+- Runtime metrics → internal only (future: Prometheus / Grafana)
+- Request IDs propagate internally; surfaced only on errors
+
+---
+
+## Architecture
+
+```
+Claude Web / Desktop
+     │  HTTPS + MCP Streamable HTTP
+     ▼
+MCP Hub (Gateway)     ← VPS: raven-victor.click
+     │
+     ├── Ombre MCP         (long-term memory — auto-discovered)
+     ├── ntfy MCP          (push notifications — auto-discovered)
+     ├── Hub Diagnostics   (hidden unless HUB_EXPOSE_INTERNAL_TOOLS=true)
+     └── Future MCPs       (drop-in, zero Core changes)
+```
 
 ---
 
 ## Repository Structure
 
 ```
-├── mcp-hub/              MCP Hub (Core)
+├── mcp-hub/              MCP Hub (Stable Core)
 │   ├── src/
+│   │   ├── core/         RemoteMCPClient, HubState, Metrics, Logging
 │   │   ├── config/       Configuration loader
 │   │   ├── lifecycle/    BaseMCPServer, lifecycle contracts
 │   │   ├── registry/     ServerManager, service registry
 │   │   ├── loader/       Discovery, Loader, plugin loading
-│   │   ├── router/       Router, route interfaces
 │   │   ├── runtime/      Middleware layer
-│   │   ├── transport/    JSON-RPC 2.0 endpoint + handlers
+│   │   ├── transport/    FastMCP Streamable HTTP bridge
 │   │   ├── api/          REST endpoints (/health, /status, /tools)
-│   │   ├── models/       Shared dataclasses
-│   │   ├── core/         EventBus
-│   │   └── utils/        Helpers
+│   │   └── models/       Shared dataclasses
 │   ├── tests/
 │   ├── config.yaml
 │   └── Dockerfile
 ├── mcp_servers/          MCP Service Layer (extensible)
-│   ├── ombre/            Ombre MCP — external, connected via adapter
-│   ├── ntfy/             ntfy MCP — external, connected via adapter
+│   ├── ombre/            Ombre MCP client (RemoteMCPClient subclass)
+│   ├── ntfy/             Notification MCP (curl → ntfy.sh)
+│   ├── hub/              Hidden diagnostics (hub.debug.*)
 │   ├── example/          Example Server — Hub pipeline test
-│   └── ...               Future MCP Services
+│   ├── filesystem/       Reserved
+│   └── github/           Reserved
 ├── docker-compose.yml
+├── docs/
 ├── ARCHITECTURE.md
 ├── ROADMAP.md
 ├── PROJECT_STATE.md
-├── DECISIONS.md
-├── docs/
-└── tasks/
+└── DECISIONS.md
 ```
-
----
-
-## Remote MCP Server
-
-The Hub is a standard MCP server. Claude Desktop (or any MCP client) connects via JSON-RPC 2.0:
-
-```
-POST http://<host>:8080/mcp
-```
-
-### Initialize
-
-```bash
-curl -X POST http://localhost:8080/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}'
-```
-
-### Discover Tools
-
-```bash
-curl -X POST http://localhost:8080/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
-```
-
-### Invoke Tools
-
-```bash
-curl -X POST http://localhost:8080/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"server":"ntfy","tool":"ntfy_send","arguments":{"title":"Hello","message":"World"}}}'
-```
-
-Tools are auto-discovered from all registered MCP servers — no hardcoded names.
-
----
-
-## Local Development Environment
-
-### Requirements
-
-- **Python 3.12+** (winget or python.org installer; NOT Microsoft Store)
-- **Git Bash** or similar POSIX shell
-- Virtual environment (recommended)
-
-> **Windows note:** The Microsoft Store Python stub (`%LOCALAPPDATA%\Microsoft\WindowsApps\python.exe`) is a redirector, not a real interpreter. Install from [python.org](https://www.python.org/downloads/) or via `winget install Python.Python.3.13`.
-
-### Python Installation Detection
-
-The Claude Code shell resolves `python` as follows:
-
-| Priority | Path | Status |
-|---|---|---|
-| 1 | `<repo>/.venv/Scripts/python.exe` | Recommended — project venv |
-| 2 | `%LOCALAPPDATA%\Programs\Python\Python3XX\python.exe` | winget / python.org (real) |
-| 3 | `%LOCALAPPDATA%\Microsoft\WindowsApps\python.exe` | ❌ Microsoft Store redirector — DO NOT USE |
-
-### Setup
-
-```bash
-# 1. Create a virtual environment in the project
-python -m venv .venv
-
-# 2. Activate
-source .venv/Scripts/activate  # Git Bash
-
-# 3. Install dependencies
-cd mcp-hub
-pip install -r requirements.txt
-pip install pytest pytest-asyncio httpx
-
-# 4. Run tests
-PYTHONPATH="src:.." pytest tests/ -v
-```
-
-### Current Environment
-
-| Tool | Version |
-|---|---|
-| Python | 3.13.12 |
-| pip | 25.1.1 |
-| pytest | 9.1.0 |
-| uvicorn | 0.49.0 |
 
 ---
 
@@ -162,8 +119,7 @@ PYTHONPATH="src:.." uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload
 
 ```
 GET  /health  →  {"status":"healthy","total_servers":1,...}
-GET  /status  →  {"version":"0.1.0","runtime":"mcp-hub",...}
-POST /mcp     →  JSON-RPC 2.0  (initialize, tools/list, tools/call, health)
+POST /mcp     →  JSON-RPC 2.0  (Streamable HTTP)
 ```
 
 ---

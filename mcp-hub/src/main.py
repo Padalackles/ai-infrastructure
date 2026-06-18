@@ -33,6 +33,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from src.config import load_config
 from src.core.events import EventBus
 from src.core.hub_state import set_state
+from src.core.logging import set_request_id
 from src.loader.discovery import Discovery
 from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
@@ -274,6 +275,9 @@ class MCPProxy:
         if path != "/mcp":
             await self.app(scope, receive, send)
             return
+
+        # Assign a unique request ID for log correlation
+        set_request_id()
 
         # Read body eagerly for debug logging, then replay via wrapper
         body_chunks: list[bytes] = []

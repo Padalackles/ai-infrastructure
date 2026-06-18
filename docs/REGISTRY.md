@@ -4,7 +4,7 @@
 
 The MCP Registry is the Hub's source of truth for what MCP services exist, which are enabled, and how they are configured.
 
-This is a **design document** — no implementation exists yet. The Registry will be built in Phase 3.
+The Registry is implemented in `mcp-hub/src/registry/server_manager.py` and `mcp-hub/src/loader/discovery.py`. This document describes its design and current behavior.
 
 ---
 

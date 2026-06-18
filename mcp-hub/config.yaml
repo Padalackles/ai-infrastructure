@@ -18,7 +18,7 @@ hub:
 services:
   ombre:
     enabled: true
-    endpoint: "${OMBRE_ENDPOINT:-http://45.76.169.98:8000}"
+    endpoint: "${OMBRE_URL:-http://45.76.169.98:8000/mcp}"
 
 auth:
   # Bearer Token authentication for POST /mcp.

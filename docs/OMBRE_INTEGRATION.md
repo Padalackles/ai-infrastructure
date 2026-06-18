@@ -7,7 +7,7 @@ Ombre is an **existing external MCP-compatible long-term memory service**.
 It has already been deployed and validated independently at:
 
 ```
-http://45.76.169.98:8000
+http://45.76.169.98:8000/mcp
 ```
 
 This repository does **not** reimplement Ombre.
@@ -28,7 +28,7 @@ Claude Desktop
         │        │
         │        ▼  HTTP
         │   Ombre Service  (external, already deployed)
-        │   http://45.76.169.98:8000
+        │   http://45.76.169.98:8000/mcp
         │
         └── ... other MCP services
 ```
@@ -53,22 +53,32 @@ Claude Desktop
 services:
   ombre:
     enabled: true
-    endpoint: "${OMBRE_ENDPOINT:-http://45.76.169.98:8000}"
+    endpoint: "${OMBRE_URL:-http://45.76.169.98:8000/mcp}"
 ```
 
 Override via environment:
 ```bash
-export OMBRE_ENDPOINT=http://your-ombre-host:8000
+export OMBRE_URL=http://your-ombre-host:8000/mcp
 ```
 
 ---
 
 ## Tools Exposed
 
+The Ombre adapter discovers tools dynamically from the remote Ombre server — no tool names are hardcoded in the Hub. The Hub forwards `tools/list` and `tools/call` directly to the remote server via the MCP Streamable HTTP protocol.
+
+Current production deployment exposes tools such as:
+
 | Tool | Description |
 |---|---|
-| `ombre_health` | Check connectivity to external Ombre |
-| `ombre_status` | Get Ombre endpoint info and connection state |
+| `breath` | Memory breath — light recall |
+| `hold` | Store a memory |
+| `grow` | Expand / enrich a memory |
+| `trace` | Trace memory connections |
+| `pulse` | Memory health / status |
+| `dream` | Deep semantic recall |
+
+The available tool set depends on the remote Ombre server version and configuration.
 
 ---
 
@@ -76,7 +86,7 @@ export OMBRE_ENDPOINT=http://your-ombre-host:8000
 
 | State | Meaning |
 |---|---|
-| `CONNECTED` | Ombre returned HTTP 200 with `{"status":"ok"}` |
+| `CONNECTED` | MCP session established, tools discovered |
 | `DISCONNECTED` | Ombre is unreachable (network error, timeout) |
 | `UNHEALTHY` | Ombre responded but health check failed |
 
@@ -86,7 +96,7 @@ export OMBRE_ENDPOINT=http://your-ombre-host:8000
 
 ```
 Loading Services...
-✓ Ombre (CONNECTED) — http://45.76.169.98:8000
+✓ Ombre (CONNECTED) — http://45.76.169.98:8000/mcp
 Hub Ready
 ```
 
@@ -97,4 +107,4 @@ Hub Ready
 - Modifying Ombre source code
 - Deploying Ombre
 - Implementing Ombre business logic (memory, search, etc.)
-- Authentication to Ombre (future task)
+- Authentication to Ombre (not currently required)

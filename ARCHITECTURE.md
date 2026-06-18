@@ -181,7 +181,7 @@ Per-service configuration in `config.yaml`. Hub metadata (protocol version, name
 
 ## Ombre — External MCP Service
 
-Ombre is an **existing external MCP-compatible long-term memory service** deployed at `http://45.76.169.98:8000`. This repository does **not** contain Ombre source code. The MCP Hub connects to Ombre through an HTTP adapter layer.
+Ombre is an **existing external MCP-compatible long-term memory service** deployed at `http://45.76.169.98:8000/mcp`. This repository does **not** contain Ombre source code. The MCP Hub connects to Ombre through an HTTP adapter layer.
 
 ```
 Claude Desktop

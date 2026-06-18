@@ -27,7 +27,7 @@ NTFY_TOPIC=ai-infrastructure
 
 ## Tools
 
-### `notify.send`
+### `notify_send`
 
 Send a push notification.
 
@@ -91,5 +91,5 @@ Manual test:
 curl -sk -X POST https://raven-victor.click/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"notify.send","arguments":{"message":"Test from CLI","title":"CLI Test"}}}'
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"notify_send","arguments":{"message":"Test from CLI","title":"CLI Test"}}}'
 ```

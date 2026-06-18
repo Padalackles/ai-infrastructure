@@ -97,11 +97,10 @@ After connection, Claude discovers these tools automatically:
 |---|---|---|
 | `echo` | example | Echo back input (pipeline verification) |
 | `ping` | example | Always returns pong |
-| `ombre_health` | ombre | Check Ombre connectivity |
-| `ombre_status` | ombre | Get Ombre service metadata |
+| `breath` / `hold` / `grow` / `trace` / `pulse` / `dream` | ombre | Ombre tools are auto-discovered from the remote server; the available set depends on server version |
 | `ntfy_health` | ntfy | Check ntfy service health |
 | `ntfy_info` | ntfy | Get ntfy service metadata |
-| `ntfy_send` | ntfy | Send a push notification |
+| `notify_send` | ntfy | Send a push notification |
 
 ## Troubleshooting
 

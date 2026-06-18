@@ -8,4 +8,4 @@ name: ombre
 version: "0.1.0"
 class: OmbreServer
 description: Long-term AI memory — external MCP-compatible service
-endpoint: "${OMBRE_ENDPOINT:-http://45.76.169.98:8000}"
+endpoint: "${OMBRE_URL:-http://45.76.169.98:8000/mcp}"

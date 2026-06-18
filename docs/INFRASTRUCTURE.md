@@ -2,13 +2,9 @@
 
 ## Purpose
 
-This document defines the long-term infrastructure architecture of the AI Infrastructure project.
+This document describes the current architecture of the AI Infrastructure project.
 
-It describes where services will run, how they will be exposed to the Internet, and how future MCP services will be integrated.
-
-This is a target architecture document.
-
-Implementation will occur in later tasks.
+It is updated to reflect the current production implementation.
 
 ---
 
@@ -31,19 +27,16 @@ Implementation will occur in later tasks.
 ```text
 Internet
     │
-Cloudflare
+Cloudflare (DNS + SSL Full strict)
     │
-HTTPS
+HTTPS (:443)
     │
-Caddy
+Caddy (reverse proxy + Let's Encrypt)
     │
-MCP Hub
+MCP Hub (:8080)
     │
- ├── Ombre
-    ├── ntfy
-    ├── GitHub
-    ├── Calendar
-    └── Future MCP Services
+ ├── Ombre (external, 45.76.169.98:8000/mcp)
+ └── ntfy  (external, ntfy.sh)
 ```
 
 ---
@@ -77,8 +70,6 @@ Docker
 │
 ├── MCP Hub
 ├── Caddy
-├── ntfy
-├── Monitoring
 └── Future Services
 ```
 
@@ -112,7 +103,7 @@ This repository does not reimplement Ombre.
 
 MCP Hub integrates Ombre through the MCP interface.
 
-Target architecture:
+Architecture:
 
 ```text
 Claude Desktop
@@ -130,7 +121,10 @@ Claude Desktop
 
 Status:
 
-Planned MCP integration.
+Implemented — push notifications via curl adapter to ntfy.sh.
+
+The MCP Hub connects to ntfy.sh through `mcp_servers/ntfy/adapter.py` (HTTP bridge).
+Three tools are exposed: `notify_send`, `ntfy_health`, `ntfy_info`.
 
 Purpose:
 
@@ -138,7 +132,7 @@ Purpose:
 * Mobile alerts
 * Long-running task completion messages
 
-Future architecture:
+Architecture:
 
 ```text
 Claude Desktop
@@ -147,54 +141,54 @@ Claude Desktop
      MCP Hub
         │
         ├── Ombre
-        └── ntfy
+        └── ntfy (ntfy.sh)
 ```
 
 ---
 
 # Cloudflare
 
-Cloudflare will be introduced during production deployment.
+Cloudflare provides DNS, SSL/TLS (Full strict), and DDoS protection for the production domain `raven-victor.click`.
 
 Responsibilities:
 
-* DNS management
-* HTTPS support
-* Security protection
-* Traffic proxying
+* DNS management (A record → VPS 45.76.169.98)
+* HTTPS support (SSL Full strict, edge certificate)
+* Security protection (WAF, DDoS)
+* Traffic proxying (orange-cloud)
 * Public endpoint management
 
-Example:
+Architecture:
 
 ```text
-mcp.example.com
+raven-victor.click
         │
-   Cloudflare
+   Cloudflare (DNS + SSL Full strict)
         │
-      VPS
+      VPS (45.76.169.98)
 ```
 
 ---
 
 # Caddy
 
-Caddy acts as the reverse proxy.
+Caddy is the reverse proxy providing HTTPS termination and routing on the VPS.
 
 Responsibilities:
 
-* HTTPS termination
-* Routing
-* Certificate management
+* HTTPS termination (Let's Encrypt via acme-v02.api.letsencrypt.org)
+* Routing (`/mcp`, `/health`, `/status`, `/tools` → `mcp-hub:8080`)
+* Certificate management (auto-renewal)
 * Service exposure
 
-Example:
+Architecture:
 
 ```text
 Internet
     │
-Cloudflare
+Cloudflare (DNS + SSL Full strict)
     │
-Caddy
+Caddy (Let's Encrypt, reverse proxy :443 → :8080)
     │
 MCP Hub
 ```
@@ -217,25 +211,36 @@ The architecture should support new MCP services without modifying the Hub core.
 
 ---
 
-# Deployment Roadmap
+# Implementation Milestones
 
-Task009
-Integrate Existing Ombre Deployment
+**Core Infrastructure**
+MCP Hub foundation — FastAPI + FastMCP Streamable HTTP, plugin system, service discovery
 
-Task010
-Integrate ntfy
+**Plugin System**
+Ombre adapter, ntfy adapter — MCP service plugins loaded via manifest discovery
 
-Task011
-Claude Desktop Integration
+**Ombre Integration** — Task-011
+External Ombre Brain connected via Streamable HTTP MCP protocol
 
-Task012
-Docker Production Deployment
+**Notification Integration** — Task-011
+ntfy.sh push notifications via curl adapter
 
-Task013
-Cloudflare + Caddy
+**HTTPS Deployment** — Task-012
+Domain (`raven-victor.click`), Cloudflare SSL Full strict, Caddy reverse proxy with Let's Encrypt
 
-Task014
-Production Hardening
+**Production Validation** — Task-013
+End-to-end testing: Claude Web ↔ Hub ↔ Ombre / ntfy
+
+---
+
+# Future Work
+
+* GitHub MCP — repository interaction (reserved, not yet implemented)
+* Filesystem MCP — secure file access on VPS (reserved, not yet implemented)
+* Calendar / Email / Task Management integrations
+* Monitoring and alerting
+* Remote MCP registry federation
+* Production hardening (rate limiting, Cloudflare WAF rules, auth upgrade)
 
 ---
 

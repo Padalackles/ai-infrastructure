@@ -59,8 +59,11 @@ Avoid large-scale refactoring whenever possible.
 |---|---|
 | `docs/` | Technical documentation |
 | `tasks/` | Current implementation tasks |
-| `docker/` | Infrastructure configuration |
-| `scripts/` | Automation scripts |
+| `mcp-hub/` | MCP Hub application source and tests |
+| `mcp_servers/` | MCP service plugins (Ombre, ntfy, etc.) |
+| `caddy/` | Caddy reverse proxy configuration |
+| `cloudflare/` | Cloudflare tunnel configuration |
+| `scripts/` | Automation and deployment scripts |
 
 Files must be placed in their designated directories. Do not create ad-hoc files at the repository root.
 

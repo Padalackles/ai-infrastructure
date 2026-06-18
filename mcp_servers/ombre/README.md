@@ -20,15 +20,35 @@ This directory contains the Hub-facing adapter only. Ombre source code is **not*
 ## Health Check
 
 ```
-GET http://45.76.169.98:8000/health
-→ {"status": "ok", "buckets": 0, "decay_engine": "stopped"}
+OmbreAdapter.connect()
+    │
+    ▼
+Connect to MCP endpoint
+http://45.76.169.98:8000/mcp
+    │
+    ▼
+Initialize MCP session
+    │
+    ├── Session established + tools discovered → CONNECTED  ✓
+    ├── Connection failed                      → UNHEALTHY
+    └── Network error                          → DISCONNECTED
 ```
 
 States: `CONNECTED` | `UNHEALTHY` | `DISCONNECTED`
 
 ## Tools
 
+The Ombre adapter discovers tools dynamically from the remote Ombre server — no tool names are hardcoded in the Hub. The Hub forwards `tools/list` and `tools/call` directly to the remote server via the MCP Streamable HTTP protocol.
+
+Current production deployment exposes tools such as:
+
 | Tool | Description |
 |---|---|
-| `ombre_health` | Connectivity check to external Ombre |
-| `ombre_status` | Endpoint, connection state, adapter info |
+| `breath` | Memory breath — light recall |
+| `hold` | Store a memory |
+| `grow` | Expand / enrich a memory |
+| `trace` | Trace memory connections |
+| `pulse` | Memory health / status |
+| `dream` | Deep semantic recall |
+
+The available tool set depends on the remote Ombre server version.

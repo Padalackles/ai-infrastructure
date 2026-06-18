@@ -89,21 +89,29 @@ async def _list_tools(req: ListToolsRequest) -> ListToolsResult:
 
 @_srv.call_tool()
 async def _call_tool(name: str, arguments: dict) -> list[TextContent]:
-    runtime = _get_runtime()
-
-    # Attach tool context for log correlation
+    import time as _time
     from src.core.request_context import RequestContext
+    from src.core.observability.audit import record as audit_record
+
+    runtime = _get_runtime()
     req_ctx = RequestContext.current()
     req_ctx.set("tool", name)
 
     logger.info("tools/call — %s(%s)", name, arguments)
+    t0 = _time.perf_counter()
 
     try:
         server_name = await runtime.find_tool_server(name)
         if server_name:
             req_ctx.set("plugin", server_name)
+            plugin = server_name
+        else:
+            plugin = "unknown"
 
         if not server_name:
+            duration_ms = (_time.perf_counter() - t0) * 1000
+            audit_record(plugin=plugin, tool=name, status="failure",
+                         duration_ms=duration_ms, error_type="ToolNotFound")
             return [TextContent(
                 type="text",
                 text=f"Tool not found on any server: {name}",
@@ -112,8 +120,21 @@ async def _call_tool(name: str, arguments: dict) -> list[TextContent]:
         result = await runtime.call_tool(server_name, name, arguments or {})
         inner = result.get("result", result)
 
+        duration_ms = (_time.perf_counter() - t0) * 1000
+        is_error = isinstance(inner, dict) and inner.get("error")
+        audit_record(
+            plugin=plugin, tool=name,
+            status="failure" if is_error else "success",
+            duration_ms=duration_ms,
+            error_type="ToolError" if is_error else "",
+        )
         return [TextContent(type="text", text=str(inner))]
     except Exception as exc:
+        duration_ms = (_time.perf_counter() - t0) * 1000
+        plugin = req_ctx.plugin or "unknown"
+        audit_record(plugin=plugin, tool=name, status="failure",
+                     duration_ms=duration_ms,
+                     error_type=type(exc).__name__)
         logger.exception("tools/call failed — %s", name)
         return [TextContent(type="text", text=str(exc))]
 

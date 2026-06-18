@@ -49,6 +49,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-018 | ✅ | 修复 notify.send → notify_send（`.` 违反 ^[a-zA-Z0-9_-]{1,64}$） |
 | Task-019 | ✅ | 隐藏内部 Tool — ExampleServer 复用 HUB_EXPOSE_INTERNAL_TOOLS |
 | Task-020 | ✅ | 诊断日志 — 4 处临时日志 + TROUBLESHOOTING_MCP_TOOLS.md |
+| Task-021 | ✅ | 文档筛查 — 7 docs 修复（工具名、状态、环境变量、架构图） |
 
 ---
 
@@ -97,6 +98,7 @@ mcp-hub/src/
 11. Task-018 — 修复 Tool 命名（notify.send → notify_send）
 12. Task-019 — 隐藏内部 Tool（ExampleServer 复用 HUB_EXPOSE_INTERNAL_TOOLS）
 13. Task-020 — 诊断日志 + TROUBLESHOOTING_MCP_TOOLS.md
+14. Task-021 — 文档筛查（INFRASTRUCTURE, CLAUDE_DESKTOP, NOTIFICATION_MCP, OMBRE_INTEGRATION, REGISTRY, SPECIFICATION）
 
 ---
 
@@ -195,8 +197,8 @@ mcp-hub/src/
 
 | Field | Value |
 |---|---|
-| **Hash** | `ead6473` |
-| **Summary** | docs: add MCP Tool troubleshooting investigation record |
+| **Hash** | `19ad210` |
+| **Summary** | docs: screen and fix all docs/ for accuracy — tool names, status, env vars, architecture |
 
 ---
 

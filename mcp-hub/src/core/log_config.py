@@ -1,8 +1,17 @@
-"""Structured Logging — JSON-format logs with request correlation.
+"""Structured Logging Foundation — unified JSON logger for the MCP Hub.
 
-Every request gets a unique request_id propagated through Hub and
-plugin logs via contextvars.  Audit events are written to a
-separate JSON log stream.
+Provides:
+  - JSONFormatter: machine-readable single-line JSON log entries
+  - setup_logging(): one-call configuration of root + file handlers
+  - Request ID propagation via contextvars
+  - Audit log stream (logs/audit.log)
+  - Convenience get_logger() with component metadata
+
+Usage:
+    from src.core.log_config import setup_logging, get_logger
+    setup_logging(level="DEBUG")
+    log = get_logger("transport")
+    log.info("Ready")
 """
 
 from __future__ import annotations
@@ -10,28 +19,24 @@ from __future__ import annotations
 import json
 import logging
 import os
-import time
 import uuid
 from contextvars import ContextVar
 from datetime import datetime, timezone
 from logging.handlers import RotatingFileHandler
+from typing import Any
 
 # ── Request ID context ──────────────────────────────────────────
 
 _request_id: ContextVar[str] = ContextVar("request_id", default="")
 
-_LOG_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "logs")
-
 
 def set_request_id(rid: str | None = None) -> str:
-    """Set a request ID for the current async context. Returns the ID."""
     rid = rid or uuid.uuid4().hex[:12]
     _request_id.set(rid)
     return rid
 
 
 def get_request_id() -> str:
-    """Get the current request ID, or empty string if not set."""
     return _request_id.get("")
 
 
@@ -39,13 +44,13 @@ def get_request_id() -> str:
 
 
 class JSONFormatter(logging.Formatter):
-    """Emit log records as single-line JSON objects."""
+    """Single-line JSON log records with all required fields."""
 
     def format(self, record: logging.LogRecord) -> str:
-        obj = {
+        obj: dict[str, Any] = {
             "ts": datetime.now(timezone.utc).isoformat(),
             "level": record.levelname,
-            "logger": record.name,
+            "component": getattr(record, "component", record.name),
             "msg": record.getMessage(),
         }
         rid = get_request_id()
@@ -53,11 +58,86 @@ class JSONFormatter(logging.Formatter):
             obj["request_id"] = rid
         if record.exc_info and record.exc_info[1]:
             obj["error"] = str(record.exc_info[1])
+        # Extra fields from LoggerAdapter / extra=
+        for key in ("plugin", "tool", "duration_ms", "service"):
+            val = getattr(record, key, None)
+            if val is not None:
+                obj[key] = val
         return json.dumps(obj, ensure_ascii=False, default=str)
 
 
-# ── Audit Logger ────────────────────────────────────────────────
+# ── Log directory ──────────────────────────────────────────────
 
+_LOG_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "logs"
+)
+
+
+def _ensure_log_dir() -> str:
+    os.makedirs(_LOG_DIR, exist_ok=True)
+    return _LOG_DIR
+
+
+# ── Setup ──────────────────────────────────────────────────────
+
+
+def setup_logging(
+    level: str = "INFO",
+    log_dir: str | None = None,
+    json_stdout: bool = True,
+) -> None:
+    """Configure root logger with JSON format + rotating file handler.
+
+    Call once at startup (main.py).  After this, all standard
+    `logging.getLogger(__name__)` calls produce structured JSON.
+    """
+    directory = log_dir or _ensure_log_dir()
+    root = logging.getLogger()
+    root.setLevel(getattr(logging, level.upper(), logging.INFO))
+
+    # Clear any pre-existing handlers to avoid duplicates
+    root.handlers.clear()
+
+    # Console — JSON
+    if json_stdout:
+        console = logging.StreamHandler()
+        console.setLevel(getattr(logging, level.upper(), logging.INFO))
+        console.setFormatter(JSONFormatter())
+        root.addHandler(console)
+
+    # File — JSON, rotated
+    file_handler = RotatingFileHandler(
+        os.path.join(directory, "hub.log"),
+        maxBytes=10 * 1024 * 1024,
+        backupCount=5,
+    )
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(JSONFormatter())
+    root.addHandler(file_handler)
+
+    # Error log — ERROR+ only
+    error_handler = RotatingFileHandler(
+        os.path.join(directory, "error.log"),
+        maxBytes=5 * 1024 * 1024,
+        backupCount=3,
+    )
+    error_handler.setLevel(logging.ERROR)
+    error_handler.setFormatter(JSONFormatter())
+    root.addHandler(error_handler)
+
+    logging.getLogger("mcp").setLevel(logging.DEBUG)
+
+
+def get_logger(name: str, **extra) -> logging.Logger:
+    """Return a logger that attaches extra fields (plugin, tool, etc.)
+    to every record via a LoggerAdapter."""
+    logger = logging.getLogger(name)
+    if extra:
+        return logging.LoggerAdapter(logger, extra)  # type: ignore[return-value]
+    return logger
+
+
+# ── Audit Logger ────────────────────────────────────────────────
 
 _audit_logger: logging.Logger | None = None
 
@@ -66,13 +146,10 @@ def _get_audit_logger() -> logging.Logger:
     global _audit_logger
     if _audit_logger is not None:
         return _audit_logger
-
-    os.makedirs(_LOG_DIR, exist_ok=True)
-
+    _ensure_log_dir()
     _audit_logger = logging.getLogger("mcp-hub.audit")
     _audit_logger.propagate = False
     _audit_logger.setLevel(logging.INFO)
-
     handler = RotatingFileHandler(
         os.path.join(_LOG_DIR, "audit.log"),
         maxBytes=10 * 1024 * 1024,

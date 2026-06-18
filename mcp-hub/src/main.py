@@ -23,7 +23,6 @@ Start with:
 
 from __future__ import annotations
 
-import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -33,7 +32,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from src.config import load_config
 from src.core.events import EventBus
 from src.core.hub_state import set_state
-from src.core.log_config import set_request_id
+from src.core.log_config import get_logger, set_request_id, setup_logging
 from src.loader.discovery import Discovery
 from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
@@ -41,18 +40,9 @@ from src.transport.server import _mcp_asgi, set_runtime, start_mcp, stop_mcp
 
 # ── Logging ─────────────────────────────────────────────────────
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s — %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger("mcp-hub")
-mcp_logger = logging.getLogger("mcp-hub.transport")
-
-# Enable DEBUG logging for MCP SDK protocol tracing
-for _name in ("mcp", "mcp.server", "mcp.server.streamable_http",
-              "mcp.server.lowlevel", "mcp.server.fastmcp"):
-    logging.getLogger(_name).setLevel(logging.DEBUG)
+setup_logging(level="DEBUG")
+logger = get_logger("mcp-hub")
+mcp_logger = get_logger("mcp-hub.transport")
 
 
 # ── Lifecycle ───────────────────────────────────────────────────

@@ -1,0 +1,411 @@
+{"ts": "2026-06-18T16:55:41.634953+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:41.642359+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Starting MCP Hub..."}
+{"ts": "2026-06-18T16:55:41.646482+00:00", "level": "INFO", "component": "src.config", "msg": "Config loaded: C:\\Users\\victor\\ai-infrastructure\\mcp-hub\\config.yaml"}
+{"ts": "2026-06-18T16:55:41.646739+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Configuration Loaded"}
+{"ts": "2026-06-18T16:55:41.647183+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Registry Initialized"}
+{"ts": "2026-06-18T16:55:41.647377+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Event Bus Ready"}
+{"ts": "2026-06-18T16:55:41.649562+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\ai-infrastructure\\mcp_servers"}
+{"ts": "2026-06-18T16:55:41.650005+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: example"}
+{"ts": "2026-06-18T16:55:41.650115+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\example\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:41.651294+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: example (v0.1.0)"}
+{"ts": "2026-06-18T16:55:41.651367+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: filesystem"}
+{"ts": "2026-06-18T16:55:41.651524+00:00", "level": "DEBUG", "component": "src.loader.loader", "msg": "No server.py in filesystem"}
+{"ts": "2026-06-18T16:55:41.651590+00:00", "level": "WARNING", "component": "discovery", "msg": "Skipped filesystem: Loader returned None"}
+{"ts": "2026-06-18T16:55:41.651646+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: github"}
+{"ts": "2026-06-18T16:55:41.651764+00:00", "level": "DEBUG", "component": "src.loader.loader", "msg": "No server.py in github"}
+{"ts": "2026-06-18T16:55:41.651822+00:00", "level": "WARNING", "component": "discovery", "msg": "Skipped github: Loader returned None"}
+{"ts": "2026-06-18T16:55:41.651877+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: hub"}
+{"ts": "2026-06-18T16:55:41.651962+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\hub\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:41.664275+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: hub (v0.1.0)"}
+{"ts": "2026-06-18T16:55:41.664363+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: ntfy"}
+{"ts": "2026-06-18T16:55:41.664510+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\ntfy\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:41.666194+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: ntfy (v0.2.0)"}
+{"ts": "2026-06-18T16:55:41.666272+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: ombre"}
+{"ts": "2026-06-18T16:55:41.666387+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\ombre\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:41.667693+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: ombre (v0.1.0)"}
+{"ts": "2026-06-18T16:55:41.667774+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 4, failed: 2"}
+{"ts": "2026-06-18T16:55:41.667846+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: example"}
+{"ts": "2026-06-18T16:55:41.667903+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: hub"}
+{"ts": "2026-06-18T16:55:41.667957+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: ntfy"}
+{"ts": "2026-06-18T16:55:41.668010+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: ombre"}
+{"ts": "2026-06-18T16:55:41.668128+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: filesystem — Loader returned None"}
+{"ts": "2026-06-18T16:55:41.668217+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: github — Loader returned None"}
+{"ts": "2026-06-18T16:55:41.668292+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: example (v0.1.0)"}
+{"ts": "2026-06-18T16:55:41.668351+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: hub (v0.1.0)"}
+{"ts": "2026-06-18T16:55:41.668401+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: ntfy (v0.2.0)"}
+{"ts": "2026-06-18T16:55:41.668449+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: ombre (v0.1.0)"}
+{"ts": "2026-06-18T16:55:41.668514+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Services Loaded — 4 discovered"}
+{"ts": "2026-06-18T16:55:41.668571+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Runtime Initialized"}
+{"ts": "2026-06-18T16:55:41.668830+00:00", "level": "INFO", "component": "mcp.server.streamable_http_manager", "msg": "StreamableHTTP session manager started"}
+{"ts": "2026-06-18T16:55:41.668893+00:00", "level": "INFO", "component": "transport", "msg": "FastMCP session manager started"}
+{"ts": "2026-06-18T16:55:41.668950+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Transport Ready (FastMCP Streamable HTTP)"}
+{"ts": "2026-06-18T16:55:41.669007+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: example"}
+{"ts": "2026-06-18T16:55:41.669061+00:00", "level": "INFO", "component": "mcp_servers.example.server", "msg": "ExampleServer: initialize() called"}
+{"ts": "2026-06-18T16:55:41.669114+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: example"}
+{"ts": "2026-06-18T16:55:41.669165+00:00", "level": "INFO", "component": "mcp_servers.example.server", "msg": "ExampleServer: start() called"}
+{"ts": "2026-06-18T16:55:41.669215+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: example"}
+{"ts": "2026-06-18T16:55:41.669267+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: hub"}
+{"ts": "2026-06-18T16:55:41.669321+00:00", "level": "INFO", "component": "mcp_servers.hub.server", "msg": "Hub diagnostics initialized (expose=False)"}
+{"ts": "2026-06-18T16:55:41.669371+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: hub"}
+{"ts": "2026-06-18T16:55:41.669420+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: hub"}
+{"ts": "2026-06-18T16:55:41.669470+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: ntfy"}
+{"ts": "2026-06-18T16:55:41.669542+00:00", "level": "INFO", "component": "mcp_servers.ntfy.server", "msg": "ntfy initialized — https://ntfy.sh/ai-infrastructure"}
+{"ts": "2026-06-18T16:55:41.669601+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: ntfy"}
+{"ts": "2026-06-18T16:55:41.669659+00:00", "level": "INFO", "component": "mcp_servers.ntfy.server", "msg": "ntfy started"}
+{"ts": "2026-06-18T16:55:41.669713+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: ntfy"}
+{"ts": "2026-06-18T16:55:41.669765+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: ombre"}
+{"ts": "2026-06-18T16:55:41.669826+00:00", "level": "INFO", "component": "mcp_servers.ombre.server", "msg": "Ombre plugin initializing — endpoint: http://45.76.169.98:8000/mcp"}
+{"ts": "2026-06-18T16:55:41.669882+00:00", "level": "INFO", "component": "src.core.remote_client", "msg": "Ombre MCP client connecting to http://45.76.169.98:8000/mcp"}
+{"ts": "2026-06-18T16:55:43.610411+00:00", "level": "DEBUG", "component": "mcp.client.streamable_http", "msg": "Connecting to StreamableHTTP endpoint: http://45.76.169.98:8000/mcp"}
+{"ts": "2026-06-18T16:55:43.613012+00:00", "level": "DEBUG", "component": "mcp.client.streamable_http", "msg": "Sending client message: root=JSONRPCRequest(method='initialize', params={'protocolVersion': '2025-11-25', 'capabilities': {}, 'clientInfo': {'name': 'mcp', 'version': '0.1.0'}}, jsonrpc='2.0', id=0)"}
+{"ts": "2026-06-18T16:55:43.617526+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=10.0 socket_options=None"}
+{"ts": "2026-06-18T16:55:43.620620+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x000001776AF1D400>"}
+{"ts": "2026-06-18T16:55:43.621587+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:43.622440+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.complete"}
+{"ts": "2026-06-18T16:55:43.622532+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:43.622849+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.complete"}
+{"ts": "2026-06-18T16:55:43.622923+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:44.247731+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Connection', b'close'), (b'Transfer-Encoding', b'chunked'), (b'Cache-Control', b'no-cache, no-transform'), (b'Content-Type', b'text/event-stream'), (b'Date', b'Thu, 18 Jun 2026 16:55:44 GMT'), (b'Mcp-Session-Id', b'5af86252b6464deea9c1c4c80f1d593a'), (b'Server', b'uvicorn'), (b'X-Accel-Buffering', b'no')])"}
+{"ts": "2026-06-18T16:55:44.248326+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: POST http://45.76.169.98:8000/mcp \"HTTP/1.1 200 OK\""}
+{"ts": "2026-06-18T16:55:44.248450+00:00", "level": "INFO", "component": "mcp.client.streamable_http", "msg": "Received session ID: 5af86252b6464deea9c1c4c80f1d593a"}
+{"ts": "2026-06-18T16:55:44.248655+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_body.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:44.441554+00:00", "level": "DEBUG", "component": "mcp.client.streamable_http", "msg": "SSE message: root=JSONRPCResponse(jsonrpc='2.0', id=0, result={'protocolVersion': '2025-11-25', 'capabilities': {'experimental': {}, 'prompts': {'listChanged': False}, 'resources': {'subscribe': False, 'listChanged': False}, 'tools': {'listChanged': False}}, 'serverInfo': {'name': 'Ombre Brain', 'version': '1.27.0'}})"}
+{"ts": "2026-06-18T16:55:44.441710+00:00", "level": "INFO", "component": "mcp.client.streamable_http", "msg": "Negotiated protocol version: 2025-11-25"}
+{"ts": "2026-06-18T16:55:44.442591+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.started"}
+{"ts": "2026-06-18T16:55:44.443433+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.complete"}
+{"ts": "2026-06-18T16:55:44.445698+00:00", "level": "INFO", "component": "src.core.remote_client", "msg": "Connected to Ombre — Ombre Brain v1.27.0"}
+{"ts": "2026-06-18T16:55:44.446647+00:00", "level": "DEBUG", "component": "mcp.client.streamable_http", "msg": "Sending client message: root=JSONRPCNotification(method='notifications/initialized', params=None, jsonrpc='2.0')"}
+{"ts": "2026-06-18T16:55:44.453239+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=10.0 socket_options=None"}
+{"ts": "2026-06-18T16:55:44.454070+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=10.0 socket_options=None"}
+{"ts": "2026-06-18T16:55:44.455730+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x000001776AF28B90>"}
+{"ts": "2026-06-18T16:55:44.456426+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:44.456651+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x000001776AF29450>"}
+{"ts": "2026-06-18T16:55:44.457359+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.complete"}
+{"ts": "2026-06-18T16:55:44.457436+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:44.457559+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.started request=<Request [b'GET']>"}
+{"ts": "2026-06-18T16:55:44.457856+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.complete"}
+{"ts": "2026-06-18T16:55:44.457941+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:44.458187+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.complete"}
+{"ts": "2026-06-18T16:55:44.458255+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.started request=<Request [b'GET']>"}
+{"ts": "2026-06-18T16:55:44.458345+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.complete"}
+{"ts": "2026-06-18T16:55:44.458402+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.started request=<Request [b'GET']>"}
+{"ts": "2026-06-18T16:55:44.458683+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_body.failed exception=GeneratorExit()"}
+{"ts": "2026-06-18T16:55:45.346407+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.complete return_value=(b'HTTP/1.1', 202, b'Accepted', [(b'Connection', b'close'), (b'Content-Length', b'0'), (b'Content-Type', b'application/json'), (b'Date', b'Thu, 18 Jun 2026 16:55:44 GMT'), (b'Mcp-Session-Id', b'5af86252b6464deea9c1c4c80f1d593a'), (b'Server', b'uvicorn')])"}
+{"ts": "2026-06-18T16:55:45.347232+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: POST http://45.76.169.98:8000/mcp \"HTTP/1.1 202 Accepted\""}
+{"ts": "2026-06-18T16:55:45.347510+00:00", "level": "DEBUG", "component": "mcp.client.streamable_http", "msg": "Received 202 Accepted"}
+{"ts": "2026-06-18T16:55:45.349334+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.started"}
+{"ts": "2026-06-18T16:55:45.350443+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.complete"}
+{"ts": "2026-06-18T16:55:45.352277+00:00", "level": "DEBUG", "component": "mcp.client.streamable_http", "msg": "Sending client message: root=JSONRPCRequest(method='tools/list', params=None, jsonrpc='2.0', id=1)"}
+{"ts": "2026-06-18T16:55:45.355150+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=10.0 socket_options=None"}
+{"ts": "2026-06-18T16:55:45.356427+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x000001776AEAFA80>"}
+{"ts": "2026-06-18T16:55:45.357251+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:45.357753+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.complete"}
+{"ts": "2026-06-18T16:55:45.357835+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:45.358249+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.complete"}
+{"ts": "2026-06-18T16:55:45.358330+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:46.033467+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Connection', b'close'), (b'Transfer-Encoding', b'chunked'), (b'Cache-Control', b'no-cache, no-transform'), (b'Content-Type', b'text/event-stream'), (b'Date', b'Thu, 18 Jun 2026 16:55:45 GMT'), (b'Mcp-Session-Id', b'5af86252b6464deea9c1c4c80f1d593a'), (b'Server', b'uvicorn'), (b'X-Accel-Buffering', b'no')])"}
+{"ts": "2026-06-18T16:55:46.034226+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: POST http://45.76.169.98:8000/mcp \"HTTP/1.1 200 OK\""}
+{"ts": "2026-06-18T16:55:46.034845+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_body.started request=<Request [b'POST']>"}
+{"ts": "2026-06-18T16:55:46.037749+00:00", "level": "DEBUG", "component": "mcp.client.streamable_http", "msg": "SSE message: root=JSONRPCResponse(jsonrpc='2.0', id=1, result={'tools': [{'name': 'breath', 'description': '检索/浮现记忆。不传query或传空=自动浮现,有query=关键词检索。max_tokens控制返回总token上限(默认10000)。domain逗号分隔,valence/arousal 0~1(-1忽略)。max_results控制返回数量上限(默认20,最大50)。importance_min>=1时按重要度批量拉取(不走语义搜索,按importance降序返回最多20条)。', 'inputSchema': {'properties': {'query': {'default': '', 'title': 'Query', 'type': 'string'}, 'max_tokens': {'default': 10000, 'title': 'Max Tokens', 'type': 'integer'}, 'domain': {'default': '', 'title': 'Domain', 'type': 'string'}, 'valence': {'default': -1, 'title': 'Valence', 'type': 'number'}, 'arousal': {'default': -1, 'title': 'Arousal', 'type': 'number'}, 'max_results': {'default': 20, 'title': 'Max Results', 'type': 'integer'}, 'importance_min': {'default': -1, 'title': 'Importance Min', 'type': 'integer'}}, 'title': 'breathArguments', 'type': 'object'}, 'outputSchema': {'properties': {'result': {'title': 'Result', 'type': 'string'}}, 'required': ['result'], 'title': 'breathOutput', 'type': 'object'}}, {'name': 'hold', 'description': '存储单条记忆,自动打标+合并。tags逗号分隔,importance 1-10。pinned=True创建永久钉选桶。feel=True存储你的第一人称感受(不参与普通浮现)。source_bucket=被消化的记忆桶ID(feel模式下,标记源记忆为已消化)。', 'inputSchema': {'properties': {'content': {'title': 'Content', 'type': 'string'}, 'tags': {'default': '', 'title': 'Tags', 'type': 'string'}, 'importance': {'default': 5, 'title': 'Importance', 'type': 'integer'}, 'pinned': {'default': False, 'title': 'Pinned', 'type': 'boolean'}, 'feel': {'default': False, 'title': 'Feel', 'type': 'boolean'}, 'source_bucket': {'default': '', 'title': 'Source Bucket', 'type': 'string'}, 'valence': {'default': -1, 'title': 'Valence', 'type': 'number'}, 'arousal': {'default': -1, 'title': 'Arousal', 'type': 'number'}}, 'required': ['content'], 'title': 'holdArguments', 'type': 'object'}, 'outputSchema': {'properties': {'result': {'title': 'Result', 'type': 'string'}}, 'required': ['result'], 'title': 'holdOutput', 'type': 'object'}}, {'name': 'grow', 'description': '日记归档,自动拆分为多桶。短内容(<30字)走快速路径。', 'inputSchema': {'properties': {'content': {'title': 'Content', 'type': 'string'}}, 'required': ['content'], 'title': 'growArguments', 'type': 'object'}, 'outputSchema': {'properties': {'result': {'title': 'Result', 'type': 'string'}}, 'required': ['result'], 'title': 'growOutput', 'type': 'object'}}, {'name': 'trace', 'description': '修改记忆元数据或内容。resolved=1沉底/0激活,pinned=1钉选/0取消,digested=1隐藏(保留但不浮现)/0取消隐藏,content=替换桶正文,delete=True删除。只传需改的,-1或空=不改。', 'inputSchema': {'properties': {'bucket_id': {'title': 'Bucket Id', 'type': 'string'}, 'name': {'default': '', 'title': 'Name', 'type': 'string'}, 'domain': {'default': '', 'title': 'Domain', 'type': 'string'}, 'valence': {'default': -1, 'title': 'Valence', 'type': 'number'}, 'arousal': {'default': -1, 'title': 'Arousal', 'type': 'number'}, 'importance': {'default': -1, 'title': 'Importance', 'type': 'integer'}, 'tags': {'default': '', 'title': 'Tags', 'type': 'string'}, 'resolved': {'default': -1, 'title': 'Resolved', 'type': 'integer'}, 'pinned': {'default': -1, 'title': 'Pinned', 'type': 'integer'}, 'digested': {'default': -1, 'title': 'Digested', 'type': 'integer'}, 'content': {'default': '', 'title': 'Content', 'type': 'string'}, 'delete': {'default': False, 'title': 'Delete', 'type': 'boolean'}}, 'required': ['bucket_id'], 'title': 'traceArguments', 'type': 'object'}, 'outputSchema': {'properties': {'result': {'title': 'Result', 'type': 'string'}}, 'required': ['result'], 'title': 'traceOutput', 'type': 'object'}}, {'name': 'pulse', 'description': '系统状态+记忆桶列表。include_archive=True含归档。', 'inputSchema': {'properties': {'include_archive': {'default': False, 'title': 'Include Archive', 'type': 'boolean'}}, 'title': 'pulseArguments', 'type': 'object'}, 'outputSchema': {'properties': {'result': {'title': 'Result', 'type': 'string'}}, 'required': ['result'], 'title': 'pulseOutput', 'type': 'object'}}, {'name': 'dream', 'description': '做梦——读取最近新增的记忆桶,供你自省。读完后可以trace(resolved=1)放下,或hold(feel=True)写感受。', 'inputSchema': {'properties': {}, 'title': 'dreamArguments', 'type': 'object'}, 'outputSchema': {'properties': {'result': {'title': 'Result', 'type': 'string'}}, 'required': ['result'], 'title': 'dreamOutput', 'type': 'object'}}]})"}
+{"ts": "2026-06-18T16:55:46.038698+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.started"}
+{"ts": "2026-06-18T16:55:46.039191+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.complete"}
+{"ts": "2026-06-18T16:55:46.040330+00:00", "level": "INFO", "component": "src.core.remote_client", "msg": "Discovered 6 tools from Ombre: ['breath', 'hold', 'grow', 'trace', 'pulse', 'dream']"}
+{"ts": "2026-06-18T16:55:46.043645+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=10.0 socket_options=None"}
+{"ts": "2026-06-18T16:55:46.045570+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x000001776AF3CB00>"}
+{"ts": "2026-06-18T16:55:46.046889+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.started request=<Request [b'DELETE']>"}
+{"ts": "2026-06-18T16:55:46.047573+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.complete"}
+{"ts": "2026-06-18T16:55:46.047699+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.started request=<Request [b'DELETE']>"}
+{"ts": "2026-06-18T16:55:46.047853+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.complete"}
+{"ts": "2026-06-18T16:55:46.047948+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.started request=<Request [b'DELETE']>"}
+{"ts": "2026-06-18T16:55:46.048648+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_body.failed exception=GeneratorExit()"}
+{"ts": "2026-06-18T16:55:46.995001+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Connection', b'close'), (b'Transfer-Encoding', b'chunked'), (b'Cache-Control', b'no-cache, no-transform'), (b'Content-Type', b'text/event-stream'), (b'Date', b'Thu, 18 Jun 2026 16:55:45 GMT'), (b'Mcp-Session-Id', b'5af86252b6464deea9c1c4c80f1d593a'), (b'Server', b'uvicorn'), (b'X-Accel-Buffering', b'no')])"}
+{"ts": "2026-06-18T16:55:46.995264+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: GET http://45.76.169.98:8000/mcp \"HTTP/1.1 200 OK\""}
+{"ts": "2026-06-18T16:55:46.995367+00:00", "level": "DEBUG", "component": "mcp.client.streamable_http", "msg": "GET SSE connection established"}
+{"ts": "2026-06-18T16:55:46.995518+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_body.started request=<Request [b'GET']>"}
+{"ts": "2026-06-18T16:55:50.645767+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_body.complete"}
+{"ts": "2026-06-18T16:55:50.647586+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.started"}
+{"ts": "2026-06-18T16:55:50.648532+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.complete"}
+{"ts": "2026-06-18T16:55:50.650016+00:00", "level": "INFO", "component": "mcp.client.streamable_http", "msg": "GET stream disconnected, reconnecting in 1000ms..."}
+{"ts": "2026-06-18T16:55:51.665477+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.started host='127.0.0.1' port=7897 local_address=None timeout=10.0 socket_options=None"}
+{"ts": "2026-06-18T16:55:51.667506+00:00", "level": "DEBUG", "component": "httpcore.connection", "msg": "connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x000001776AF09A30>"}
+{"ts": "2026-06-18T16:55:51.669122+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.started request=<Request [b'GET']>"}
+{"ts": "2026-06-18T16:55:51.670033+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_headers.complete"}
+{"ts": "2026-06-18T16:55:51.670272+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.started request=<Request [b'GET']>"}
+{"ts": "2026-06-18T16:55:51.670391+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "send_request_body.complete"}
+{"ts": "2026-06-18T16:55:51.670454+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.started request=<Request [b'GET']>"}
+{"ts": "2026-06-18T16:55:51.769519+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Connection', b'close'), (b'Content-Type', b'application/json'), (b'Date', b'Thu, 18 Jun 2026 16:55:47 GMT'), (b'Mcp-Session-Id', b'5af86252b6464deea9c1c4c80f1d593a'), (b'Server', b'uvicorn'), (b'Content-Length', b'0')])"}
+{"ts": "2026-06-18T16:55:51.770283+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: DELETE http://45.76.169.98:8000/mcp \"HTTP/1.1 200 OK\""}
+{"ts": "2026-06-18T16:55:51.770608+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_body.started request=<Request [b'DELETE']>"}
+{"ts": "2026-06-18T16:55:51.770840+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_body.complete"}
+{"ts": "2026-06-18T16:55:51.772238+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.started"}
+{"ts": "2026-06-18T16:55:51.773078+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.complete"}
+{"ts": "2026-06-18T16:55:51.774711+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "receive_response_headers.failed exception=CancelledError(\"Cancelled via cancel scope 1776ae43570 by <Task pending name='anyio.from_thread.BlockingPortal._call_func' coro=<TaskHandle._run_coro() running at C:\\\\Users\\\\victor\\\\PyCharmMiscProject\\\\.venv\\\\Lib\\\\site-packages\\\\anyio\\\\_core\\\\_tasks.py:278> cb=[TaskGroup._spawn.<locals>.task_done() at C:\\\\Users\\\\victor\\\\PyCharmMiscProject\\\\.venv\\\\Lib\\\\site-packages\\\\anyio\\\\_backends\\\\_asyncio.py:832]>\")"}
+{"ts": "2026-06-18T16:55:51.775941+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.started"}
+{"ts": "2026-06-18T16:55:51.776721+00:00", "level": "DEBUG", "component": "httpcore.http11", "msg": "response_closed.complete"}
+{"ts": "2026-06-18T16:55:51.778777+00:00", "level": "INFO", "component": "mcp_servers.ombre.server", "msg": "Ombre — Ombre Brain v1.27.0 (6 tools)"}
+{"ts": "2026-06-18T16:55:51.778858+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: ombre"}
+{"ts": "2026-06-18T16:55:51.778921+00:00", "level": "INFO", "component": "mcp_servers.ombre.server", "msg": "Ombre plugin started (6 tools)"}
+{"ts": "2026-06-18T16:55:51.778976+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: ombre"}
+{"ts": "2026-06-18T16:55:51.779049+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Services Started — total: 4 running: 4 failed: 0"}
+{"ts": "2026-06-18T16:55:51.779108+00:00", "level": "INFO", "component": "mcp-hub", "msg": "MCP Hub Ready"}
+{"ts": "2026-06-18T16:55:51.792424+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: GET http://testserver/health \"HTTP/1.1 200 OK\""}
+{"ts": "2026-06-18T16:55:51.793143+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Stopping Services..."}
+{"ts": "2026-06-18T16:55:51.793237+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopping: example"}
+{"ts": "2026-06-18T16:55:51.793298+00:00", "level": "INFO", "component": "mcp_servers.example.server", "msg": "ExampleServer: stop() called"}
+{"ts": "2026-06-18T16:55:51.793354+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopped: example"}
+{"ts": "2026-06-18T16:55:51.793409+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopping: hub"}
+{"ts": "2026-06-18T16:55:51.793463+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopped: hub"}
+{"ts": "2026-06-18T16:55:51.793516+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopping: ntfy"}
+{"ts": "2026-06-18T16:55:51.793571+00:00", "level": "INFO", "component": "mcp_servers.ntfy.server", "msg": "ntfy stopped"}
+{"ts": "2026-06-18T16:55:51.793625+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopped: ntfy"}
+{"ts": "2026-06-18T16:55:51.793676+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopping: ombre"}
+{"ts": "2026-06-18T16:55:51.793736+00:00", "level": "INFO", "component": "src.core.remote_client", "msg": "Ombre MCP client disconnected"}
+{"ts": "2026-06-18T16:55:51.793788+00:00", "level": "INFO", "component": "mcp_servers.ombre.server", "msg": "Ombre plugin stopped"}
+{"ts": "2026-06-18T16:55:51.793839+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopped: ombre"}
+{"ts": "2026-06-18T16:55:51.793900+00:00", "level": "INFO", "component": "mcp.server.streamable_http_manager", "msg": "StreamableHTTP session manager shutting down"}
+{"ts": "2026-06-18T16:55:51.794075+00:00", "level": "INFO", "component": "transport", "msg": "FastMCP session manager stopped"}
+{"ts": "2026-06-18T16:55:51.794134+00:00", "level": "INFO", "component": "mcp-hub", "msg": "Exit."}
+{"ts": "2026-06-18T16:55:51.804615+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:51.811153+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: GET http://testserver/health \"HTTP/1.1 200 OK\""}
+{"ts": "2026-06-18T16:55:51.813285+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:51.829670+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: GET http://testserver/status \"HTTP/1.1 200 OK\""}
+{"ts": "2026-06-18T16:55:51.835386+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:51.837855+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "===== Incoming Request =====", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838007+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "Method:  POST", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838073+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "Path:    /mcp", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838196+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "Headers:", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838262+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  accept: application/json", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838323+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  content-type: application/json", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838383+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  user-agent: testclient", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838446+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  content-length: 58", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838551+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "Body(JSON):", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838631+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  jsonrpc: 2.0", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838718+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  id:      1", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838799+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  method:  initialize", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838882+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  params:  {}", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.838966+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "============================", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.839092+00:00", "level": "DEBUG", "component": "mcp-hub.transport", "msg": "MCP ← POST /mcp  UA=testclient  Accept=application/json  Content-Type=application/json  Content-Length=58  Authorization=(none)", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.839236+00:00", "level": "WARNING", "component": "mcp-hub.transport", "msg": "AUTH DENIED → 401  method=POST path=/mcp  has_auth=False auth=(none)  UA=testclient  Content-Length=58  reason=Missing or malformed Authorization header. Expected: Bearer <token>", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.839335+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "===== Outgoing Response =====", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.839428+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "Status: 401", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.839513+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "Response Headers:", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.839602+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  content-type: application/json", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.839714+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "  www-authenticate: Bearer", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.839818+00:00", "level": "INFO", "component": "mcp-hub.transport", "msg": "============================", "request_id": "6e5993b71de1"}
+{"ts": "2026-06-18T16:55:51.842122+00:00", "level": "INFO", "component": "httpx", "msg": "HTTP Request: POST http://testserver/mcp \"HTTP/1.1 401 Unauthorized\""}
+{"ts": "2026-06-18T16:55:51.844592+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:51.866710+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\AppData\\Local\\Temp\\tmp13so7ci_"}
+{"ts": "2026-06-18T16:55:51.867084+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: good_plugin"}
+{"ts": "2026-06-18T16:55:51.867208+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\AppData\\Local\\Temp\\tmp13so7ci_\\good_plugin\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:51.876685+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: good_plugin (v1.0)"}
+{"ts": "2026-06-18T16:55:51.876808+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 1, failed: 0"}
+{"ts": "2026-06-18T16:55:51.876883+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: good_plugin"}
+{"ts": "2026-06-18T16:55:51.899813+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:51.906832+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\AppData\\Local\\Temp\\tmphccvmvl_"}
+{"ts": "2026-06-18T16:55:51.907231+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: fallback_plugin"}
+{"ts": "2026-06-18T16:55:51.916269+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: fallbackplugin (v0.1.0)"}
+{"ts": "2026-06-18T16:55:51.916475+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 1, failed: 0"}
+{"ts": "2026-06-18T16:55:51.916627+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: fallbackplugin"}
+{"ts": "2026-06-18T16:55:51.936317+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:51.949202+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\AppData\\Local\\Temp\\tmp7ku_makq"}
+{"ts": "2026-06-18T16:55:51.949843+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: no_manifest"}
+{"ts": "2026-06-18T16:55:51.961316+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: nomanifestserver (v0.1.0)"}
+{"ts": "2026-06-18T16:55:51.961547+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 1, failed: 0"}
+{"ts": "2026-06-18T16:55:51.961719+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: nomanifestserver"}
+{"ts": "2026-06-18T16:55:51.973634+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.002998+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\AppData\\Local\\Temp\\tmphwslz2f5"}
+{"ts": "2026-06-18T16:55:52.003503+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: bad_plugin"}
+{"ts": "2026-06-18T16:55:52.003637+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\AppData\\Local\\Temp\\tmphwslz2f5\\bad_plugin\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:52.004302+00:00", "level": "DEBUG", "component": "src.loader.loader", "msg": "No server.py in bad_plugin"}
+{"ts": "2026-06-18T16:55:52.004386+00:00", "level": "WARNING", "component": "discovery", "msg": "Skipped bad_plugin: Loader returned None"}
+{"ts": "2026-06-18T16:55:52.004454+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 0, failed: 1"}
+{"ts": "2026-06-18T16:55:52.004525+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: bad_plugin — Loader returned None"}
+{"ts": "2026-06-18T16:55:52.009743+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.020098+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\AppData\\Local\\Temp\\tmpv0z7a5g4"}
+{"ts": "2026-06-18T16:55:52.020535+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: broken_plugin"}
+{"ts": "2026-06-18T16:55:52.020708+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\AppData\\Local\\Temp\\tmpv0z7a5g4\\broken_plugin\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:52.024040+00:00", "level": "ERROR", "component": "discovery", "msg": "Unexpected error loading broken_plugin", "error": "invalid syntax (server.py, line 1)"}
+{"ts": "2026-06-18T16:55:52.026840+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 0, failed: 1"}
+{"ts": "2026-06-18T16:55:52.027030+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: broken_plugin — invalid syntax (server.py, line 1)"}
+{"ts": "2026-06-18T16:55:52.031773+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.061058+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\AppData\\Local\\Temp\\tmp5_jppv60"}
+{"ts": "2026-06-18T16:55:52.061499+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: bad"}
+{"ts": "2026-06-18T16:55:52.061628+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\AppData\\Local\\Temp\\tmp5_jppv60\\bad\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:52.069523+00:00", "level": "ERROR", "component": "discovery", "msg": "Unexpected error loading bad", "error": "'{' was never closed (server.py, line 1)"}
+{"ts": "2026-06-18T16:55:52.071163+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: good"}
+{"ts": "2026-06-18T16:55:52.071320+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\AppData\\Local\\Temp\\tmp5_jppv60\\good\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:52.085846+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: good (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.086444+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 1, failed: 1"}
+{"ts": "2026-06-18T16:55:52.086860+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: good"}
+{"ts": "2026-06-18T16:55:52.087423+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: bad — '{' was never closed (server.py, line 1)"}
+{"ts": "2026-06-18T16:55:52.113102+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.119608+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\AppData\\Local\\Temp\\tmpqwwu1e84"}
+{"ts": "2026-06-18T16:55:52.120816+00:00", "level": "INFO", "component": "discovery", "msg": "No server directories found"}
+{"ts": "2026-06-18T16:55:52.134106+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.137141+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: lifecycle-test (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.137386+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.137556+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.137755+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.141405+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.143994+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.144223+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.147946+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.150245+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.150423+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.153613+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.166830+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.167029+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.167196+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopping: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.167333+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopped: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.170380+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.176413+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: lifecycle-test (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.176655+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.176819+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.176963+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.177114+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopping: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.177254+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopped: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.180751+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.183103+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: lifecycle-test (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.183317+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.183525+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.183671+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.188878+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.192038+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: lifecycle-test (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.192328+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.192668+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.192835+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.192928+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopping: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.193007+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopped: lifecycle-test"}
+{"ts": "2026-06-18T16:55:52.194878+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.215062+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: failing (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.215333+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: failing"}
+{"ts": "2026-06-18T16:55:52.215526+00:00", "level": "ERROR", "component": "src.registry.server_manager", "msg": "Failed to start server: failing", "error": "init failure"}
+{"ts": "2026-06-18T16:55:52.224109+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.226566+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: failing-start (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.226777+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: failing-start"}
+{"ts": "2026-06-18T16:55:52.226936+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: failing-start"}
+{"ts": "2026-06-18T16:55:52.227131+00:00", "level": "ERROR", "component": "src.lifecycle.base_server", "msg": "Server start failed for failing-start — rolling back", "error": "start failure"}
+{"ts": "2026-06-18T16:55:52.230054+00:00", "level": "ERROR", "component": "src.registry.server_manager", "msg": "Server start failed for failing-start — rolling back", "error": "start failure"}
+{"ts": "2026-06-18T16:55:52.231425+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopping: failing-start"}
+{"ts": "2026-06-18T16:55:52.231643+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server stopped: failing-start"}
+{"ts": "2026-06-18T16:55:52.235239+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.238025+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: good (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.238193+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: bad (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.238349+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: good"}
+{"ts": "2026-06-18T16:55:52.238468+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: good"}
+{"ts": "2026-06-18T16:55:52.238580+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: good"}
+{"ts": "2026-06-18T16:55:52.238689+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: bad"}
+{"ts": "2026-06-18T16:55:52.238815+00:00", "level": "ERROR", "component": "src.registry.server_manager", "msg": "Failed to start server: bad", "error": "init failure"}
+{"ts": "2026-06-18T16:55:52.243333+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.245775+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: one (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.246024+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: two (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.246217+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: one"}
+{"ts": "2026-06-18T16:55:52.246374+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: one"}
+{"ts": "2026-06-18T16:55:52.246515+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: one"}
+{"ts": "2026-06-18T16:55:52.246650+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: two"}
+{"ts": "2026-06-18T16:55:52.246785+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: two"}
+{"ts": "2026-06-18T16:55:52.246923+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: two"}
+{"ts": "2026-06-18T16:55:52.250371+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.252854+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: good (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.252980+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: bad (v0.1.0)"}
+{"ts": "2026-06-18T16:55:52.253057+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: good"}
+{"ts": "2026-06-18T16:55:52.253127+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server starting: good"}
+{"ts": "2026-06-18T16:55:52.253190+00:00", "level": "INFO", "component": "src.lifecycle.base_server", "msg": "Server started: good"}
+{"ts": "2026-06-18T16:55:52.253256+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Initializing server: bad"}
+{"ts": "2026-06-18T16:55:52.253331+00:00", "level": "ERROR", "component": "src.registry.server_manager", "msg": "Failed to start server: bad", "error": "init failure"}
+{"ts": "2026-06-18T16:55:52.255977+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.280833+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.285892+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.291146+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:52.293623+00:00", "level": "WARNING", "component": "mcp_servers.ntfy.adapter", "msg": "NTFY_TOPIC not configured — using default 'ai-infrastructure'"}
+{"ts": "2026-06-18T16:55:52.293911+00:00", "level": "INFO", "component": "mcp_servers.ntfy.adapter", "msg": "ntfy curl: curl -s -X POST -H \"Title: Claude Test\" -d \"Task-012 test from pytest\" https://ntfy.sh/ai-infrastructure"}
+{"ts": "2026-06-18T16:55:53.490496+00:00", "level": "INFO", "component": "mcp_servers.ntfy.adapter", "msg": "ntfy sent successfully — id=vCXczgV22DwR"}
+{"ts": "2026-06-18T16:55:53.495892+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:53.502442+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:53.505810+00:00", "level": "WARNING", "component": "mcp_servers.ntfy.adapter", "msg": "NTFY_TOPIC not configured — using default 'ai-infrastructure'"}
+{"ts": "2026-06-18T16:55:53.506136+00:00", "level": "INFO", "component": "mcp_servers.ntfy.adapter", "msg": "ntfy curl: curl -s -X POST -H \"Title: Pytest\" -d \"Integration test\" https://ntfy.sh/ai-infrastructure"}
+{"ts": "2026-06-18T16:55:55.762139+00:00", "level": "INFO", "component": "mcp_servers.ntfy.adapter", "msg": "ntfy sent successfully — id=VBxsexMKE9Iv"}
+{"ts": "2026-06-18T16:55:55.766912+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.770977+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.773500+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.777367+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.779674+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.780762+00:00", "level": "INFO", "component": "src.core.remote_client", "msg": "Test MCP client disconnected"}
+{"ts": "2026-06-18T16:55:55.787903+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.803993+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.818579+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.820302+00:00", "level": "WARNING", "component": "mcp_servers.ombre.server", "msg": "Ombre plugin started but not connected"}
+{"ts": "2026-06-18T16:55:55.820409+00:00", "level": "INFO", "component": "src.core.remote_client", "msg": "Ombre MCP client disconnected"}
+{"ts": "2026-06-18T16:55:55.820475+00:00", "level": "INFO", "component": "mcp_servers.ombre.server", "msg": "Ombre plugin stopped"}
+{"ts": "2026-06-18T16:55:55.824258+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.827168+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.829707+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.847913+00:00", "level": "INFO", "component": "src.core.remote_client", "msg": "Ombre MCP client disconnected"}
+{"ts": "2026-06-18T16:55:55.850093+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.853944+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\ai-infrastructure\\mcp_servers"}
+{"ts": "2026-06-18T16:55:55.854897+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: example"}
+{"ts": "2026-06-18T16:55:55.855196+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\example\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:55.857626+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: example (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.857797+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: filesystem"}
+{"ts": "2026-06-18T16:55:55.858142+00:00", "level": "DEBUG", "component": "src.loader.loader", "msg": "No server.py in filesystem"}
+{"ts": "2026-06-18T16:55:55.858288+00:00", "level": "WARNING", "component": "discovery", "msg": "Skipped filesystem: Loader returned None"}
+{"ts": "2026-06-18T16:55:55.858412+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: github"}
+{"ts": "2026-06-18T16:55:55.858640+00:00", "level": "DEBUG", "component": "src.loader.loader", "msg": "No server.py in github"}
+{"ts": "2026-06-18T16:55:55.858770+00:00", "level": "WARNING", "component": "discovery", "msg": "Skipped github: Loader returned None"}
+{"ts": "2026-06-18T16:55:55.858904+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: hub"}
+{"ts": "2026-06-18T16:55:55.859089+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\hub\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:55.861116+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: hub (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.861254+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: ntfy"}
+{"ts": "2026-06-18T16:55:55.861435+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\ntfy\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:55.863306+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: ntfy (v0.2.0)"}
+{"ts": "2026-06-18T16:55:55.863390+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: ombre"}
+{"ts": "2026-06-18T16:55:55.863499+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\ombre\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:55.864668+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: ombre (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.864753+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 4, failed: 2"}
+{"ts": "2026-06-18T16:55:55.864828+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: example"}
+{"ts": "2026-06-18T16:55:55.864891+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: hub"}
+{"ts": "2026-06-18T16:55:55.864950+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: ntfy"}
+{"ts": "2026-06-18T16:55:55.865008+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: ombre"}
+{"ts": "2026-06-18T16:55:55.865071+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: filesystem — Loader returned None"}
+{"ts": "2026-06-18T16:55:55.865129+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: github — Loader returned None"}
+{"ts": "2026-06-18T16:55:55.865201+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: ombre (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.866953+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.868678+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: ombre (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.870729+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.894798+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: ombre (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.896538+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.902219+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.905249+00:00", "level": "INFO", "component": "discovery", "msg": "Scanning MCP namespace: C:\\Users\\victor\\ai-infrastructure\\mcp_servers"}
+{"ts": "2026-06-18T16:55:55.905803+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: example"}
+{"ts": "2026-06-18T16:55:55.905941+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\example\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:55.907311+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: example (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.907421+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: filesystem"}
+{"ts": "2026-06-18T16:55:55.907615+00:00", "level": "DEBUG", "component": "src.loader.loader", "msg": "No server.py in filesystem"}
+{"ts": "2026-06-18T16:55:55.907709+00:00", "level": "WARNING", "component": "discovery", "msg": "Skipped filesystem: Loader returned None"}
+{"ts": "2026-06-18T16:55:55.907789+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: github"}
+{"ts": "2026-06-18T16:55:55.907932+00:00", "level": "DEBUG", "component": "src.loader.loader", "msg": "No server.py in github"}
+{"ts": "2026-06-18T16:55:55.908013+00:00", "level": "WARNING", "component": "discovery", "msg": "Skipped github: Loader returned None"}
+{"ts": "2026-06-18T16:55:55.908094+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: hub"}
+{"ts": "2026-06-18T16:55:55.908233+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\hub\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:55.909935+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: hub (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.910069+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: ntfy"}
+{"ts": "2026-06-18T16:55:55.910257+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\ntfy\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:55.911621+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: ntfy (v0.2.0)"}
+{"ts": "2026-06-18T16:55:55.911704+00:00", "level": "INFO", "component": "discovery", "msg": "Found directory: ombre"}
+{"ts": "2026-06-18T16:55:55.911814+00:00", "level": "INFO", "component": "discovery", "msg": "Loading manifest: C:\\Users\\victor\\ai-infrastructure\\mcp_servers\\ombre\\manifest.yaml"}
+{"ts": "2026-06-18T16:55:55.913408+00:00", "level": "INFO", "component": "discovery", "msg": "Server ready: ombre (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.913553+00:00", "level": "INFO", "component": "discovery", "msg": "Discovery complete — loaded: 4, failed: 2"}
+{"ts": "2026-06-18T16:55:55.913666+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: example"}
+{"ts": "2026-06-18T16:55:55.913765+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: hub"}
+{"ts": "2026-06-18T16:55:55.913858+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: ntfy"}
+{"ts": "2026-06-18T16:55:55.913947+00:00", "level": "INFO", "component": "discovery", "msg": "  loaded: ombre"}
+{"ts": "2026-06-18T16:55:55.914044+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: filesystem — Loader returned None"}
+{"ts": "2026-06-18T16:55:55.914211+00:00", "level": "WARNING", "component": "discovery", "msg": "  failed: github — Loader returned None"}
+{"ts": "2026-06-18T16:55:55.916491+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.940687+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: ombre (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.943272+00:00", "level": "INFO", "component": "src.registry.server_manager", "msg": "Registered server: example (v0.1.0)"}
+{"ts": "2026-06-18T16:55:55.946994+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}
+{"ts": "2026-06-18T16:55:55.970377+00:00", "level": "WARNING", "component": "mcp_servers.ombre.server", "msg": "Ombre plugin started but not connected"}
+{"ts": "2026-06-18T16:55:55.970619+00:00", "level": "INFO", "component": "src.core.remote_client", "msg": "Ombre MCP client disconnected"}
+{"ts": "2026-06-18T16:55:55.970808+00:00", "level": "INFO", "component": "mcp_servers.ombre.server", "msg": "Ombre plugin stopped"}
+{"ts": "2026-06-18T16:55:55.974477+00:00", "level": "DEBUG", "component": "asyncio", "msg": "Using proactor: IocpProactor"}

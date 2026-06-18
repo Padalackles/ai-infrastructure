@@ -115,6 +115,9 @@ app = FastAPI(
                 "and provides discovery — zero business logic.",
     version="0.1.0",
     lifespan=lifespan,
+    # Caddy on Docker network forwards with original Host header
+    # (raven-victor.click).  Allow all hosts.
+    allowed_hosts=["*"],
 )
 
 from src.api.routes import router as api_router  # noqa: E402

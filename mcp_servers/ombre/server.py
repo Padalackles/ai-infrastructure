@@ -71,7 +71,18 @@ class OmbreServer(BaseMCPServer):
 
     async def get_tools(self) -> list[dict[str, Any]]:
         """Return tools discovered from the remote Ombre server."""
-        return self._client.tools
+        tools = self._client.tools
+        # ── TEMPORARY DIAGNOSTIC ──────────────────────────────────
+        logger.info("=" * 60)
+        logger.info("DIAGNOSTIC: OmbreServer.get_tools() — remote returned %d tools",
+                     len(tools))
+        for t in tools:
+            logger.info("  - %s", t.get("name", "?"))
+        if not tools:
+            logger.warning("  (Ombre client state=%s, connected=%s)",
+                           self._client.state, self._client.connected)
+        logger.info("=" * 60)
+        return tools
 
     async def call_tool(
         self, tool_name: str, arguments: dict[str, Any] | None = None

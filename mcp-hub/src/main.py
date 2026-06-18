@@ -95,6 +95,24 @@ async def lifespan(app: FastAPI):
     logger.info("Services Started — total: %d running: %d failed: %d",
                 registry.count, registry.running_count, registry.failed_count)
 
+    # ── TEMPORARY DIAGNOSTIC: Print every server's tool count ──────
+    total_tools = 0
+    logger.info("=" * 60)
+    logger.info("DIAGNOSTIC: Server → Tool Count (post-startup)")
+    logger.info("=" * 60)
+    for srv_name, srv in sorted(registry.servers.items()):
+        try:
+            srv_tools = await srv.get_tools()
+            tool_names = [t["name"] for t in srv_tools]
+            total_tools += len(tool_names)
+            logger.info("  %s: %d tools", srv_name, len(srv_tools))
+            for tname in tool_names:
+                logger.info("    - %s", tname)
+        except Exception:
+            logger.exception("  %s: FAILED to retrieve tools", srv_name)
+    logger.info("TOTAL: %d tools across %d servers", total_tools, registry.count)
+    logger.info("=" * 60)
+
     # ── Store metadata ────────────────────────────────────────────
     hub = config.get("hub", {})
     app.state.version = hub.get("version", "0.1.0")

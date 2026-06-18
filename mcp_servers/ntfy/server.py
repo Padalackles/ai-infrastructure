@@ -49,7 +49,7 @@ class NtfyServer(BaseMCPServer):
     # ── Tools ────────────────────────────────────────────────────
 
     async def get_tools(self) -> list[dict[str, Any]]:
-        return [
+        tools = [
             {
                 "name": "notify.send",
                 "description": "Send a push notification via ntfy.sh",
@@ -87,6 +87,13 @@ class NtfyServer(BaseMCPServer):
                 "inputSchema": {"type": "object", "properties": {}},
             },
         ]
+        # ── TEMPORARY DIAGNOSTIC ──────────────────────────────────
+        logger.info("=" * 60)
+        logger.info("DIAGNOSTIC: NtfyServer.get_tools() — %d tools", len(tools))
+        for t in tools:
+            logger.info("  - %s", t["name"])
+        logger.info("=" * 60)
+        return tools
 
     async def call_tool(
         self, tool_name: str, arguments: dict[str, Any] | None = None

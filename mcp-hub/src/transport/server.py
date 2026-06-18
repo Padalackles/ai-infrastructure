@@ -80,7 +80,13 @@ async def _list_tools(req: ListToolsRequest) -> ListToolsResult:
                     "inputSchema", {"type": "object", "properties": {}}),
             ))
 
-    logger.info("tools/list — %d tools", len(tools))
+    # ── TEMPORARY DIAGNOSTIC: Print exact tool list sent to Claude ──
+    logger.info("=" * 60)
+    logger.info("DIAGNOSTIC: FastMCP tools/list → Sending to Claude")
+    logger.info("Tool count: %d", len(tools))
+    for t in tools:
+        logger.info("  - %s", t.name)
+    logger.info("=" * 60)
     return ListToolsResult(tools=tools)
 
 

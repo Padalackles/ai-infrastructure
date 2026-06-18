@@ -12,11 +12,14 @@ No business logic. No Ombre/Memory/Agent concepts.
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any
 
 from src.lifecycle.base_server import BaseMCPServer, ToolNotFoundError
 
 logger = logging.getLogger(__name__)
+
+_EXPOSE = os.getenv("HUB_EXPOSE_INTERNAL_TOOLS", "").lower() in ("true", "1", "yes")
 
 
 class ExampleServer(BaseMCPServer):
@@ -25,7 +28,7 @@ class ExampleServer(BaseMCPServer):
     # ── Lifecycle ────────────────────────────────────────────────
 
     async def initialize(self) -> None:
-        logger.info("ExampleServer: initialize() called")
+        logger.info("ExampleServer: initialize() called (expose=%s)", _EXPOSE)
 
     async def start(self) -> None:
         logger.info("ExampleServer: start() called")
@@ -36,6 +39,8 @@ class ExampleServer(BaseMCPServer):
     # ── Tools ────────────────────────────────────────────────────
 
     async def get_tools(self) -> list[dict[str, Any]]:
+        if not _EXPOSE:
+            return []
         return [
             {
                 "name": "echo",

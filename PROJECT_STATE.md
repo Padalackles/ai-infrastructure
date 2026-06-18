@@ -2,7 +2,7 @@
 
 **Status:** 🟡 In Progress
 **Version:** v0.1.0
-**Last Updated:** 2026-06-18
+**Last Updated:** 2026-06-18 (deployed to production)
 
 ---
 
@@ -40,7 +40,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-009 | ✅ | Ombre Adapter — HTTP bridge to external Ombre |
 | Task-010 | ✅ | ntfy External Service Integration — via ntfy.sh API |
 | Task-011 | ✅ | Remote MCP Transport — protocol validated, Claude Desktop Ready |
-| Task-012 | 🟡 | Domain + HTTPS + Cloudflare (architecture audit ✅, pending real domain binding) |
+| Task-012 | ✅ | Domain + HTTPS + Cloudflare — deployed at raven-victor.click |
 | Task-013 | ⬜ | Claude Desktop Remote Connection |
 | Task-014 | ⬜ | Real ntfy Notification Test |
 | Task-015 | ⬜ | Docker Production |
@@ -52,9 +52,9 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-012 |
-| **Status** | 🟡 In Progress |
-| **Description** | Domain + HTTPS + Cloudflare |
+| **Task ID** | Task-013 |
+| **Status** | ⬜ Planned |
+| **Description** | Claude Desktop Remote Connection |
 
 ---
 
@@ -153,12 +153,12 @@ mcp-hub/src/
 | Component | Status |
 |---|---|
 | MCP Hub (Gateway) | ✅ Runtime |
-| Caddy | Planned |
-| Cloudflare | Planned |
-| Ombre MCP | External (Docker only) |
-| ntfy MCP | Planned |
-| Filesystem MCP | Planned |
-| GitHub MCP | Planned |
+| Caddy | ✅ Running (Let's Encrypt TLS) |
+| Cloudflare | ✅ DNS + Proxy |
+| Ombre MCP | ✅ External (45.76.169.98:8000) |
+| ntfy MCP | ✅ External (ntfy.sh) |
+| Filesystem MCP | Reserved |
+| GitHub MCP | Reserved |
 
 ---
 
@@ -178,8 +178,8 @@ mcp-hub/src/
 
 | Field | Value |
 |---|---|
-| **Hash** | `a7fe756` |
-| **Summary** | fix: architecture consistency — align docker-compose, docs, and stale comments |
+| **Hash** | `63106d3` |
+| **Summary** | fix: pass DOMAIN and CADDY_ACME_EMAIL env vars to Caddy container |
 
 ---
 

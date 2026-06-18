@@ -4,6 +4,32 @@ All notable changes to the MCP Hub project.
 
 ---
 
+## [v0.1.0] — 2026-06-18 (Production Deployed)
+
+### Task-012 — Domain + HTTPS + Cloudflare ✅
+
+**Domain:** `raven-victor.click`  
+**VPS:** `45.76.169.98`  
+**Status:** Deployed and verified
+
+**Endpoints (all HTTPS):**
+- `GET /health` → `{"status":"healthy","total_servers":3,...}`
+- `GET /status` → `{"version":"0.1.0","runtime":"mcp-hub",...}`
+- `POST /mcp` → JSON-RPC 2.0 (initialize, tools/list, tools/call)
+
+**Infrastructure:**
+- Caddy: Let's Encrypt certificate (acme-v02.api.letsencrypt.org)
+- Cloudflare: DNS A record (45.76.169.98), SSL Full (strict)
+- Docker: ai-caddy + ai-mcp-hub (2 containers, 3 Python adapters)
+
+**Fixes during deployment:**
+- Removed broken ombre-mcp/ntfy-mcp Docker stubs (external services, loaded by Hub discovery)
+- Fixed discovery.py auto-detect for Docker flat layout (3 vs 4 directory levels)
+- Added CADDY_ACME_EMAIL + DOMAIN environment variables to Caddy container
+- 157/157 tests passing
+
+---
+
 ## [v0.1.0] — 2026-06-18
 
 ### Architecture Consistency Audit (Pre-Deployment)

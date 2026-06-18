@@ -215,6 +215,51 @@ class MCPProxy:
             message,
         )
 
+    @staticmethod
+    def _dump_request(scope: Scope, body_bytes: bytes) -> None:
+        """Temporary verbose debug log — full request details."""
+        headers = {k.decode().lower(): v.decode() for k, v in scope.get("headers", [])}
+        mcp_headers = {k: v for k, v in headers.items() if k.startswith("mcp-")}
+
+        mcp_logger.info("===== Incoming Request =====")
+        mcp_logger.info("Method:  %s", scope.get("method", "?"))
+        mcp_logger.info("Path:    %s", scope.get("path", "?"))
+        qs = scope.get("query_string", b"").decode()
+        if qs:
+            mcp_logger.info("Query:   %s", qs)
+        mcp_logger.info("Headers:")
+        for key in ("authorization", "accept", "content-type", "user-agent",
+                     "content-length", "mcp-session-id", "mcp-protocol-version"):
+            val = headers.get(key)
+            if val:
+                if key == "authorization" and val.startswith("Bearer "):
+                    val = f"Bearer {val[7:8]}***[{len(val)-7} chars]"
+                mcp_logger.info("  %s: %s", key, val)
+        for k, v in sorted(mcp_headers.items()):
+            mcp_logger.info("  %s: %s", k, v)
+        # JSON-RPC body
+        try:
+            import json
+            body_obj = json.loads(body_bytes)
+            mcp_logger.info("Body(JSON):")
+            mcp_logger.info("  jsonrpc: %s", body_obj.get("jsonrpc", "?"))
+            mcp_logger.info("  id:      %s", body_obj.get("id", "?"))
+            mcp_logger.info("  method:  %s", body_obj.get("method", "?"))
+            params = body_obj.get("params", {})
+            if isinstance(params, dict) and params:
+                for pk, pv in params.items():
+                    if isinstance(pv, dict):
+                        mcp_logger.info("  params.%s: {%s keys}", pk, len(pv))
+                    elif isinstance(pv, str) and len(str(pv)) > 80:
+                        mcp_logger.info("  params.%s: %s...", pk, str(pv)[:80])
+                    else:
+                        mcp_logger.info("  params.%s: %s", pk, pv)
+            else:
+                mcp_logger.info("  params:  %s", params)
+        except Exception:
+            mcp_logger.info("Body(raw): %s", body_bytes[:500])
+        mcp_logger.info("============================")
+
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
@@ -225,6 +270,26 @@ class MCPProxy:
             await self.app(scope, receive, send)
             return
 
+        # Read body eagerly for debug logging, then replay via wrapper
+        body_chunks: list[bytes] = []
+        more = True
+        while more:
+            msg = await receive()
+            body_chunks.append(msg.get("body", b""))
+            more = msg.get("more_body", False)
+        body_bytes = b"".join(body_chunks)
+
+        # Replay receive for downstream
+        _replayed = False
+
+        async def _replay_receive() -> dict:
+            nonlocal _replayed
+            if _replayed:
+                return {"type": "http.request", "body": b"", "more_body": False}
+            _replayed = True
+            return {"type": "http.request", "body": body_bytes, "more_body": False}
+
+        self._dump_request(scope, body_bytes)
         req_info = self._log_request(scope)
 
         # Auth check before forwarding
@@ -267,7 +332,7 @@ class MCPProxy:
         scope["path"] = "/"
         scope["raw_path"] = b"/"
 
-        await self.mcp_app(scope, receive, _send)
+        await self.mcp_app(scope, _replay_receive, _send)
 
 
 # Wrap FastAPI with the MCP proxy

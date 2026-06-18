@@ -297,6 +297,12 @@ class MCPProxy:
         if auth_error is not None:
             status, message = auth_error
             self._log_auth_failure(req_info, status, message)
+            mcp_logger.info("===== Outgoing Response =====")
+            mcp_logger.info("Status: %d", status)
+            mcp_logger.info("Response Headers:")
+            mcp_logger.info("  content-type: application/json")
+            mcp_logger.info("  www-authenticate: Bearer")
+            mcp_logger.info("============================")
             body = (
                 f'{{"jsonrpc":"2.0","id":null,'
                 f'"error":{{"code":-32003,"message":"Unauthorized: {message}"}}}}'
@@ -315,14 +321,24 @@ class MCPProxy:
             })
             return
 
-        # Wrap send to capture the response status code
-        _status = 0
+        # Wrap send to capture response status + headers
+        _response_status = 0
+        _response_headers: list = []
 
         async def _send(message: dict) -> None:
-            nonlocal _status
+            nonlocal _response_status, _response_headers
             if message["type"] == "http.response.start":
-                _status = message["status"]
-                self._log_response(_status)
+                _response_status = message["status"]
+                _response_headers = message.get("headers", [])
+                self._log_response(_response_status)
+                mcp_logger.info("===== Outgoing Response =====")
+                mcp_logger.info("Status: %d", _response_status)
+                mcp_logger.info("Response Headers:")
+                for k, v in _response_headers:
+                    key = k.decode() if isinstance(k, bytes) else k
+                    val = v.decode() if isinstance(v, bytes) else v
+                    mcp_logger.info("  %s: %s", key, val)
+                mcp_logger.info("============================")
             elif message["type"] == "http.response.body":
                 pass  # don't log body chunks
             await send(message)

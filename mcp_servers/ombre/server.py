@@ -1,9 +1,11 @@
-"""Ombre MCP Server — Hub adapter for the external Ombre deployment.
+"""Ombre MCP Server plugin — remote MCP client bridge.
 
-Ombre is an independently deployed MCP-compatible long-term memory service.
-This adapter bridges the Hub to Ombre via HTTP.
+Connects to the deployed Ombre Brain MCP server (45.76.169.98:8000/mcp)
+via the MCP Streamable HTTP protocol.  All tools are auto-discovered from
+the remote server — no hardcoded tool definitions.
 
-Delegates HTTP concerns to adapter.py. No Ombre business logic.
+Implements the BaseMCPServer contract so the Hub's Discovery / Registry /
+Lifecycle can manage it like any other plugin.
 """
 
 from __future__ import annotations
@@ -13,13 +15,17 @@ from typing import Any
 
 from src.lifecycle.base_server import BaseMCPServer, ToolNotFoundError
 
-from mcp_servers.ombre.adapter import OmbreAdapter
+from mcp_servers.ombre.adapter import (
+    CONNECTED,
+    DISCONNECTED,
+    OmbreMCPClient,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class OmbreServer(BaseMCPServer):
-    """Adapter that connects MCP Hub to the external Ombre deployment."""
+    """MCP Hub plugin that bridges to the remote Ombre Brain MCP server."""
 
     def __init__(
         self,
@@ -28,61 +34,53 @@ class OmbreServer(BaseMCPServer):
         endpoint: str | None = None,
     ) -> None:
         super().__init__(name=name, version=version)
-        self._adapter = OmbreAdapter(endpoint=endpoint)
+        self._client = OmbreMCPClient(url=endpoint)
 
     # ── Lifecycle ────────────────────────────────────────────────
 
     async def initialize(self) -> None:
-        logger.info("Ombre adapter initializing — endpoint: %s", self._adapter.endpoint)
-        status = await self._adapter.connect()
-        if status == "CONNECTED":
-            logger.info("✓ Ombre (CONNECTED) — %s", self._adapter.endpoint)
+        logger.info("Ombre plugin initializing — endpoint: %s", self._client.url)
+        state = await self._client.connect()
+        if state == CONNECTED:
+            logger.info("Ombre — %s v%s (%d tools)",
+                        self._client.server_info.get("name", "?"),
+                        self._client.server_info.get("version", "?"),
+                        len(self._client.tools))
         else:
-            logger.warning("Ombre health check: %s", status)
+            logger.warning("Ombre unavailable — state=%s", state)
 
     async def start(self) -> None:
-        if self._adapter.connected:
-            logger.info("Ombre adapter started — endpoint: %s", self._adapter.endpoint)
+        if self._client.connected:
+            logger.info("Ombre plugin started (%d tools)", len(self._client.tools))
         else:
-            logger.warning("Ombre adapter started but not connected")
+            logger.warning("Ombre plugin started but not connected")
 
     async def stop(self) -> None:
-        await self._adapter.disconnect()
-        logger.info("Ombre adapter stopped")
+        await self._client.disconnect()
+        logger.info("Ombre plugin stopped")
 
     # ── Health ───────────────────────────────────────────────────
 
     async def health(self) -> dict[str, Any]:
         return {
             "name": self.name,
-            **await self._adapter.health(),
+            **self._client.health(),
         }
 
-    # ── Tools ────────────────────────────────────────────────────
+    # ── Tools (auto-discovered) ──────────────────────────────────
 
     async def get_tools(self) -> list[dict[str, Any]]:
-        return [
-            {
-                "name": "ombre_health",
-                "description": "Check connectivity to the external Ombre deployment",
-                "inputSchema": {"type": "object", "properties": {}},
-            },
-            {
-                "name": "ombre_status",
-                "description": "Get Ombre service status and endpoint info",
-                "inputSchema": {"type": "object", "properties": {}},
-            },
-        ]
+        """Return tools discovered from the remote Ombre server."""
+        return self._client.tools
 
     async def call_tool(
         self, tool_name: str, arguments: dict[str, Any] | None = None
     ) -> Any:
-        if tool_name == "ombre_health":
-            return await self.health()
-        if tool_name == "ombre_status":
-            return {
-                "name": self.name,
-                "version": self.version,
-                **self._adapter.info(),
-            }
-        raise ToolNotFoundError(self.name, tool_name)
+        """Forward tool call to the remote Ombre server."""
+        args = arguments or {}
+        result = await self._client.call_tool(tool_name, args)
+
+        if result.get("error"):
+            raise ToolNotFoundError(self.name, tool_name)
+
+        return result

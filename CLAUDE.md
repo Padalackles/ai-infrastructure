@@ -57,3 +57,23 @@ Every completed task must follow this sequence:
   - `PROJECT_STATE.md` — Current development status (single source of truth)
   - `CLAUDE.md` — Development workflow and coding rules (this file)
   - `DECISIONS.md` — Stable architectural decisions
+
+## Definition of Completed
+
+A task is NOT complete until ALL gates pass:
+
+- **Code Implemented** — all changes written and working
+- **Documentation Updated** — PROJECT_STATE, ARCHITECTURE, ROADMAP, task docs current
+- **GitHub Synced** — `git push` reflects latest state
+- **Reviewed by ChatGPT** — external AI architecture review for blind spots
+- **Real Validation Passed** — if task touches real infra (VPS, domain, HTTPS, Cloudflare), verified live
+
+## Review Gate (Task Transition Pipeline)
+
+Before moving to the next task:
+
+```
+Claude Code → Self Test → Git Push → ZIP Export → ChatGPT Review → Approved → Next Task
+```
+
+No task transitions without passing all gates. Every task independently verified before the next begins.

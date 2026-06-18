@@ -163,3 +163,43 @@ The architecture should grow by adding new MCP services.
 - New functionality should be added through standardized interfaces.
 
 The architecture should evolve through **extension**, not reconstruction.
+
+---
+
+## 9. Definition of Completed
+
+A task is **not** complete until ALL of the following are satisfied:
+
+| Gate | Requirement |
+|---|---|
+| **Code Implemented** | All code changes written and working |
+| **Documentation Updated** | PROJECT_STATE.md, ARCHITECTURE.md, ROADMAP.md, and any task-specific docs are current |
+| **GitHub Synced** | `git push` — the remote repository reflects the latest state |
+| **Reviewed by ChatGPT** | Architecture and implementation reviewed by an external AI (ChatGPT) for blind-spot detection |
+| **Real Validation Passed** | If the task involves real infrastructure (VPS, domain, HTTPS, Cloudflare) — the feature must be verified against the live environment |
+
+Partial completion is not completion. All gates must pass.
+
+---
+
+## 10. Review Gate
+
+Before moving from one Task to the next, this fixed pipeline must execute:
+
+```
+Claude Code        ← Implementation & self-review
+       ↓
+Self Test          ← Local tests pass (pytest, manual verification)
+       ↓
+Git Push           ← Code pushed to GitHub
+       ↓
+ZIP Export         ← Repository exported as a zip archive
+       ↓
+ChatGPT Review     ← Architecture review by external AI (ChatGPT)
+       ↓
+Approved           ← Review findings addressed, changes approved
+       ↓
+Next Task          ← Proceed to the next task
+```
+
+**No task transitions without passing all gates.** This ensures every task is independently verified before the next begins, preventing compounding architectural drift.

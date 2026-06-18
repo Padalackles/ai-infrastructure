@@ -1,7 +1,0 @@
-{"ts": "2026-06-18T16:55:52.024078+00:00", "level": "ERROR", "component": "discovery", "msg": "Unexpected error loading broken_plugin", "error": "invalid syntax (server.py, line 1)"}
-{"ts": "2026-06-18T16:55:52.069621+00:00", "level": "ERROR", "component": "discovery", "msg": "Unexpected error loading bad", "error": "'{' was never closed (server.py, line 1)"}
-{"ts": "2026-06-18T16:55:52.215586+00:00", "level": "ERROR", "component": "src.registry.server_manager", "msg": "Failed to start server: failing", "error": "init failure"}
-{"ts": "2026-06-18T16:55:52.227197+00:00", "level": "ERROR", "component": "src.lifecycle.base_server", "msg": "Server start failed for failing-start ¡ª rolling back", "error": "start failure"}
-{"ts": "2026-06-18T16:55:52.230140+00:00", "level": "ERROR", "component": "src.registry.server_manager", "msg": "Server start failed for failing-start ¡ª rolling back", "error": "start failure"}
-{"ts": "2026-06-18T16:55:52.238867+00:00", "level": "ERROR", "component": "src.registry.server_manager", "msg": "Failed to start server: bad", "error": "init failure"}
-{"ts": "2026-06-18T16:55:52.253358+00:00", "level": "ERROR", "component": "src.registry.server_manager", "msg": "Failed to start server: bad", "error": "init failure"}

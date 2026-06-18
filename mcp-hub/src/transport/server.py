@@ -91,10 +91,18 @@ async def _list_tools(req: ListToolsRequest) -> ListToolsResult:
 async def _call_tool(name: str, arguments: dict) -> list[TextContent]:
     runtime = _get_runtime()
 
+    # Attach tool context for log correlation
+    from src.core.request_context import RequestContext
+    req_ctx = RequestContext.current()
+    req_ctx.set("tool", name)
+
     logger.info("tools/call — %s(%s)", name, arguments)
 
     try:
         server_name = await runtime.find_tool_server(name)
+        if server_name:
+            req_ctx.set("plugin", server_name)
+
         if not server_name:
             return [TextContent(
                 type="text",

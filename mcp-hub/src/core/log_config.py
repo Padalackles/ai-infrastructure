@@ -3,7 +3,7 @@
 Provides:
   - JSONFormatter: machine-readable single-line JSON log entries
   - setup_logging(): one-call configuration of root + file handlers
-  - Request ID propagation via contextvars
+  - Request ID propagation via RequestContext
   - Audit log stream (logs/audit.log)
   - Convenience get_logger() with component metadata
 
@@ -19,25 +19,25 @@ from __future__ import annotations
 import json
 import logging
 import os
-import uuid
-from contextvars import ContextVar
 from datetime import datetime, timezone
 from logging.handlers import RotatingFileHandler
 from typing import Any
 
-# ── Request ID context ──────────────────────────────────────────
 
-_request_id: ContextVar[str] = ContextVar("request_id", default="")
-
-
-def set_request_id(rid: str | None = None) -> str:
-    rid = rid or uuid.uuid4().hex[:12]
-    _request_id.set(rid)
-    return rid
-
+# ── Request ID helpers (delegate to RequestContext) ─────────────
 
 def get_request_id() -> str:
-    return _request_id.get("")
+    """Return the current request ID, or empty string."""
+    from src.core.request_context import RequestContext
+    return RequestContext.current().request_id
+
+
+def set_request_id(rid: str) -> str:
+    """Backward-compat — use RequestContext() context manager instead."""
+    from src.core.request_context import RequestContext
+    ctx = RequestContext.current()
+    # Can't set on sentinel; this is a best-effort helper
+    return ctx.request_id
 
 
 # ── JSON Formatter ─────────────────────────────────────────────

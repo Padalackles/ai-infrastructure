@@ -32,7 +32,8 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from src.config import load_config
 from src.core.events import EventBus
 from src.core.hub_state import set_state
-from src.core.log_config import get_logger, set_request_id, setup_logging
+from src.core.log_config import get_logger, setup_logging
+from src.core.request_context import RequestContext
 from src.loader.discovery import Discovery
 from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
@@ -266,88 +267,90 @@ class MCPProxy:
             await self.app(scope, receive, send)
             return
 
-        # Assign a unique request ID for log correlation
-        set_request_id()
+        # Create per-request context for log correlation.
+        # All downstream code (auth, FastMCP, handlers, plugins) shares
+        # this context automatically via contextvars — no signature changes.
+        with RequestContext() as req_ctx:
 
-        # Read body eagerly for debug logging, then replay via wrapper
-        body_chunks: list[bytes] = []
-        more = True
-        while more:
-            msg = await receive()
-            body_chunks.append(msg.get("body", b""))
-            more = msg.get("more_body", False)
-        body_bytes = b"".join(body_chunks)
+            # Read body eagerly for debug logging, then replay via wrapper
+            body_chunks: list[bytes] = []
+            more = True
+            while more:
+                msg = await receive()
+                body_chunks.append(msg.get("body", b""))
+                more = msg.get("more_body", False)
+            body_bytes = b"".join(body_chunks)
 
-        # Replay receive for downstream
-        _replayed = False
+            # Replay receive for downstream
+            _replayed = False
 
-        async def _replay_receive() -> dict:
-            nonlocal _replayed
-            if _replayed:
-                return {"type": "http.request", "body": b"", "more_body": False}
-            _replayed = True
-            return {"type": "http.request", "body": body_bytes, "more_body": False}
+            async def _replay_receive() -> dict:
+                nonlocal _replayed
+                if _replayed:
+                    return {"type": "http.request", "body": b"", "more_body": False}
+                _replayed = True
+                return {"type": "http.request", "body": body_bytes, "more_body": False}
 
-        self._dump_request(scope, body_bytes)
-        req_info = self._log_request(scope)
+            self._dump_request(scope, body_bytes)
+            req_info = self._log_request(scope)
 
-        # Auth check before forwarding
-        auth_error = _check_auth(scope)
-        if auth_error is not None:
-            status, message = auth_error
-            self._log_auth_failure(req_info, status, message)
-            mcp_logger.info("===== Outgoing Response =====")
-            mcp_logger.info("Status: %d", status)
-            mcp_logger.info("Response Headers:")
-            mcp_logger.info("  content-type: application/json")
-            mcp_logger.info("  www-authenticate: Bearer")
-            mcp_logger.info("============================")
-            body = (
-                f'{{"jsonrpc":"2.0","id":null,'
-                f'"error":{{"code":-32003,"message":"Unauthorized: {message}"}}}}'
-            ).encode()
-            await send({
-                "type": "http.response.start",
-                "status": status,
-                "headers": [
-                    (b"content-type", b"application/json"),
-                    (b"www-authenticate", b"Bearer"),
-                ],
-            })
-            await send({
-                "type": "http.response.body",
-                "body": body,
-            })
-            return
-
-        # Wrap send to capture response status + headers
-        _response_status = 0
-        _response_headers: list = []
-
-        async def _send(message: dict) -> None:
-            nonlocal _response_status, _response_headers
-            if message["type"] == "http.response.start":
-                _response_status = message["status"]
-                _response_headers = message.get("headers", [])
-                self._log_response(_response_status)
+            # Auth check before forwarding
+            auth_error = _check_auth(scope)
+            if auth_error is not None:
+                status, message = auth_error
+                self._log_auth_failure(req_info, status, message)
                 mcp_logger.info("===== Outgoing Response =====")
-                mcp_logger.info("Status: %d", _response_status)
+                mcp_logger.info("Status: %d", status)
                 mcp_logger.info("Response Headers:")
-                for k, v in _response_headers:
-                    key = k.decode() if isinstance(k, bytes) else k
-                    val = v.decode() if isinstance(v, bytes) else v
-                    mcp_logger.info("  %s: %s", key, val)
+                mcp_logger.info("  content-type: application/json")
+                mcp_logger.info("  www-authenticate: Bearer")
                 mcp_logger.info("============================")
-            elif message["type"] == "http.response.body":
-                pass  # don't log body chunks
-            await send(message)
+                body = (
+                    f'{{"jsonrpc":"2.0","id":null,'
+                    f'"error":{{"code":-32003,"message":"Unauthorized: {message}"}}}}'
+                ).encode()
+                await send({
+                    "type": "http.response.start",
+                    "status": status,
+                    "headers": [
+                        (b"content-type", b"application/json"),
+                        (b"www-authenticate", b"Bearer"),
+                    ],
+                })
+                await send({
+                    "type": "http.response.body",
+                    "body": body,
+                })
+                return
 
-        # Rewrite path so FastMCP sees "/" (its internal streamable_http_path)
-        scope = dict(scope)
-        scope["path"] = "/"
-        scope["raw_path"] = b"/"
+            # Wrap send to capture response status + headers
+            _response_status = 0
+            _response_headers: list = []
 
-        await self.mcp_app(scope, _replay_receive, _send)
+            async def _send(message: dict) -> None:
+                nonlocal _response_status, _response_headers
+                if message["type"] == "http.response.start":
+                    _response_status = message["status"]
+                    _response_headers = message.get("headers", [])
+                    self._log_response(_response_status)
+                    mcp_logger.info("===== Outgoing Response =====")
+                    mcp_logger.info("Status: %d", _response_status)
+                    mcp_logger.info("Response Headers:")
+                    for k, v in _response_headers:
+                        key = k.decode() if isinstance(k, bytes) else k
+                        val = v.decode() if isinstance(v, bytes) else v
+                        mcp_logger.info("  %s: %s", key, val)
+                    mcp_logger.info("============================")
+                elif message["type"] == "http.response.body":
+                    pass  # don't log body chunks
+                await send(message)
+
+            # Rewrite path so FastMCP sees "/" (its internal streamable_http_path)
+            scope = dict(scope)
+            scope["path"] = "/"
+            scope["raw_path"] = b"/"
+
+            await self.mcp_app(scope, _replay_receive, _send)
 
 
 # Wrap FastAPI with the MCP proxy

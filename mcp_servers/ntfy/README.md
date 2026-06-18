@@ -28,5 +28,5 @@ Optional HTTP forwarding to ntfy.sh via `NTFY_SERVER` env var.
 ```bash
 # Optional: forward to ntfy.sh
 export NTFY_SERVER=https://ntfy.sh
-export NTFY_TOPIC=ai-infrastructure
+export NTFY_TOPIC=raven-victor-c503460d
 ```

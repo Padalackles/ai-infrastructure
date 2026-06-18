@@ -1,6 +1,6 @@
 # Notification MCP — ntfy.sh Integration
 
-Push notifications via ntfy.sh, delivered to the `ai-infrastructure` topic.
+Push notifications via ntfy.sh, delivered to the `raven-victor-c503460d` topic.
 Notifications are sent by executing `curl` on the VPS host.
 
 ## Architecture
@@ -16,13 +16,13 @@ Claude Web → MCP Hub → Notification MCP → curl → https://ntfy.sh/<topic>
 | Variable | Default | Description |
 |---|---|---|
 | `NTFY_SERVER` | `https://ntfy.sh` | ntfy server URL |
-| `NTFY_TOPIC` | `ai-infrastructure` | Target topic |
+| `NTFY_TOPIC` | `raven-victor-c503460d` | Target topic |
 
 Set in `.env`:
 
 ```bash
 NTFY_SERVER=https://ntfy.sh
-NTFY_TOPIC=ai-infrastructure
+NTFY_TOPIC=raven-victor-c503460d
 ```
 
 ## Tools

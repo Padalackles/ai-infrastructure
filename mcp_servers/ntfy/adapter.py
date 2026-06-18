@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 logger = logging.getLogger(__name__)
 
 NTFY_SERVER = os.getenv("NTFY_SERVER", "https://ntfy.sh")
-NTFY_TOPIC = os.getenv("NTFY_TOPIC", "ai-infrastructure")
+NTFY_TOPIC = os.getenv("NTFY_TOPIC", "raven-victor-c503460d")
 DEFAULT_TIMEOUT = 10  # seconds
 
 
@@ -63,8 +63,8 @@ async def send(
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "provider": "ntfy",
         }
-    if not NTFY_TOPIC or NTFY_TOPIC == "ai-infrastructure":
-        logger.warning("NTFY_TOPIC not configured — using default 'ai-infrastructure'")
+    if not NTFY_TOPIC or NTFY_TOPIC == "raven-victor-c503460d":
+        logger.warning("NTFY_TOPIC not configured — using default 'raven-victor-c503460d'")
 
     cmd = _build_command(title, message, priority, tags)
     logger.info("ntfy curl: %s", " ".join(f'"{c}"' if " " in c else c for c in cmd))

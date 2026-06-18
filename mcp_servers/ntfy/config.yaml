@@ -6,4 +6,4 @@ server:
   url: "${NTFY_SERVER:-https://ntfy.sh}"
 
 notification:
-  default_topic: "${NTFY_TOPIC:-ai-infrastructure}"
+  default_topic: "${NTFY_TOPIC:-raven-victor-c503460d}"

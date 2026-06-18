@@ -64,7 +64,7 @@ class OmbreServer(BaseMCPServer):
     async def health(self) -> dict[str, Any]:
         return {
             "name": self.name,
-            **self._client.health(),
+            **(await self._client.health()),
         }
 
     # ── Tools (auto-discovered) ──────────────────────────────────

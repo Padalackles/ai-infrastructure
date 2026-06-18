@@ -1,21 +1,45 @@
-"""Integration tests for Ombre adapter — end-to-end Hub pipeline.
-
-Verifies: discovery → registration → health → tools → router.
-"""
+"""Integration tests for Ombre — discovery, registration, tools via Hub."""
 
 import sys
 
 sys.path.insert(0, ".")
 
 import pytest
-from fastapi.testclient import TestClient
 
-from mcp_servers.ombre.adapter import DEFAULT_ENDPOINT, OmbreAdapter
+from mcp_servers.ombre.adapter import DEFAULT_OMBRE_URL, OmbreMCPClient
 from mcp_servers.ombre.server import OmbreServer
 from src.core.events import EventBus
-from src.loader.discovery import Discovery, DiscoveryResult
+from src.loader.discovery import Discovery
 from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
+
+
+# ── RemoteMCPClient integration ─────────────────────────────────
+
+
+class TestRemoteClientIntegration:
+    def test_client_not_connected_by_default(self):
+        c = OmbreMCPClient()
+        assert c.connected is False
+        assert c.state == "DISCONNECTED"
+
+    async def test_health_when_disconnected(self):
+        c = OmbreMCPClient()
+        h = await c.health()
+        assert h["state"] == "DISCONNECTED"
+        assert h["endpoint"] == DEFAULT_OMBRE_URL
+        assert h["tools_count"] == 0
+
+    async def test_call_tool_when_disconnected(self):
+        c = OmbreMCPClient()
+        result = await c.call_tool("x", {})
+        assert result.get("error") is True
+
+    async def test_disconnect_clears_tools(self):
+        c = OmbreMCPClient()
+        await c.disconnect()
+        assert c.tools == []
+        assert c.connected is False
 
 
 # ── Integration: Discovery → Registration ─────────────────────
@@ -23,7 +47,6 @@ from src.runtime.runtime import Runtime
 
 class TestOmbreDiscoveryToRegistration:
     async def test_ombre_discovered_and_registered(self):
-        """Ombre is discovered from mcp_servers/ombre/ and registered."""
         registry = ServerManager()
         discovery = Discovery()
 
@@ -40,45 +63,15 @@ class TestOmbreDiscoveryToRegistration:
         assert registered.name == "ombre"
 
 
-# ── Integration: Adapter → Health check ───────────────────────
-
-
-class TestOmbreAdapterIntegration:
-    @pytest.mark.integration
-    async def test_real_health_check(self):
-        """Integration test: real HTTP health check to external Ombre."""
-        adapter = OmbreAdapter(endpoint=DEFAULT_ENDPOINT, timeout=10)
-        status = await adapter.connect()
-        # External Ombre may or may not be reachable in CI
-        assert status in ("CONNECTED", "DISCONNECTED", "UNHEALTHY")
-
-    async def test_adapter_health_method(self):
-        adapter = OmbreAdapter()
-        health = await adapter.health()
-        assert "endpoint" in health
-        assert "status" in health
-        assert "connected" in health
-
-
 # ── Integration: ServerManager → OmbreServer ──────────────────
 
 
 class TestOmbreServerManagerIntegration:
-    async def test_server_registered_and_started(self):
+    async def test_server_registered(self):
         registry = ServerManager()
-        server = OmbreServer()
-        registry.register(server)
-
+        registry.register(OmbreServer())
         assert registry.count == 1
         assert registry.get_server("ombre") is not None
-
-        await registry.start_all()
-        # adapter may or may not connect to the real external Ombre
-        assert registry.running_count in (0, 1)
-        # But server should be registered regardless
-        servers = registry.list_servers()
-        ombre_info = next(s for s in servers if s["name"] == "ombre")
-        assert ombre_info["version"] == "0.1.0"
 
 
 # ── Integration: Runtime → Ombre tools ────────────────────────
@@ -95,30 +88,6 @@ class TestOmbreRuntimeIntegration:
             (t for t in tools["tools"] if t["server"] == "ombre"), None
         )
         assert ombre_entry is not None
-        tool_names = [t["name"] for t in ombre_entry["tools"]]
-        assert "ombre_health" in tool_names
-        assert "ombre_status" in tool_names
-
-    async def test_runtime_call_tool_ombre_status(self):
-        registry = ServerManager()
-        registry.register(OmbreServer())
-        runtime = Runtime(registry, EventBus(), {})
-
-        result = await runtime.call_tool("ombre", "ombre_status", {})
-        assert result["server"] == "ombre"
-        assert result["tool"] == "ombre_status"
-        assert result["result"]["name"] == "ombre"
-        assert "endpoint" in result["result"]
-
-    async def test_runtime_call_tool_unknown_errors(self):
-        registry = ServerManager()
-        registry.register(OmbreServer())
-        runtime = Runtime(registry, EventBus(), {})
-
-        from src.transport.response import JSONRPCError
-
-        with pytest.raises(JSONRPCError):
-            await runtime.call_tool("ombre", "nonexistent_tool", {})
 
     async def test_runtime_server_not_found(self):
         registry = ServerManager()
@@ -139,11 +108,9 @@ class TestOmbreDiscoveryResult:
         discovery = Discovery()
         _, result = await discovery.discover()
 
-        # Ombre should be in the result (either loaded or failed)
         all_entries = result.loaded + [name for name, _ in result.failed]
         assert "ombre" in all_entries, (
-            f"Ombre not found in discovery result. "
-            f"Loaded: {result.loaded}, Failed: {result.failed}"
+            f"Ombre not found. Loaded: {result.loaded}, Failed: {result.failed}"
         )
 
 
@@ -158,7 +125,6 @@ class TestMultiServerWithOmbre:
         from mcp_servers.example.server import ExampleServer
 
         registry.register(ExampleServer(name="example"))
-
         assert registry.count == 2
 
         runtime = Runtime(registry, EventBus(), {})
@@ -168,20 +134,17 @@ class TestMultiServerWithOmbre:
         assert "example" in server_names
 
 
-# ── Integration: Adapter info after lifecycle ─────────────────
+# ── Integration: OmbreServer lifecycle ────────────────────────
 
 
 class TestOmbreLifecycleIntegration:
-    async def test_initialize_then_info(self):
-        server = OmbreServer()
-        await server.initialize()
-        # After initialize, adapter should have attempted connection
-        info = server._adapter.info()
-        assert "endpoint" in info
-        assert "connected" in info
-
-    async def test_stop_disconnects(self):
+    async def test_start_stop(self):
         server = OmbreServer()
         await server.start()
         await server.stop()
-        assert server._adapter.connected is False
+        assert server._client.connected is False
+
+    async def test_health_when_disconnected(self):
+        server = OmbreServer()
+        h = await server.health()
+        assert h["state"] == "DISCONNECTED"

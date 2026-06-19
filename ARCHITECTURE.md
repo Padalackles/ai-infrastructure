@@ -261,7 +261,8 @@ Claude Trigger           ← Notify Claude
 - **Schema-Versioned** — breaking changes to the event schema bump a version integer
 - **Typed Payload** — each event type maps to a specific, typed payload sub-schema
 
-**Current Status:** 🟡 In Design — Event Schema defined (Task A001).  See `docs/activity/SCHEMA.md`.
+**Current Status:** 🟡 In Progress — Event Schema defined (Task A001), Gateway implemented (Task A002).
+See `docs/activity/SCHEMA.md` and `activity/gateway/`.
 
 ---
 

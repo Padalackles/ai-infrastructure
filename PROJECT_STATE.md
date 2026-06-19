@@ -2,7 +2,7 @@
 
 **Status:** 🟡 In Progress
 **Version:** v0.4.0
-**Last Updated:** 2026-06-19 — Activity Subsystem enters design phase (Task A001)
+**Last Updated:** 2026-06-19 — Activity Gateway implemented (Task A002)
 
 ---
 
@@ -54,13 +54,14 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-020 | ✅ | 诊断日志 — 4 处临时日志 + TROUBLESHOOTING_MCP_TOOLS.md |
 | Task-021 | ✅ | 文档筛查 — 7 docs 修复（工具名、状态、环境变量、架构图） |
 | Task-016 | ✅ | Scheduler Framework — TypeScript scheduler service with Job registry |
-| Task-A001 | 🟡 | Activity Event Schema — unified event contract for device activity pipeline |
+| Task-A001 | ✅ | Activity Event Schema — unified event contract for device activity pipeline |
+| Task-A002 | 🟡 | Activity Gateway — HTTP ingest endpoint (POST /activity/events) |
 
 ---
 
 ## Activity Subsystem (New)
 
-**Status:** 🟡 In Design
+**Status:** 🟡 In Progress — Gateway implemented
 
 The Activity subsystem ingests device events (Android → MacroDroid → Gateway),
 normalizes them into a unified schema, stores them, and triggers Claude awareness.
@@ -73,8 +74,8 @@ Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Databas
 
 | Component | Status |
 |---|---|
-| Event Schema | 🟡 Defined (Task A001 — `docs/activity/SCHEMA.md`) |
-| Activity Gateway | ⬜ Planned (Task A002) |
+| Event Schema | ✅ Defined (Task A001 — `docs/activity/SCHEMA.md`) |
+| Activity Gateway | 🟡 Implemented (Task A002 — POST /activity/events) |
 | Event Normalizer | ⬜ Planned |
 | Event Database | ⬜ Planned |
 | Decision Script | ⬜ Planned |
@@ -89,9 +90,9 @@ See `docs/activity/SCHEMA.md` for the full event contract.
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-A001 |
+| **Task ID** | Task-A002 |
 | **Status** | 🟡 In Progress |
-| **Description** | Activity Event Schema — define unified event contract for device activity pipeline |
+| **Description** | Activity Gateway — HTTP POST /activity/events endpoint |
 
 ---
 
@@ -123,7 +124,12 @@ ai-infrastructure/
 │           ├── types.ts     Job interface + ExecutionResult
 │           └── jobs/        DailyJournal (placeholder)
 ├── activity/
-│   └── types.ts             Activity Event Schema — TypeScript contract
+│   ├── types.ts             Activity Event Schema — TypeScript contract
+│   └── gateway/             Activity Gateway (Python/FastAPI)
+│       ├── __init__.py
+│       ├── models.py        Pydantic request/response models
+│       ├── service.py       ID generation, timestamp, event assembly
+│       └── router.py        POST /activity/events endpoint
 ├── docs/
 │   └── activity/
 │       └── SCHEMA.md        Activity Event Schema documentation

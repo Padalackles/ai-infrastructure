@@ -24,7 +24,15 @@ Start with:
 from __future__ import annotations
 
 import os
+import sys
 from contextlib import asynccontextmanager
+from pathlib import Path
+
+# Ensure repo root is on sys.path so sibling top-level packages
+# (activity/, mcp_servers/) are importable from within mcp-hub/.
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
 from fastapi import FastAPI
 from starlette.types import ASGIApp, Receive, Scope, Send
@@ -37,6 +45,7 @@ from src.core.request_context import RequestContext
 from src.loader.discovery import Discovery
 from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
+from activity.gateway import router as activity_router
 from src.transport.server import _mcp_asgi, set_runtime, start_mcp, stop_mcp
 
 # ── Logging ─────────────────────────────────────────────────────
@@ -143,6 +152,7 @@ app = FastAPI(
 from src.api.routes import router as api_router  # noqa: E402
 
 app.include_router(api_router)
+app.include_router(activity_router)
 
 
 # ── Bearer Token check (raw ASGI — no FastAPI Depends) ───────────

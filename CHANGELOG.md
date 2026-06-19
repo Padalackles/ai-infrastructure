@@ -4,7 +4,21 @@ All notable changes to the MCP Hub project.
 
 ---
 
-## [v0.4.0] — 2026-06-19 (Activity Subsystem Design)
+## [v0.4.0] — 2026-06-19 (Activity Gateway Implemented)
+
+### Activity Gateway (Task A002)
+
+First executable component of the Activity subsystem.  External devices (Android →
+MacroDroid) can now submit events into the system.
+
+- **`activity/gateway/`**: Python FastAPI module
+  - `models.py`: Pydantic models — `ActivityEventRequest` (5 required + 4 optional fields), `ActivityEventResponse`
+  - `service.py`: Pure functions — ULID-inspired `generate_event_id()`, `utc_now_iso()`, `build_event()`
+  - `router.py`: `POST /activity/events` — validates request, auto-populates server fields, logs, returns acceptance
+- **`mcp-hub/src/main.py`**: Integrated `activity_router` into FastAPI app
+- Source-agnostic: MacroDroid, Tasker, Shortcuts, Home Assistant all use the same endpoint
+- Server-side field auto-population: version→1, id→`evt_<ULID>`, timestamp→ISO 8601 UTC
+- Temporary human-readable console logging for development visibility
 
 ### Activity Event Schema (Task A001)
 
@@ -15,33 +29,20 @@ pipeline for ingesting device activity and triggering autonomous Claude awarenes
   - Unified event contract: version, id, timestamp, source, collector, device, type, payload, raw
   - Hierarchical dot-notation naming convention (`device.awake`, `battery.low`, …)
   - 12 reserved event domains, 25+ typed event types defined
-  - Payload sub-schemas for every event type (DeviceAwakePayload, BatteryLowPayload, …)
+  - Payload sub-schemas for every event type
   - Design principles: source agnostic, normalize late, schema-versioned, typed payload
-  - Future extension strategy for new sources, collectors, and event types
-- **`activity/types.ts`**: TypeScript type contract
-  - `ActivityEvent<T>` — discriminated union with typed payload per event type
-  - `EventPayload<T>` — maps each `EventType` to its specific payload interface
-  - 25+ payload sub-schemas with full TypeScript type safety
-  - Extensible `EventType` and `EventCollector` types (string union with escape hatch)
+- **`activity/types.ts`**: TypeScript type contract with discriminated union types
 
 ### Documentation Updates
 
-- `ARCHITECTURE.md`: Added Activity Subsystem section with pipeline diagram and component table
-- `ROADMAP.md`: Added Phase 7 (Background Automation) + Phase 8 (Activity Subsystem) + updated Long-Term Vision diagram
-- `PROJECT_STATE.md`: Restructured (Hub Module → Repository Structure), added Activity Subsystem section, updated components + task table
+- `ARCHITECTURE.md`: Added Activity Subsystem section with pipeline diagram
+- `ROADMAP.md`: Added Phase 7 (Background Automation) + Phase 8 (Activity) + updated vision
+- `PROJECT_STATE.md`: Restructured, added Activity subsystem + task tracking
 - `CHANGELOG.md`: This entry
-
-### Design Decisions
-
-- Activity is a **separate subsystem**, not an MCP service. It has its own pipeline (Gateway → Normalizer → Database → Decision → Trigger).
-- The **Event Contract** is defined before any implementation — schema-first, documentation-first.
-- **`raw` is always preserved** alongside normalized `payload` — enables re-processing and debugging.
-- **IDs are ULID-based** (`evt_<ulid>`) — time-sortable, globally unique, generated server-side by the Gateway.
-- Extension is purely additive: new event types, sources, and collectors require zero breaking changes.
 
 ### Tag
 
-`v0.4.0` — Activity Event Schema defined, subsystem design phase begins
+`v0.4.0` — Activity Gateway receiving events, subsystem pipeline taking shape
 
 ---
 

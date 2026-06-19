@@ -92,8 +92,8 @@ Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Databas
 
 | Component | Purpose | Status |
 |---|---|---|
-| Event Schema | Unified event contract | 🟡 Defined (Task A001) |
-| Activity Gateway | HTTP ingest endpoint | Planned (Task A002) |
+| Event Schema | Unified event contract | ✅ Defined (Task A001) |
+| Activity Gateway | HTTP ingest endpoint | 🟡 Implemented (Task A002) |
 | Event Normalizer | Map collector → unified schema | Planned |
 | Event Database | Persist + query events | Planned |
 | Decision Script | Rule evaluation engine | Planned |

@@ -240,6 +240,9 @@ Event Normalizer         ← Map to unified schema
 Event Database           ← Persist + query
         │
         ▼
+Activity Service         ← Unified read interface
+        │
+        ▼
 Decision Script          ← Evaluate rules
         │
         ▼
@@ -250,7 +253,8 @@ Claude Trigger           ← Notify Claude
 |---|---|
 | **Gateway** | HTTP ingest endpoint. Receives raw events from collectors (MacroDroid, Tasker, …) |
 | **Normalizer** | Maps collector-specific formats to the unified Activity Event Schema.  Source-independent mapping table with per-type payload normalizers.  Unknown events are logged and marked, never rejected. |
-| **Database** | SQLite persistence. Auto-creates `data/activity.db` on startup. Repository API with save/get/list/count. JSON payload + raw. WAL mode, no ORM. |
+| **Database** | SQLite persistence. Auto-creates `data/activity.db` on startup. Repository API with save/get/list/count/get_by_type/get_between/get_latest/list_types. JSON payload + raw. WAL mode, no ORM. Indexed on type + timestamp. |
+| **Service** | Read-only query layer. All downstream reads go through `ActivityService` — never direct SQLite. Constructor-injected repository for future PostgreSQL swap. |
 | **Decision** | Evaluates rules against events. Triggers actions (notify, schedule, escalate) |
 | **Claude Trigger** | Bridges Activity decisions to Claude via the MCP Hub |
 
@@ -261,8 +265,8 @@ Claude Trigger           ← Notify Claude
 - **Schema-Versioned** — breaking changes to the event schema bump a version integer
 - **Typed Payload** — each event type maps to a specific, typed payload sub-schema
 
-**Current Status:** 🟡 In Progress — Full ingestion pipeline verified: Schema (A001), Gateway (A002), Normalizer (A003), SQLite (A004), MacroDroid Integration (A005).
-See `docs/activity/` for SCHEMA, NORMALIZER, STORAGE, and MACRODROID documentation.
+**Current Status:** 🟡 In Progress — Full ingestion pipeline verified: Schema (A001), Gateway (A002), Normalizer (A003), SQLite (A004), MacroDroid Integration (A005), Event Normalization (A006), Event Query Service (A007).
+See `docs/activity/` for API, SCHEMA, NORMALIZER, STORAGE, and MACRODROID documentation.
 
 ---
 

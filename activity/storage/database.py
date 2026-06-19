@@ -58,7 +58,9 @@ def init_db(db_path: Path | str | None = None) -> Path:
     try:
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA foreign_keys=ON")
-        conn.execute(_CREATE_EVENTS_DDL)
+        conn.execute(_CREATE_EVENTS_TABLE)
+        conn.execute(_CREATE_EVENTS_TYPE_INDEX)
+        conn.execute(_CREATE_EVENTS_TIMESTAMP_INDEX)
         conn.commit()
         logger.info("Database ready: %s", path)
     finally:
@@ -82,7 +84,7 @@ def get_connection(db_path: Path | str | None = None) -> sqlite3.Connection:
 
 # ── DDL ────────────────────────────────────────────────────────────
 
-_CREATE_EVENTS_DDL = """
+_CREATE_EVENTS_TABLE = """
 CREATE TABLE IF NOT EXISTS events (
     id          TEXT PRIMARY KEY,
     version     INTEGER NOT NULL DEFAULT 1,
@@ -96,3 +98,11 @@ CREATE TABLE IF NOT EXISTS events (
     created_at  TEXT    NOT NULL
 )
 """
+
+_CREATE_EVENTS_TYPE_INDEX = (
+    "CREATE INDEX IF NOT EXISTS idx_events_type ON events (type)"
+)
+
+_CREATE_EVENTS_TIMESTAMP_INDEX = (
+    "CREATE INDEX IF NOT EXISTS idx_events_timestamp ON events (timestamp)"
+)

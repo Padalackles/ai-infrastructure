@@ -328,3 +328,114 @@ def test_multiple_events_independent(repo: ActivityRepository):
     assert found_a["type"] == "device.awake"
     assert found_b["type"] == "device.sleep"
     assert found_a["id"] != found_b["id"]
+
+
+# ── get_by_type ───────────────────────────────────────────────────────
+
+
+def test_get_by_type_returns_matching_events(repo: ActivityRepository):
+    """get_by_type() returns only events with the matching canonical type."""
+    repo.save_event(_make_event(id="evt_bt_a", type="device.awake"))
+    repo.save_event(_make_event(id="evt_bt_b", type="device.sleep"))
+    repo.save_event(_make_event(id="evt_bt_c", type="device.awake"))
+
+    results = repo.get_by_type("device.awake")
+    assert len(results) == 2
+    assert all(r["type"] == "device.awake" for r in results)
+
+
+def test_get_by_type_respects_limit(repo: ActivityRepository):
+    """get_by_type(limit=N) returns at most N results."""
+    for i in range(5):
+        repo.save_event(_make_event(id=f"evt_btl_{i:03d}", type="app.opened"))
+
+    results = repo.get_by_type("app.opened", limit=2)
+    assert len(results) == 2
+
+
+def test_get_by_type_empty_for_unknown_type(repo: ActivityRepository):
+    """get_by_type() returns [] for a type that doesn't exist."""
+    results = repo.get_by_type("nonexistent.type")
+    assert results == []
+
+
+# ── get_between ───────────────────────────────────────────────────────
+
+
+def test_get_between_returns_events_in_range(repo: ActivityRepository):
+    """get_between() returns events with timestamp in [start, end]."""
+    repo.save_event(_make_event(
+        id="evt_ts_a", timestamp="2026-06-19T08:00:00.000Z", type="device.awake",
+    ))
+    repo.save_event(_make_event(
+        id="evt_ts_b", timestamp="2026-06-19T09:00:00.000Z", type="device.sleep",
+    ))
+    repo.save_event(_make_event(
+        id="evt_ts_c", timestamp="2026-06-19T10:00:00.000Z", type="device.awake",
+    ))
+
+    results = repo.get_between(
+        start="2026-06-19T08:30:00.000Z",
+        end="2026-06-19T10:30:00.000Z",
+    )
+    assert len(results) == 2
+    ids = [r["id"] for r in results]
+    assert "evt_ts_b" in ids
+    assert "evt_ts_c" in ids
+    assert "evt_ts_a" not in ids
+
+
+def test_get_between_empty_when_no_matches(repo: ActivityRepository):
+    """get_between() returns [] when no events fall in the range."""
+    repo.save_event(_make_event(
+        id="evt_range_x", timestamp="2026-06-01T00:00:00.000Z",
+    ))
+    results = repo.get_between(
+        start="2026-06-10T00:00:00.000Z",
+        end="2026-06-20T00:00:00.000Z",
+    )
+    assert results == []
+
+
+# ── get_latest ────────────────────────────────────────────────────────
+
+
+def test_get_latest_returns_most_recent_of_type(repo: ActivityRepository):
+    """get_latest() returns the newest event of the given type."""
+    repo.save_event(_make_event(
+        id="evt_lat_a", type="device.awake",
+        timestamp="2026-06-19T08:00:00.000Z",
+    ))
+    repo.save_event(_make_event(
+        id="evt_lat_b", type="device.awake",
+        timestamp="2026-06-19T09:00:00.000Z",
+    ))
+
+    latest = repo.get_latest("device.awake")
+    assert latest is not None
+    assert latest["id"] == "evt_lat_b"
+
+
+def test_get_latest_returns_none_for_unknown_type(repo: ActivityRepository):
+    """get_latest() returns None when no event of that type exists."""
+    latest = repo.get_latest("nonexistent.type")
+    assert latest is None
+
+
+# ── list_types ────────────────────────────────────────────────────────
+
+
+def test_list_types_returns_distinct_sorted(repo: ActivityRepository):
+    """list_types() returns distinct canonical types, sorted alphabetically."""
+    repo.save_event(_make_event(id="evt_lt_a", type="device.sleep"))
+    repo.save_event(_make_event(id="evt_lt_b", type="device.awake"))
+    repo.save_event(_make_event(id="evt_lt_c", type="device.awake"))  # duplicate
+
+    types = repo.list_types()
+    assert types == ["device.awake", "device.sleep"]
+
+
+def test_list_types_empty_for_empty_db(repo: ActivityRepository):
+    """list_types() returns [] when no events exist."""
+    types = repo.list_types()
+    assert types == []

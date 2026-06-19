@@ -119,6 +119,62 @@ class ActivityRepository:
         finally:
             conn.close()
 
+    def get_by_type(self, event_type: str, limit: int = 100) -> list[dict[str, Any]]:
+        """Return events of a specific canonical type, newest first.
+
+        *limit* is clamped to [1, 1000].
+        """
+        limit = max(1, min(limit, 1000))
+        conn = get_connection(self._db_path)
+        try:
+            rows = conn.execute(
+                _SELECT_BY_TYPE,
+                {"type": event_type, "limit": limit},
+            ).fetchall()
+            return [_row_to_event(r) for r in rows]
+        finally:
+            conn.close()
+
+    def get_between(
+        self, start: str, end: str, limit: int = 100
+    ) -> list[dict[str, Any]]:
+        """Return events within a timestamp range, newest first.
+
+        *limit* is clamped to [1, 1000].
+        """
+        limit = max(1, min(limit, 1000))
+        conn = get_connection(self._db_path)
+        try:
+            rows = conn.execute(
+                _SELECT_BETWEEN,
+                {"start": start, "end": end, "limit": limit},
+            ).fetchall()
+            return [_row_to_event(r) for r in rows]
+        finally:
+            conn.close()
+
+    def get_latest(self, event_type: str) -> dict[str, Any] | None:
+        """Return the most recent event of a given type, or None."""
+        conn = get_connection(self._db_path)
+        try:
+            row = conn.execute(
+                _SELECT_LATEST, {"type": event_type}
+            ).fetchone()
+            if row is None:
+                return None
+            return _row_to_event(row)
+        finally:
+            conn.close()
+
+    def list_types(self) -> list[str]:
+        """Return all distinct canonical event types in the database."""
+        conn = get_connection(self._db_path)
+        try:
+            rows = conn.execute(_SELECT_DISTINCT_TYPES).fetchall()
+            return sorted(r["type"] for r in rows)
+        finally:
+            conn.close()
+
 
 # ── SQL (private) ───────────────────────────────────────────────────
 
@@ -141,6 +197,34 @@ LIMIT :limit
 """
 
 _COUNT_EVENTS = "SELECT COUNT(*) FROM events"
+
+_SELECT_BY_TYPE = """
+SELECT id, version, timestamp, source, collector, device, type, payload, raw, created_at
+FROM events
+WHERE type = :type
+ORDER BY created_at DESC
+LIMIT :limit
+"""
+
+_SELECT_BETWEEN = """
+SELECT id, version, timestamp, source, collector, device, type, payload, raw, created_at
+FROM events
+WHERE timestamp >= :start AND timestamp <= :end
+ORDER BY timestamp DESC
+LIMIT :limit
+"""
+
+_SELECT_LATEST = """
+SELECT id, version, timestamp, source, collector, device, type, payload, raw, created_at
+FROM events
+WHERE type = :type
+ORDER BY timestamp DESC
+LIMIT 1
+"""
+
+_SELECT_DISTINCT_TYPES = """
+SELECT DISTINCT type FROM events ORDER BY type
+"""
 
 
 # ── Helpers ─────────────────────────────────────────────────────────

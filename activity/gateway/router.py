@@ -40,6 +40,7 @@ from fastapi.responses import JSONResponse
 
 from activity.normalizer.service import normalize_event
 from activity.storage.repository import ActivityRepository
+from activity.service import ActivityService
 
 from .models import ActivityEventRequest, ActivityEventResponse
 from .service import build_event
@@ -48,9 +49,9 @@ logger = logging.getLogger("mcp-hub.activity.gateway")
 
 router = APIRouter(prefix="/activity", tags=["activity"])
 
-# Repository is created once at import time.  The database is
-# initialized by main.py's lifespan before any requests arrive.
+# Repository + Service — created once at import time.
 _repo = ActivityRepository()
+_service = ActivityService(_repo)
 
 
 @router.post("/events", response_model=ActivityEventResponse, status_code=200)
@@ -91,6 +92,57 @@ async def ingest_event(request: Request, body: ActivityEventRequest) -> dict[str
         "timestamp": normalized["timestamp"],
         "version": normalized["version"],
     }
+
+
+# ── Query endpoints ─────────────────────────────────────────────
+
+
+@router.get("/recent", status_code=200)
+async def get_recent(limit: int = 50) -> list[dict[str, Any]]:
+    """Return the most recent events, newest first.
+
+    Query params:
+        limit (int): max events to return, clamped to [1, 1000].  Default 50.
+    """
+    return _service.get_recent(limit=limit)
+
+
+@router.get("/latest", status_code=200)
+async def get_latest(type: str) -> dict[str, Any]:
+    """Return the most recent event of a given canonical type.
+
+    Query params:
+        type (str): canonical event type, e.g. ``device.awake``.
+
+    Returns 404 if no event of that type exists.
+    """
+    event = _service.get_latest(type)
+    if event is None:
+        return JSONResponse(
+            status_code=404,
+            content={"status": "not_found", "message": f"No events of type {type!r}"},
+        )
+    return event
+
+
+@router.get("/history", status_code=200)
+async def get_history(
+    start: str, end: str, limit: int = 100
+) -> list[dict[str, Any]]:
+    """Return events within a timestamp range, newest first.
+
+    Query params:
+        start (str): ISO 8601 start timestamp (inclusive).
+        end   (str): ISO 8601 end timestamp (inclusive).
+        limit (int): max events to return, clamped to [1, 1000].  Default 100.
+    """
+    return _service.get_between(start=start, end=end, limit=limit)
+
+
+@router.get("/types", status_code=200)
+async def get_types() -> list[str]:
+    """Return all distinct canonical event types currently stored."""
+    return _service.list_types()
 
 
 # ── Logging ──────────────────────────────────────────────────────

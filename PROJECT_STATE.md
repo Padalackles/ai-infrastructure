@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.8.0
-**Last Updated:** 2026-06-19 — Current Android Events fully supported: network.wifi.connected canonical type (Task A006)
+**Version:** v0.9.0
+**Last Updated:** 2026-06-19 — Event Query Service: unified read API with Service layer (Task A007)
 
 ---
 
@@ -60,6 +60,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-A004 | ✅ | Activity SQLite Persistence — repository + auto-create DB |
 | Task-A005 | ✅ | MacroDroid Integration — documented, tested, 30 integration tests |
 | Task-A006 | ✅ | Support Current Android Events — network.wifi.connected canonical type + payload normalizer |
+| Task-A007 | ✅ | Event Query Service — Service layer + GET /activity/recent, /latest, /history, /types |
 
 ---
 
@@ -82,6 +83,8 @@ Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Databas
 | Activity Gateway | 🟡 Implemented (Task A002 — POST /activity/events) |
 | Event Normalizer | ✅ Implemented (Task A003 — maps collector→canonical types, normalizes payloads) |
 | Event Database | ✅ Implemented (Task A004 — SQLite persistence, repository API) |
+| Activity Service | ✅ Implemented (Task A007 — read-only query layer) |
+| Query API | ✅ Implemented (Task A007 — GET /recent, /latest, /history, /types) |
 | Decision Script | ⬜ Planned |
 | Claude Trigger | ⬜ Planned |
 
@@ -94,9 +97,9 @@ See `docs/activity/SCHEMA.md` for the full event contract.
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-A006 |
+| **Task ID** | Task-A007 |
 | **Status** | ✅ Completed |
-| **Description** | Support Current Android Events — network.wifi.connected + payload normalization |
+| **Description** | Event Query Service — Service layer + 4 GET endpoints + 108 tests |
 
 ---
 
@@ -280,8 +283,8 @@ ai-infrastructure/
 
 | Field | Value |
 |---|---|
-| **Hash** | (pending — Task A006) |
-| **Summary** | feat(activity): support Android events — network.wifi.connected canonical type + payload normalization |
+| **Hash** | (pending — Task A007) |
+| **Summary** | feat(activity): Event Query Service — Service layer + GET /recent, /latest, /history, /types |
 
 ---
 
@@ -292,4 +295,4 @@ When resuming this project:
 1. Read README.md
 2. Read PROJECT_STATE.md
 3. Read ARCHITECTURE.md
-4. Continue from **Task-A006** — Support Current Android Events (completed); next: **Task-A007** (Decision Script) or **Task-015** (Docker Production)
+4. Continue from **Task-A007** — Event Query Service (completed); next: **Task-A008** (Decision Script) or **Task-015** (Docker Production)

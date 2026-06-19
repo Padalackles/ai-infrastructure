@@ -46,6 +46,16 @@ services:
     networks:
       - ai-net
 
+  # ── Scheduler — Background Job Engine ──────
+  scheduler:
+    build: ./services/scheduler
+    container_name: ai-scheduler
+    restart: unless-stopped
+    volumes:
+      - ./services/scheduler/config.yaml:/app/config.yaml:ro
+    networks:
+      - ai-net
+
   # ──────────────────────────────────────────
   # MCP Services
   # ──────────────────────────────────────────

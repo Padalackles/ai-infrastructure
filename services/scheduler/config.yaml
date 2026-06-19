@@ -1,0 +1,16 @@
+# ──────────────────────────────────────────
+# Scheduler Service — Configuration
+# ──────────────────────────────────────────
+#
+# Top-level ``enabled`` is the master kill-switch.
+# Each job section can be individually enabled/disabled
+# and its cron expression overridden.
+#
+# Adding a future job: add a new key under this file.
+# No code changes required.
+
+enabled: true
+
+dailyJournal:
+  enabled: true
+  cron: "0 22 * * *"   # 22:00 UTC daily

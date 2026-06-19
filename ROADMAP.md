@@ -63,11 +63,45 @@ Wire Claude Desktop to the MCP Hub via JSON-RPC / MCP protocol. End-to-end tool 
 
 Authentication, TLS, health-check loops, metrics, structured logging, CI/CD.
 
-**Status:** Planned
+**Status:** 🟡 In Progress
 
 ---
 
-## Phase 7 — External MCP Services
+## Phase 7 — Background Automation
+
+Autonomous background jobs running on schedule. Foundation for AI-driven daily workflows.
+
+| Component | Purpose | Status |
+|---|---|---|
+| Scheduler Service | Cron-based job engine (TypeScript) | ✅ Implemented (Task-016) |
+| Daily Journal | Daily heartbeat → Ombre | Planned (Task-017) |
+| Weekly Summary | Weekly reflection → Ombre | Planned |
+| GitHub Observer | Repository monitoring | Planned |
+| Reminder | Notification scheduling | Planned |
+
+---
+
+## Phase 8 — Activity Subsystem
+
+Event-driven device activity pipeline. Ingests raw events from Android (MacroDroid),
+normalizes them, stores them, and triggers autonomous Claude awareness.
+
+```
+Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Database → Decision Script → Claude Trigger
+```
+
+| Component | Purpose | Status |
+|---|---|---|
+| Event Schema | Unified event contract | 🟡 Defined (Task A001) |
+| Activity Gateway | HTTP ingest endpoint | Planned (Task A002) |
+| Event Normalizer | Map collector → unified schema | Planned |
+| Event Database | Persist + query events | Planned |
+| Decision Script | Rule evaluation engine | Planned |
+| Claude Trigger | Bridge Activity → Claude via MCP Hub | Planned |
+
+---
+
+## Phase 9 — External MCP Services
 
 Community and third-party MCP services. Remote adapters (HTTP/SSE/WebSocket). Service marketplace design.
 
@@ -78,19 +112,28 @@ Community and third-party MCP services. Remote adapters (HTTP/SSE/WebSocket). Se
 ## Long-Term Vision
 
 ```
-Claude Desktop
-        │
-        ▼
-  MCP Hub (Gateway)
-        │
- ┌──────┼──────────────────┐
- │      │      │           │
-Ombre  ntfy  Filesystem  GitHub
-        │
-   Future MCP Services
-        │
- Browser · SSH · Calendar · Email · ...
+                         ┌──────────────────────┐
+                         │   Android Device      │
+                         │   (MacroDroid)        │
+                         └──────┬───────────────┘
+                                │  HTTP webhook
+                                ▼
+Claude Desktop          Activity Gateway
+        │                     │
+        ▼                     ▼
+  MCP Hub (Gateway)     Event Normalizer
+        │                     │
+ ┌──────┼──────────┐          ▼
+ │      │          │     Event Database
+Ombre  ntfy  Scheduler         │
+        │          │           ▼
+   Future MCP   Daily Jobs  Decision Script
+   Services     (background)     │
+        │                       ▼
+ Browser · SSH          Claude Trigger ──→ MCP Hub ──→ Claude Desktop
+ Calendar · Email              (autonomous awareness)
 ```
 
 The architecture evolves through **extension, not reconstruction**.
 Adding a new MCP service requires a manifest + server.py — zero Core changes.
+Adding a new Activity event type requires only a payload sub-schema — zero pipeline changes.

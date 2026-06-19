@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.3.1
-**Last Updated:** 2026-06-19 — Documentation Freeze (全仓库一致性收尾)
+**Version:** v0.4.0
+**Last Updated:** 2026-06-19 — Activity Subsystem enters design phase (Task A001)
 
 ---
 
@@ -53,6 +53,35 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-019 | ✅ | 隐藏内部 Tool — ExampleServer 复用 HUB_EXPOSE_INTERNAL_TOOLS |
 | Task-020 | ✅ | 诊断日志 — 4 处临时日志 + TROUBLESHOOTING_MCP_TOOLS.md |
 | Task-021 | ✅ | 文档筛查 — 7 docs 修复（工具名、状态、环境变量、架构图） |
+| Task-016 | ✅ | Scheduler Framework — TypeScript scheduler service with Job registry |
+| Task-A001 | 🟡 | Activity Event Schema — unified event contract for device activity pipeline |
+
+---
+
+## Activity Subsystem (New)
+
+**Status:** 🟡 In Design
+
+The Activity subsystem ingests device events (Android → MacroDroid → Gateway),
+normalizes them into a unified schema, stores them, and triggers Claude awareness.
+
+**Pipeline:**
+
+```
+Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Database → Decision Script → Claude Trigger
+```
+
+| Component | Status |
+|---|---|
+| Event Schema | 🟡 Defined (Task A001 — `docs/activity/SCHEMA.md`) |
+| Activity Gateway | ⬜ Planned (Task A002) |
+| Event Normalizer | ⬜ Planned |
+| Event Database | ⬜ Planned |
+| Decision Script | ⬜ Planned |
+| Claude Trigger | ⬜ Planned |
+
+**Design Principles:** Source agnostic, normalize late, schema-versioned, typed payload.
+See `docs/activity/SCHEMA.md` for the full event contract.
 
 ---
 
@@ -60,28 +89,48 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-015 |
-| **Status** | ⬜ Planned |
-| **Description** | Docker Production — optimize docker-compose for production deployment |
+| **Task ID** | Task-A001 |
+| **Status** | 🟡 In Progress |
+| **Description** | Activity Event Schema — define unified event contract for device activity pipeline |
 
 ---
 
-## Hub Module Structure
+## Repository Structure
 
 ```
-mcp-hub/src/
-├── main.py              Entry point — 7-step startup pipeline
-├── config/              load_config() — unified YAML config
-├── lifecycle/           BaseMCPServer, ToolNotFoundError
-├── registry/            ServerManager — service registry
-├── loader/              Discovery, Loader, PythonLoader
-├── router/              Router + RouterInterface + RouteRegistry
-├── runtime/             Runtime — middleware pass-through
-├── transport/           JSON-RPC 2.0 stack (server, handlers)
-├── models/              ServiceInfo, PluginManifest, HubState, RuntimeContext
-├── api/                 REST endpoints (/health, /status, /tools)
-├── core/                EventBus, RemoteMCPClient, HubState, Auth, Audit, Metrics
-└── utils/               generate_id() helpers
+ai-infrastructure/
+├── mcp-hub/                 Python MCP Hub (FastAPI)
+│   └── src/
+│       ├── main.py          Entry point — 8-step startup pipeline
+│       ├── config/          load_config() — unified YAML config
+│       ├── lifecycle/       BaseMCPServer, ToolNotFoundError
+│       ├── registry/        ServerManager — service registry
+│       ├── loader/          Discovery, Loader, PythonLoader
+│       ├── router/          Router + RouterInterface + RouteRegistry
+│       ├── runtime/         Runtime — middleware pass-through
+│       ├── transport/       JSON-RPC 2.0 stack (server, handlers)
+│       ├── models/          ServiceInfo, PluginManifest, HubState, RuntimeContext
+│       ├── api/             REST endpoints (/health, /status, /tools)
+│       ├── core/            EventBus, RemoteMCPClient, HubState, Auth, Audit, Metrics
+│       └── utils/           generate_id() helpers
+├── services/
+│   └── scheduler/           TypeScript Scheduler Service
+│       └── src/
+│           ├── index.ts     Entry point — startup + signal handling
+│           ├── scheduler.ts Cron engine + job execution + logging
+│           ├── registry.ts  JobRegistry — register/get/remove
+│           ├── config.ts    YAML config loader with defaults
+│           ├── types.ts     Job interface + ExecutionResult
+│           └── jobs/        DailyJournal (placeholder)
+├── activity/
+│   └── types.ts             Activity Event Schema — TypeScript contract
+├── docs/
+│   └── activity/
+│       └── SCHEMA.md        Activity Event Schema documentation
+├── mcp_servers/             MCP server adapters (Python)
+├── caddy/                   Reverse proxy config
+├── cloudflare/              Tunnel config
+└── docker-compose.yml       Deployment orchestration
 ```
 
 ---
@@ -159,9 +208,14 @@ mcp-hub/src/
 
 | Capability | Target |
 |---|---|
-| GitHub MCP Server | Task-015+ |
-| Filesystem MCP Server | Task-015+ |
+| GitHub MCP Server | Future |
+| Filesystem MCP Server | Future |
 | Docker Production optimization | Task-015 |
+| Activity Gateway | Task A002+ |
+| Event Normalizer | Task A003+ |
+| Event Database | Task A004+ |
+| Decision Script | Future |
+| Claude Trigger (Activity) | Future |
 | Health-check loop | Future |
 | Remote server adapters (HTTP/SSE/WebSocket) | Future |
 | Prometheus / Grafana metrics | Future |
@@ -174,10 +228,12 @@ mcp-hub/src/
 | Component | Status |
 |---|---|
 | MCP Hub (Gateway) | ✅ Runtime |
+| Scheduler Service | ✅ Runtime (TypeScript, cron-based background jobs) |
 | Caddy | ✅ Running (Let's Encrypt TLS) |
 | Cloudflare | ✅ DNS + Proxy |
 | Ombre MCP | ✅ External (45.76.169.98:8000) — 6 tools |
 | ntfy MCP | ✅ External (ntfy.sh) — 3 tools |
+| Activity Subsystem | 🟡 In Design (Event Schema defined) |
 | Filesystem MCP | Reserved |
 | GitHub MCP | Reserved |
 
@@ -200,8 +256,8 @@ mcp-hub/src/
 
 | Field | Value |
 |---|---|
-| **Hash** | `508ceec` |
-| **Summary** | Documentation Freeze — 全仓过期关键词清理, README统一, 配置一致性 |
+| **Hash** | (pending — Task A001) |
+| **Summary** | feat(activity): introduce unified activity event schema |
 
 ---
 

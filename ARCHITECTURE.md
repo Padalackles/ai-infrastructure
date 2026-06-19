@@ -222,8 +222,54 @@ Architecture changes are documented before or alongside implementation.
 
 ---
 
+## Activity Subsystem
+
+A separate event-driven pipeline that ingests device activity, normalizes
+it, and feeds autonomous decision-making:
+
+```
+Android (MacroDroid)
+        │
+        ▼
+Activity Gateway         ← Ingest raw events
+        │
+        ▼
+Event Normalizer         ← Map to unified schema
+        │
+        ▼
+Event Database           ← Persist + query
+        │
+        ▼
+Decision Script          ← Evaluate rules
+        │
+        ▼
+Claude Trigger           ← Notify Claude
+```
+
+| Component | Responsibility |
+|---|---|
+| **Gateway** | HTTP ingest endpoint. Receives raw events from collectors (MacroDroid, Tasker, …) |
+| **Normalizer** | Maps collector-specific formats to the unified Activity Event Schema |
+| **Database** | Persists normalized events. Queryable by time, type, device, source |
+| **Decision** | Evaluates rules against events. Triggers actions (notify, schedule, escalate) |
+| **Claude Trigger** | Bridges Activity decisions to Claude via the MCP Hub |
+
+**Design Principles:**
+
+- **Source Agnostic** — Android, iOS, desktop, IoT all produce the same event shape
+- **Normalize Late** — raw collector data is always preserved alongside normalized payloads
+- **Schema-Versioned** — breaking changes to the event schema bump a version integer
+- **Typed Payload** — each event type maps to a specific, typed payload sub-schema
+
+**Current Status:** 🟡 In Design — Event Schema defined (Task A001).  See `docs/activity/SCHEMA.md`.
+
+---
+
 ## Future Expansion
 
 New MCP services are added by creating directories under `mcp_servers/`. The architecture evolves through **extension, not reconstruction**.
+
+New subsystems (like Activity) are added as top-level directories with their own
+documentation, types, and services — following the same low-coupling principles.
 
 **Candidate services:** Calendar MCP, Email MCP, Database MCP, Home Assistant MCP, Monitoring MCP, Redis MCP.

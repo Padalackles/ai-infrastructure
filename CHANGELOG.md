@@ -4,6 +4,47 @@ All notable changes to the MCP Hub project.
 
 ---
 
+## [v0.4.0] — 2026-06-19 (Activity Subsystem Design)
+
+### Activity Event Schema (Task A001)
+
+First architectural milestone for the Activity subsystem — a new event-driven
+pipeline for ingesting device activity and triggering autonomous Claude awareness.
+
+- **`docs/activity/SCHEMA.md`**: Comprehensive event schema documentation
+  - Unified event contract: version, id, timestamp, source, collector, device, type, payload, raw
+  - Hierarchical dot-notation naming convention (`device.awake`, `battery.low`, …)
+  - 12 reserved event domains, 25+ typed event types defined
+  - Payload sub-schemas for every event type (DeviceAwakePayload, BatteryLowPayload, …)
+  - Design principles: source agnostic, normalize late, schema-versioned, typed payload
+  - Future extension strategy for new sources, collectors, and event types
+- **`activity/types.ts`**: TypeScript type contract
+  - `ActivityEvent<T>` — discriminated union with typed payload per event type
+  - `EventPayload<T>` — maps each `EventType` to its specific payload interface
+  - 25+ payload sub-schemas with full TypeScript type safety
+  - Extensible `EventType` and `EventCollector` types (string union with escape hatch)
+
+### Documentation Updates
+
+- `ARCHITECTURE.md`: Added Activity Subsystem section with pipeline diagram and component table
+- `ROADMAP.md`: Added Phase 7 (Background Automation) + Phase 8 (Activity Subsystem) + updated Long-Term Vision diagram
+- `PROJECT_STATE.md`: Restructured (Hub Module → Repository Structure), added Activity Subsystem section, updated components + task table
+- `CHANGELOG.md`: This entry
+
+### Design Decisions
+
+- Activity is a **separate subsystem**, not an MCP service. It has its own pipeline (Gateway → Normalizer → Database → Decision → Trigger).
+- The **Event Contract** is defined before any implementation — schema-first, documentation-first.
+- **`raw` is always preserved** alongside normalized `payload` — enables re-processing and debugging.
+- **IDs are ULID-based** (`evt_<ulid>`) — time-sortable, globally unique, generated server-side by the Gateway.
+- Extension is purely additive: new event types, sources, and collectors require zero breaking changes.
+
+### Tag
+
+`v0.4.0` — Activity Event Schema defined, subsystem design phase begins
+
+---
+
 ## [v0.3.0] — 2026-06-18 (Claude Web Connected)
 
 ### First End-to-End Closed Loop

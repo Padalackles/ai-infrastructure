@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.5.0
-**Last Updated:** 2026-06-19 — Event Normalizer implemented (Task A003)
+**Version:** v0.6.0
+**Last Updated:** 2026-06-19 — SQLite persistence implemented (Task A004)
 
 ---
 
@@ -57,6 +57,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-A001 | ✅ | Activity Event Schema — unified event contract for device activity pipeline |
 | Task-A002 | ✅ | Activity Gateway — HTTP ingest endpoint (POST /activity/events) |
 | Task-A003 | ✅ | Event Normalizer — canonical event transformation |
+| Task-A004 | ✅ | Activity SQLite Persistence — repository + auto-create DB |
 
 ---
 
@@ -78,7 +79,7 @@ Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Databas
 | Event Schema | ✅ Defined (Task A001 — `docs/activity/SCHEMA.md`) |
 | Activity Gateway | 🟡 Implemented (Task A002 — POST /activity/events) |
 | Event Normalizer | ✅ Implemented (Task A003 — maps collector→canonical types, normalizes payloads) |
-| Event Database | ⬜ Planned |
+| Event Database | ✅ Implemented (Task A004 — SQLite persistence, repository API) |
 | Decision Script | ⬜ Planned |
 | Claude Trigger | ⬜ Planned |
 
@@ -91,9 +92,9 @@ See `docs/activity/SCHEMA.md` for the full event contract.
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-A003 |
+| **Task ID** | Task-A004 |
 | **Status** | ✅ Completed |
-| **Description** | Event Normalizer — canonical event transformation |
+| **Description** | Activity SQLite Persistence — repository + auto-create DB |
 
 ---
 
@@ -131,12 +132,18 @@ ai-infrastructure/
 │   │   ├── models.py        Pydantic request/response models
 │   │   ├── service.py       ID generation, timestamp, event assembly
 │   │   └── router.py        POST /activity/events endpoint
-│   └── normalizer/          Event Normalizer (Python)
+│   ├── normalizer/          Event Normalizer (Python)
+│   │   ├── __init__.py
+│   │   ├── mappings.py      Collector→canonical event type mapping table
+│   │   ├── service.py       normalize_event() + payload normalizers
+│   │   └── tests/
+│   │       └── test_normalizer.py  20 unit tests
+│   └── storage/             Activity Storage (Python)
 │       ├── __init__.py
-│       ├── mappings.py      Collector→canonical event type mapping table
-│       ├── service.py       normalize_event() + payload normalizers
+│       ├── database.py      SQLite connection + table creation
+│       ├── repository.py    ActivityRepository — save/get/list/count
 │       └── tests/
-│           └── test_normalizer.py  20 unit tests
+│           └── test_storage.py  19 unit tests
 ├── docs/
 │   └── activity/
 │       └── SCHEMA.md        Activity Event Schema documentation
@@ -269,8 +276,8 @@ ai-infrastructure/
 
 | Field | Value |
 |---|---|
-| **Hash** | (pending — Task A003) |
-| **Summary** | feat(activity): implement canonical event normalizer |
+| **Hash** | (pending — Task A004) |
+| **Summary** | feat(activity): implement SQLite persistence layer |
 
 ---
 

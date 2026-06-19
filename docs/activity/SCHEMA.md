@@ -286,6 +286,7 @@ import type { ActivityEvent, EventType, EventSource } from "../activity/types";
 
 - `activity/types.ts` — TypeScript type definitions
 - `docs/activity/NORMALIZER.md` — Event normalization flow and mapping strategy
+- `docs/activity/STORAGE.md` — SQLite persistence layer
 - `ARCHITECTURE.md` — System architecture (Activity subsystem)
 - `PROJECT_STATE.md` — Current development status
 - `ROADMAP.md` — Long-term planning

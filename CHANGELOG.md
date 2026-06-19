@@ -4,6 +4,52 @@ All notable changes to the MCP Hub project.
 
 ---
 
+## [v0.6.0] — 2026-06-19 (Activity SQLite Persistence)
+
+### SQLite Persistence Layer (Task A004)
+
+Third component of the Activity subsystem.  Persists normalized Activity
+Events to a local SQLite database with a clean repository interface.
+
+- **`activity/storage/database.py`**: Connection management — `init_db()` with
+  auto-creating parent directories, WAL journal mode, foreign keys ON.
+  `get_connection()` returns `sqlite3.Row`-based connections.
+- **`activity/storage/repository.py`**: `ActivityRepository` class —
+  `save_event()` (returns ID), `get_event()` (returns dict or None),
+  `list_events(limit)` (newest-first, limit clamped [1,1000]),
+  `count_events()` (returns int).  SQL never leaks to callers.
+- **`activity/storage/tests/test_storage.py`**: 19 unit tests covering
+  DB init, table creation, all CRUD operations, JSON round-trip,
+  data integrity, and error handling.
+- **`activity/gateway/router.py`**: Pipeline extended — Gateway →
+  Normalizer → **Repository.save_event()** → Console → Response.
+  Persistence failures return HTTP 500.
+- **`mcp-hub/src/main.py`**: DB bootstrapped in lifespan (step 1.5)
+  before any requests arrive.
+- **`docs/activity/STORAGE.md`**: Full storage layer documentation.
+
+### Design Highlights
+
+- **No ORM** — standard library `sqlite3` with parameterized queries.
+- **Auto-create** — `data/activity.db` created on first startup.
+- **JSON columns** — `payload` and `raw` stored as compact JSON text.
+- **Layered architecture** — Gateway (HTTP), Normalizer (transform),
+  Repository (persist), Database (connect).  No mixing.
+- **Zero regressions** — 100/101 tests pass (1 pre-existing skip).
+
+### Documentation Updates
+
+- `ARCHITECTURE.md`: Updated Database component + current status
+- `ROADMAP.md`: Event Database marked ✅ Implemented
+- `PROJECT_STATE.md`: Task A004 marked complete, v0.6.0
+- `CHANGELOG.md`: This entry
+
+### Tag
+
+`v0.6.0` — Activity pipeline now persisting events end-to-end
+
+---
+
 ## [v0.5.0] — 2026-06-19 (Event Normalizer Implemented)
 
 ### Event Normalizer (Task A003)

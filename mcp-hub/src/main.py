@@ -46,6 +46,7 @@ from src.loader.discovery import Discovery
 from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
 from activity.gateway import router as activity_router
+from activity.storage.database import init_db as init_activity_db
 from src.transport.server import _mcp_asgi, set_runtime, start_mcp, stop_mcp
 
 # ── Logging ─────────────────────────────────────────────────────
@@ -66,6 +67,10 @@ async def lifespan(app: FastAPI):
     config = load_config()
     app.state.config = config
     logger.info("Configuration Loaded")
+
+    # ── 1.5 Bootstrap Activity database ───────────────────────────
+    init_activity_db()
+    logger.info("Activity Database Ready")
 
     # ── 2. Initialize Registry ────────────────────────────────────
     registry = ServerManager()

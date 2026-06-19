@@ -4,6 +4,51 @@ All notable changes to the MCP Hub project.
 
 ---
 
+## [v0.7.0] — 2026-06-19 (MacroDroid Integration)
+
+### MacroDroid Integration (Task A005)
+
+Integration layer between MacroDroid (Android) and the Activity Gateway.
+Fully documented, tested end-to-end for all 13 event types.
+
+- **`activity/normalizer/mappings.py`**: Added `battery_changed` and
+  `notification_posted` mappings for MacroDroid-specific event names.
+- **`activity/tests/test_macrodroid_integration.py`**: **30 integration tests**
+  covering every MacroDroid event type through the full pipeline —
+  Gateway → Normalizer → SQLite.  Uses FastAPI TestClient with temp DB.
+  Includes parametrized full-pipeline tests, raw preservation, unique ID
+  generation, timestamp assignment, and minimal payload verification.
+- **`docs/activity/MACRODROID.md`**: Complete integration guide —
+  endpoint spec, required/optional fields, 13 supported event types with
+  payload schemas, 10 example JSON payloads, curl examples, MacroDroid
+  configuration (HTTP Request Action setup, variable syntax, trigger→action
+  mapping table), response formats, and architecture boundaries.
+
+### Test Coverage
+
+| Test Suite | Tests | Status |
+|---|---|---|
+| Normalizer unit | 20 | ✅ |
+| Storage unit | 19 | ✅ |
+| MacroDroid integration | 30 | ✅ |
+| MCP Hub | 61 | ✅ |
+
+**Total: 130 tests** (129 passed, 1 pre-existing skip)
+
+### Documentation
+
+- `docs/activity/MACRODROID.md`: MacroDroid integration guide
+- `ARCHITECTURE.md`: Updated status
+- `ROADMAP.md`: MacroDroid Integration marked ✅
+- `PROJECT_STATE.md`: Task A005 marked complete, v0.7.0
+- `CHANGELOG.md`: This entry
+
+### Tag
+
+`v0.7.0` — Activity pipeline ingestion ready for MacroDroid on Android
+
+---
+
 ## [v0.6.0] — 2026-06-19 (Activity SQLite Persistence)
 
 ### SQLite Persistence Layer (Task A004)

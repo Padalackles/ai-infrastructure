@@ -92,6 +92,7 @@ EVENT_MAPPINGS: dict[str, str] = {
     "charging_started": CANONICAL_BATTERY_CHARGING_STARTED,
     "charging_stopped": CANONICAL_BATTERY_CHARGING_STOPPED,
     "battery_level_changed": CANONICAL_BATTERY_LEVEL_CHANGED,
+    "battery_changed": CANONICAL_BATTERY_LEVEL_CHANGED,
     # Alternative names
     "power_connected": CANONICAL_BATTERY_CHARGING_STARTED,
     "power_disconnected": CANONICAL_BATTERY_CHARGING_STOPPED,
@@ -107,6 +108,7 @@ EVENT_MAPPINGS: dict[str, str] = {
     "location_changed": CANONICAL_LOCATION_CHANGED,
     # ── Notification ────────────────────────────────────────────
     "notification_received": CANONICAL_NOTIFICATION_RECEIVED,
+    "notification_posted": CANONICAL_NOTIFICATION_RECEIVED,
     "notification_dismissed": CANONICAL_NOTIFICATION_DISMISSED,
     # ── Call ────────────────────────────────────────────────────
     "call_started": CANONICAL_CALL_STARTED,

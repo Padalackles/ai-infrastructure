@@ -93,9 +93,10 @@ Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Databas
 | Component | Purpose | Status |
 |---|---|---|
 | Event Schema | Unified event contract | ✅ Defined (Task A001) |
-| Activity Gateway | HTTP ingest endpoint | 🟡 Implemented (Task A002) |
+| Activity Gateway | HTTP ingest endpoint | ✅ Implemented (Task A002) |
 | Event Normalizer | Map collector → unified schema | ✅ Implemented (Task A003) |
 | Event Database | Persist + query events | ✅ Implemented (Task A004) |
+| MacroDroid Integration | Android event ingestion, documented + tested | ✅ Implemented (Task A005) |
 | Decision Script | Rule evaluation engine | Planned |
 | Claude Trigger | Bridge Activity → Claude via MCP Hub | Planned |
 

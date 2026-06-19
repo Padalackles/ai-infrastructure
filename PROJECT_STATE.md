@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.6.0
-**Last Updated:** 2026-06-19 — SQLite persistence implemented (Task A004)
+**Version:** v0.7.0
+**Last Updated:** 2026-06-19 — MacroDroid integration documented and tested (Task A005)
 
 ---
 
@@ -58,6 +58,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-A002 | ✅ | Activity Gateway — HTTP ingest endpoint (POST /activity/events) |
 | Task-A003 | ✅ | Event Normalizer — canonical event transformation |
 | Task-A004 | ✅ | Activity SQLite Persistence — repository + auto-create DB |
+| Task-A005 | ✅ | MacroDroid Integration — documented, tested, 30 integration tests |
 
 ---
 
@@ -92,9 +93,9 @@ See `docs/activity/SCHEMA.md` for the full event contract.
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-A004 |
+| **Task ID** | Task-A005 |
 | **Status** | ✅ Completed |
-| **Description** | Activity SQLite Persistence — repository + auto-create DB |
+| **Description** | MacroDroid Integration — documented, tested, 30 integration tests |
 
 ---
 
@@ -144,6 +145,8 @@ ai-infrastructure/
 │       ├── repository.py    ActivityRepository — save/get/list/count
 │       └── tests/
 │           └── test_storage.py  19 unit tests
+│   └── tests/                Activity integration tests
+│       └── test_macrodroid_integration.py  30 integration tests
 ├── docs/
 │   └── activity/
 │       └── SCHEMA.md        Activity Event Schema documentation
@@ -276,8 +279,8 @@ ai-infrastructure/
 
 | Field | Value |
 |---|---|
-| **Hash** | (pending — Task A004) |
-| **Summary** | feat(activity): implement SQLite persistence layer |
+| **Hash** | (pending — Task A005) |
+| **Summary** | feat(activity): MacroDroid integration — HTTP interface + 30 E2E tests |
 
 ---
 

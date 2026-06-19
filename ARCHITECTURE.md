@@ -261,8 +261,8 @@ Claude Trigger           ← Notify Claude
 - **Schema-Versioned** — breaking changes to the event schema bump a version integer
 - **Typed Payload** — each event type maps to a specific, typed payload sub-schema
 
-**Current Status:** 🟡 In Progress — Event Schema defined (A001), Gateway implemented (A002), Normalizer implemented (A003), SQLite Storage implemented (A004).
-See `docs/activity/SCHEMA.md`, `docs/activity/NORMALIZER.md`, `docs/activity/STORAGE.md`, `activity/gateway/`, `activity/normalizer/`, and `activity/storage/`.
+**Current Status:** 🟡 In Progress — Full ingestion pipeline verified: Schema (A001), Gateway (A002), Normalizer (A003), SQLite (A004), MacroDroid Integration (A005).
+See `docs/activity/` for SCHEMA, NORMALIZER, STORAGE, and MACRODROID documentation.
 
 ---
 

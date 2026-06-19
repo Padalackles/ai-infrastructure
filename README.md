@@ -99,13 +99,38 @@ MCP Hub (Gateway)     ← VPS: raven-victor.click
 │   ├── example/          Example Server — Hub pipeline test
 │   ├── filesystem/       Reserved
 │   └── github/           Reserved
+├── activity/             Activity Subsystem (event pipeline)
+│   ├── types.ts          Event schema — TypeScript contract
+│   ├── gateway/          HTTP ingest endpoint
+│   ├── normalizer/       Canonical event transformation
+│   ├── storage/          SQLite persistence layer
+│   └── tests/            Integration tests (30 tests)
 ├── docker-compose.yml
 ├── docs/
+│   └── activity/         Activity subsystem documentation
 ├── ARCHITECTURE.md
 ├── ROADMAP.md
 ├── PROJECT_STATE.md
 └── DECISIONS.md
 ```
+
+### Activity Subsystem
+
+Event-driven pipeline for ingesting Android device activity:
+
+```
+MacroDroid (Android) → Gateway (HTTP) → Normalizer (canonical) → SQLite (persistence)
+```
+
+| Component | Status |
+|---|---|
+| Event Schema | ✅ (Task A001) |
+| Activity Gateway | ✅ `POST /activity/events` (A002) |
+| Event Normalizer | ✅ collector→canonical mapping (A003) |
+| SQLite Persistence | ✅ `data/activity.db` auto-create (A004) |
+| MacroDroid Integration | ✅ documented + 30 E2E tests (A005) |
+
+See [`docs/activity/MACRODROID.md`](docs/activity/MACRODROID.md) for the MacroDroid integration guide.
 
 ---
 

@@ -129,6 +129,8 @@ def test_clear_rules_removes_all():
 
 def test_rule_receives_events_list():
     """Rules receive the events list passed by the service."""
+    from decision.rules import register, get_rules
+
     received = []
 
     @register
@@ -146,6 +148,7 @@ def test_rule_receives_events_list():
 
 def test_rule_can_return_trigger_request():
     """A rule that returns a TriggerRequest works correctly."""
+    from decision.rules import register
 
     @register
     def active_rule(events):

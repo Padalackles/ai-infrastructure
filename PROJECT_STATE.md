@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.9.0
-**Last Updated:** 2026-06-19 — Event Query Service: unified read API with Service layer (Task A007)
+**Version:** v0.10.0
+**Last Updated:** 2026-06-19 — Decision Engine Phase 1: rule framework + Trigger model + scheduler (Task A008)
 
 ---
 
@@ -61,6 +61,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-A005 | ✅ | MacroDroid Integration — documented, tested, 30 integration tests |
 | Task-A006 | ✅ | Support Current Android Events — network.wifi.connected canonical type + payload normalizer |
 | Task-A007 | ✅ | Event Query Service — Service layer + GET /activity/recent, /latest, /history, /types |
+| Task-A008 | ✅ | Decision Engine Phase 1 — rule framework + Trigger model + 60s scheduler |
 
 ---
 
@@ -85,7 +86,7 @@ Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Databas
 | Event Database | ✅ Implemented (Task A004 — SQLite persistence, repository API) |
 | Activity Service | ✅ Implemented (Task A007 — read-only query layer) |
 | Query API | ✅ Implemented (Task A007 — GET /recent, /latest, /history, /types) |
-| Decision Script | ⬜ Planned |
+| Decision Script | ✅ Implemented (Task A008 — Decision Engine + rule framework) |
 | Claude Trigger | ⬜ Planned |
 
 **Design Principles:** Source agnostic, normalize late, schema-versioned, typed payload.
@@ -97,9 +98,9 @@ See `docs/activity/SCHEMA.md` for the full event contract.
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-A007 |
+| **Task ID** | Task-A008 |
 | **Status** | ✅ Completed |
-| **Description** | Event Query Service — Service layer + 4 GET endpoints + 108 tests |
+| **Description** | Decision Engine Phase 1 — rule framework + Trigger model + 60s scheduler |
 
 ---
 
@@ -283,8 +284,8 @@ ai-infrastructure/
 
 | Field | Value |
 |---|---|
-| **Hash** | (pending — Task A007) |
-| **Summary** | feat(activity): Event Query Service — Service layer + GET /recent, /latest, /history, /types |
+| **Hash** | (pending — Task A008) |
+| **Summary** | feat(decision): Decision Engine Phase 1 — rule framework + Trigger model + scheduler |
 
 ---
 
@@ -295,4 +296,4 @@ When resuming this project:
 1. Read README.md
 2. Read PROJECT_STATE.md
 3. Read ARCHITECTURE.md
-4. Continue from **Task-A007** — Event Query Service (completed); next: **Task-A008** (Decision Script) or **Task-015** (Docker Production)
+4. Continue from **Task-A008** — Decision Engine Phase 1 (completed); next: **Task-A009** (Claude Trigger) or **Task-015** (Docker Production)

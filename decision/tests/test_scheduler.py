@@ -11,7 +11,7 @@ if _REPO_ROOT not in sys.path:
 
 import pytest
 
-from decision.models import Trigger
+from decision.models import TriggerRequest
 from decision.scheduler import run
 
 
@@ -28,23 +28,46 @@ class _FakeSleep:
 class _FakeDecisionService:
     """Mock DecisionService for scheduler tests."""
 
-    def __init__(self, triggers: list[Trigger] | None = None):
-        self.triggers = triggers or []
+    def __init__(self, requests: list[TriggerRequest] | None = None):
+        self.requests = requests or []
         self.evaluate_calls = 0
 
-    def evaluate(self) -> list[Trigger]:
+    def evaluate(self) -> list[TriggerRequest]:
         self.evaluate_calls += 1
-        return list(self.triggers)
+        return list(self.requests)
+
+
+class _FakeTriggerService:
+    """Mock TriggerService for scheduler tests."""
+
+    def __init__(self):
+        self.created: list[dict] = []
+
+    def create_trigger(
+        self,
+        type: str,
+        payload: dict | None = None,
+        priority: int = 1,
+    ) -> dict:
+        record = {
+            "id": f"trg_fake_{len(self.created):04d}",
+            "type": type,
+            "payload": payload or {},
+            "priority": priority,
+        }
+        self.created.append(record)
+        return record
 
 
 def test_scheduler_calls_evaluate():
     """The scheduler calls evaluate() on each iteration."""
     fake = _FakeDecisionService()
+    trigger_svc = _FakeTriggerService()
     sleep = _FakeSleep()
 
     # Run one iteration by making sleep raise StopIteration
     try:
-        run(fake, interval=60, _sleep=lambda s: (_ for _ in ()).throw(StopIteration))
+        run(fake, trigger_svc, interval=60, _sleep=lambda s: (_ for _ in ()).throw(StopIteration))
     except StopIteration:
         pass
 
@@ -52,9 +75,10 @@ def test_scheduler_calls_evaluate():
 
 
 def test_scheduler_prints_triggers(capsys):
-    """Triggers from evaluate() are printed to stdout."""
-    trigger = Trigger(type="test.fired", payload={"msg": "hello"})
-    fake = _FakeDecisionService(triggers=[trigger])
+    """TriggerRequests from evaluate() are persisted and printed to stdout."""
+    req = TriggerRequest(type="test.fired", payload={"msg": "hello"})
+    fake = _FakeDecisionService(requests=[req])
+    trigger_svc = _FakeTriggerService()
 
     # Use a sleep that allows exactly 1 iteration then raises
     call_count = [0]
@@ -73,7 +97,7 @@ def test_scheduler_prints_triggers(capsys):
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
     try:
-        run(fake, interval=60, _sleep=one_shot_sleep)
+        run(fake, trigger_svc, interval=60, _sleep=one_shot_sleep)
     except KeyboardInterrupt:
         pass  # swallowed internally by run()
     finally:
@@ -81,13 +105,18 @@ def test_scheduler_prints_triggers(capsys):
         signal.signal(signal.SIGTERM, old_sigterm)
 
     captured = capsys.readouterr()
-    # The trigger should appear in stdout
+    # The trigger type and "Trigger created" should appear in stdout
     assert "test.fired" in captured.out
+    assert "Trigger created" in captured.out
+    # At least one trigger was created (may be 2 due to loop timing)
+    assert len(trigger_svc.created) >= 1
+    assert trigger_svc.created[0]["type"] == "test.fired"
 
 
 def test_scheduler_empty_triggers_no_output(capsys):
-    """When evaluate() returns [], nothing extra is printed."""
-    fake = _FakeDecisionService(triggers=[])
+    """When evaluate() returns [], no Trigger created messages appear."""
+    fake = _FakeDecisionService(requests=[])
+    trigger_svc = _FakeTriggerService()
 
     call_count = [0]
 
@@ -104,7 +133,7 @@ def test_scheduler_empty_triggers_no_output(capsys):
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
     try:
-        run(fake, interval=60, _sleep=one_shot_sleep)
+        run(fake, trigger_svc, interval=60, _sleep=one_shot_sleep)
     except KeyboardInterrupt:
         pass
     finally:
@@ -112,13 +141,15 @@ def test_scheduler_empty_triggers_no_output(capsys):
         signal.signal(signal.SIGTERM, old_sigterm)
 
     captured = capsys.readouterr()
-    # No trigger repr in output (only the scheduler banner)
-    assert "Trigger(id=" not in captured.out
+    # No "Trigger created" in output when queue is empty
+    assert "Trigger created" not in captured.out
+    assert len(trigger_svc.created) == 0
 
 
 def test_scheduler_handles_evaluate_error(capsys):
     """If evaluate() raises, the scheduler logs the error and continues."""
     fake = _FakeDecisionService()
+    trigger_svc = _FakeTriggerService()
 
     call_count = [0]
 
@@ -141,7 +172,7 @@ def test_scheduler_handles_evaluate_error(capsys):
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
     try:
-        run(fake, interval=60, _sleep=one_shot_sleep)
+        run(fake, trigger_svc, interval=60, _sleep=one_shot_sleep)
     except KeyboardInterrupt:
         pass
     finally:

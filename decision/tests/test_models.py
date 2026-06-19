@@ -1,4 +1,4 @@
-"""Unit tests for the Trigger model."""
+"""Unit tests for TriggerRequest and Trigger (deprecated) models."""
 
 from __future__ import annotations
 
@@ -10,10 +10,47 @@ _REPO_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from decision.models import Trigger
+from decision.models import Trigger, TriggerRequest
 
 
-def test_trigger_creation_with_required_fields():
+def test_trigger_request_creation_with_defaults():
+    """A TriggerRequest can be created with only the required type field."""
+    tr = TriggerRequest(type="procrastination")
+    assert tr.type == "procrastination"
+    assert tr.payload == {}
+    assert tr.priority == 1
+
+
+def test_trigger_request_creation_with_all_fields():
+    """All fields are preserved exactly as passed."""
+    tr = TriggerRequest(
+        type="battery.low",
+        payload={"level": 15},
+        priority=0,
+    )
+    assert tr.type == "battery.low"
+    assert tr.payload == {"level": 15}
+    assert tr.priority == 0
+
+
+def test_trigger_request_no_id_or_timestamp():
+    """TriggerRequest has no database concepts — no id, status, or timestamps."""
+    tr = TriggerRequest(type="focus")
+    assert not hasattr(tr, "id")
+    assert not hasattr(tr, "status")
+    assert not hasattr(tr, "created_at")
+
+
+def test_trigger_request_repr():
+    """__repr__ includes type, priority, and payload."""
+    tr = TriggerRequest(type="sleep", payload={"hours": 8}, priority=2)
+    r = repr(tr)
+    assert "sleep" in r
+    assert "2" in r
+    assert "hours" in r
+
+
+# ── Deprecated Trigger tests (kept for backward compat) ──────────
     """A Trigger can be created with only the required type field."""
     t = Trigger(type="battery.low")
     assert t.type == "battery.low"

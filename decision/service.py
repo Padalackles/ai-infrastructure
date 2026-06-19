@@ -2,14 +2,16 @@
 
 The DecisionService is the single entry point for the decision
 pipeline.  It reads recent events from the Activity subsystem,
-runs all registered rules, and collects any Trigger objects
-they emit.
+runs all registered rules, and collects any ``TriggerRequest``
+objects they emit.
 
-Design constraints (Phase 1):
+Design constraints:
     * Reads events through ActivityService — never touches SQLite.
     * Executes rules but never makes business decisions itself.
-    * Returns Trigger objects — never generates text, calls Claude,
-      sends notifications, or stores memory.
+    * Returns ``TriggerRequest`` objects — domain models expressing
+      intent, NOT persisted ``Trigger`` records.
+    * The caller is responsible for passing ``TriggerRequest`` to
+      ``TriggerService.create()``.
     * Claude remains the only intelligent layer.
 """
 
@@ -18,7 +20,7 @@ from __future__ import annotations
 from typing import Any
 
 from activity.service import ActivityService
-from decision.models import Trigger
+from decision.models import TriggerRequest
 from decision.rules import get_rules
 
 
@@ -33,15 +35,16 @@ class DecisionService:
     def __init__(self, activity_service: ActivityService) -> None:
         self._activity = activity_service
 
-    def evaluate(self) -> list[Trigger]:
+    def evaluate(self) -> list[TriggerRequest]:
         """Read recent events and run all registered rules.
 
         Returns:
-            A list of Trigger objects from rules that fired.
+            A list of ``TriggerRequest`` objects from rules that fired.
             May be empty if no rules matched.
+            The caller should pass each request to ``TriggerService.create()``.
         """
         events = self._activity.get_recent(limit=50)
-        triggers: list[Trigger] = []
+        requests: list[TriggerRequest] = []
 
         for rule in get_rules():
             try:
@@ -52,6 +55,6 @@ class DecisionService:
                 result = None
 
             if result is not None:
-                triggers.append(result)
+                requests.append(result)
 
-        return triggers
+        return requests

@@ -16,7 +16,7 @@ import pytest
 from activity.storage.database import init_db, set_db_path
 from activity.storage.repository import ActivityRepository
 from activity.service import ActivityService
-from decision.models import Trigger
+from decision.models import TriggerRequest
 from decision.rules import clear_rules, register
 from decision.service import DecisionService
 
@@ -118,7 +118,7 @@ def test_evaluate_single_rule_fires(service: DecisionService, repo: ActivityRepo
     def low_battery_detector(events):
         for e in events:
             if e["type"] == "battery.low":
-                return Trigger(
+                return TriggerRequest(
                     type="battery.low",
                     payload={"level": e["payload"]["level"]},
                 )
@@ -139,14 +139,14 @@ def test_evaluate_multiple_rules_fire(service: DecisionService, repo: ActivityRe
     def awake_detector(events):
         for e in events:
             if e["type"] == "device.awake":
-                return Trigger(type="device.awake.seen")
+                return TriggerRequest(type="device.awake.seen")
         return None
 
     @register
     def battery_detector(events):
         for e in events:
             if e["type"] == "battery.low":
-                return Trigger(type="battery.low.seen")
+                return TriggerRequest(type="battery.low.seen")
         return None
 
     results = service.evaluate()
@@ -163,7 +163,7 @@ def test_evaluate_no_matching_events(service: DecisionService, repo: ActivityRep
     def only_awake(events):
         for e in events:
             if e["type"] == "device.awake":
-                return Trigger(type="awake.found")
+                return TriggerRequest(type="awake.found")
         return None
 
     results = service.evaluate()
@@ -180,7 +180,7 @@ def test_evaluate_broken_rule_does_not_crash(service: DecisionService, repo: Act
 
     @register
     def good_rule(events):
-        return Trigger(type="good.survived")
+        return TriggerRequest(type="good.survived")
 
     results = service.evaluate()
     assert len(results) == 1

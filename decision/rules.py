@@ -2,11 +2,15 @@
 
 Each rule is an independent function with the signature::
 
-    (events: list[dict]) -> Trigger | None
+    (events: list[dict]) -> TriggerRequest | None
 
 Rules are registered via the ``@register`` decorator.  The
 DecisionService calls every registered rule for each evaluation
 cycle — rules decide independently whether to fire.
+
+Rules return ``TriggerRequest`` (a domain model expressing intent)
+rather than ``Trigger`` (a database concept).  The caller is
+responsible for passing ``TriggerRequest`` to ``TriggerService.create()``.
 
 Adding a new rule:
     1. Write a function matching the rule signature.
@@ -22,12 +26,12 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from decision.models import Trigger
+from decision.models import TriggerRequest  # noqa: F401 — re-exported
 
 # ── Rule type ──────────────────────────────────────────────────────
 
 #: Signature for a rule function.
-RuleFn = Callable[[list[dict[str, Any]]], Trigger | None]
+RuleFn = Callable[[list[dict[str, Any]]], TriggerRequest | None]
 
 # ── Registry ───────────────────────────────────────────────────────
 
@@ -40,7 +44,7 @@ def register(rule_fn: RuleFn) -> RuleFn:
     Intended for use as a decorator::
 
         @register
-        def my_rule(events: list[dict]) -> Trigger | None:
+        def my_rule(events: list[dict]) -> TriggerRequest | None:
             ...
 
     Rules are evaluated in registration order.
@@ -63,7 +67,7 @@ def clear_rules() -> None:
 
 
 @register
-def battery_low_rule(events: list[dict[str, Any]]) -> Trigger | None:
+def battery_low_rule(events: list[dict[str, Any]]) -> TriggerRequest | None:
     """Check for recent battery.low events.
 
     Placeholder — returns None.  Will be implemented in Phase 2.
@@ -72,7 +76,7 @@ def battery_low_rule(events: list[dict[str, Any]]) -> Trigger | None:
 
 
 @register
-def screen_awake_rule(events: list[dict[str, Any]]) -> Trigger | None:
+def screen_awake_rule(events: list[dict[str, Any]]) -> TriggerRequest | None:
     """Check for recent device.awake events.
 
     Placeholder — returns None.  Will be implemented in Phase 2.
@@ -81,7 +85,7 @@ def screen_awake_rule(events: list[dict[str, Any]]) -> Trigger | None:
 
 
 @register
-def focus_timeout_rule(events: list[dict[str, Any]]) -> Trigger | None:
+def focus_timeout_rule(events: list[dict[str, Any]]) -> TriggerRequest | None:
     """Check for device inactivity (focus timeout).
 
     Placeholder — returns None.  Will be implemented in Phase 2.

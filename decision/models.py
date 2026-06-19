@@ -1,15 +1,18 @@
-"""Decision Engine — unified Trigger model.
+"""Decision Engine — domain models.
 
-The Trigger is the *only* output of the Decision Engine.  Every rule
-that fires produces exactly one Trigger.  Downstream components
-(console printer, future Claude bridge) consume Triggers — they
-never interact with rules directly.
+Two output models:
+
+1.  ``TriggerRequest`` (current) — a rule's *intent* to create a trigger.
+    Rules return what should happen; the Trigger service decides how
+    to persist and manage it.  No database concepts leak into rules.
+
+2.  ``Trigger`` (deprecated) — Phase 1 console-only output.  Kept for
+    backward compatibility.  New code should use ``TriggerRequest``.
 
 Design:
-    * Plain dataclass — no Pydantic, no ORM.
-    * Stable schema — the ``type`` + ``payload`` contract will be
-      consumed by Claude in Phase 2.
-    * ID is auto-generated for traceability.
+    * Plain dataclasses — no Pydantic, no ORM.
+    * Rules never touch database IDs, status, or timestamps.
+    * The ``type`` + ``payload`` contract is consumed by TriggerService.
 """
 
 from __future__ import annotations
@@ -36,8 +39,39 @@ def _utc_now_iso() -> str:
 
 
 @dataclass
+class TriggerRequest:
+    """A rule's intent to create a Trigger.
+
+    Rules return this when they detect a condition worth acting on.
+    It carries no database concepts — no id, status, or timestamps.
+    The TriggerService is responsible for turning this into a
+    persisted ``Trigger`` record.
+
+    Attributes:
+        type: Stable trigger type, e.g. ``procrastination``, ``battery.low``.
+        payload: Free-form JSON payload with rule-specific data.
+        priority: Queue priority — 0 highest, 1 normal, 2 low.
+    """
+
+    type: str
+    payload: dict[str, Any] = field(default_factory=dict)
+    priority: int = 1
+
+    def __repr__(self) -> str:
+        return (
+            f"TriggerRequest(type={self.type!r}, "
+            f"priority={self.priority!r}, payload={self.payload!r})"
+        )
+
+
+# Deprecated — kept for Phase 1 console scheduler backward compatibility.
+# New code should use ``TriggerRequest`` instead.
+@dataclass
 class Trigger:
-    """A decision emitted by the Decision Engine.
+    """Deprecated — use ``TriggerRequest`` for new code.
+
+    Phase 1 console-only output.  Kept for backward compatibility
+    with ``decision.scheduler`` printing.
 
     Attributes:
         id: Globally unique trigger ID (``trg_<...>``).

@@ -11,7 +11,7 @@ if _REPO_ROOT not in sys.path:
 
 import pytest
 
-from decision.models import Trigger
+from decision.models import TriggerRequest
 from decision.rules import (
     battery_low_rule,
     clear_rules,
@@ -131,13 +131,13 @@ def test_rule_receives_events_list():
     assert received[0] == sample_events
 
 
-def test_rule_can_return_trigger():
-    """A rule that returns a Trigger works correctly."""
+def test_rule_can_return_trigger_request():
+    """A rule that returns a TriggerRequest works correctly."""
 
     @register
     def active_rule(events):
         if events:
-            return Trigger(type="test.fired", payload={"count": len(events)})
+            return TriggerRequest(type="test.fired", payload={"count": len(events)})
         return None
 
     # With events → fires

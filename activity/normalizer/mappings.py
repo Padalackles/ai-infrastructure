@@ -75,19 +75,26 @@ CANONICAL_UNKNOWN = "unknown"
 #
 # Both direct aliases and semantic mappings live here.  For example,
 # ``screen_on`` could come from MacroDroid while ``display_on`` might
-# come from Tasker — both map to ``device.awake``.
+# come from Tasker — both map to ``screen.on``.
 
 EVENT_MAPPINGS: dict[str, str] = {
     # ── Device ──────────────────────────────────────────────────
-    "screen_on": CANONICAL_DEVICE_AWAKE,
-    "screen_off": CANONICAL_DEVICE_SLEEP,
     "device_boot": CANONICAL_DEVICE_BOOT,
     "device_shutdown": CANONICAL_DEVICE_SHUTDOWN,
+    # Identity mappings for already-canonical types
+    "device.awake": CANONICAL_DEVICE_AWAKE,
+    "device.sleep": CANONICAL_DEVICE_SLEEP,
     # Alternative collector names (Tasker / Home Assistant style)
     "display_on": CANONICAL_DEVICE_AWAKE,
     "display_off": CANONICAL_DEVICE_SLEEP,
     "device_on": CANONICAL_DEVICE_AWAKE,
     "device_off": CANONICAL_DEVICE_SLEEP,
+    # ── Screen ──────────────────────────────────────────────────
+    "screen_on": CANONICAL_SCREEN_ON,
+    "screen_off": CANONICAL_SCREEN_OFF,
+    "screen_on_direct": CANONICAL_SCREEN_ON,
+    "screen_off_direct": CANONICAL_SCREEN_OFF,
+    "screen_unlocked": CANONICAL_SCREEN_UNLOCKED,
     # ── Battery ─────────────────────────────────────────────────
     "battery_low": CANONICAL_BATTERY_LOW,
     "battery_full": CANONICAL_BATTERY_FULL,
@@ -116,10 +123,6 @@ EVENT_MAPPINGS: dict[str, str] = {
     "call_started": CANONICAL_CALL_STARTED,
     "call_ended": CANONICAL_CALL_ENDED,
     "call_missed": CANONICAL_CALL_MISSED,
-    # ── Screen (direct pass-through; also mapped via device.*) ──
-    "screen_on_direct": CANONICAL_SCREEN_ON,
-    "screen_off_direct": CANONICAL_SCREEN_OFF,
-    "screen_unlocked": CANONICAL_SCREEN_UNLOCKED,
     # ── Sensor ──────────────────────────────────────────────────
     "sensor_reading": CANONICAL_SENSOR_READING,
     # ── Bluetooth ───────────────────────────────────────────────

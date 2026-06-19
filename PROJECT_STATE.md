@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.10.0
-**Last Updated:** 2026-06-19 — Decision Engine Phase 1: rule framework + Trigger model + scheduler (Task A008)
+**Version:** v0.11.0
+**Last Updated:** 2026-06-19 — Decision Engine Phase 2: configuration-driven rule system (Task A009)
 
 ---
 
@@ -62,12 +62,13 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-A006 | ✅ | Support Current Android Events — network.wifi.connected canonical type + payload normalizer |
 | Task-A007 | ✅ | Event Query Service — Service layer + GET /activity/recent, /latest, /history, /types |
 | Task-A008 | ✅ | Decision Engine Phase 1 — rule framework + Trigger model + 60s scheduler |
+| Task-A009 | ✅ | Decision Engine Phase 2 — config-driven rules, SessionAnalyzer, Cooldown, RuleManager |
 
 ---
 
 ## Activity Subsystem (New)
 
-**Status:** 🟡 In Progress — Gateway implemented
+**Status:** 🟡 In Progress — Decision Engine Phase 2 complete
 
 The Activity subsystem ingests device events (Android → MacroDroid → Gateway),
 normalizes them into a unified schema, stores them, and triggers Claude awareness.
@@ -75,18 +76,18 @@ normalizes them into a unified schema, stores them, and triggers Claude awarenes
 **Pipeline:**
 
 ```
-Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Database → Decision Script → Claude Trigger
+Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Database → Decision Engine → Claude Trigger
 ```
 
 | Component | Status |
 |---|---|
 | Event Schema | ✅ Defined (Task A001 — `docs/activity/SCHEMA.md`) |
-| Activity Gateway | 🟡 Implemented (Task A002 — POST /activity/events) |
-| Event Normalizer | ✅ Implemented (Task A003 — maps collector→canonical types, normalizes payloads) |
+| Activity Gateway | ✅ Implemented (Task A002 — POST /activity/events) |
+| Event Normalizer | ✅ Implemented (Task A003 — maps collector→canonical types, normalizes payloads, updated for screen.on/off + app.opened/closed) |
 | Event Database | ✅ Implemented (Task A004 — SQLite persistence, repository API) |
 | Activity Service | ✅ Implemented (Task A007 — read-only query layer) |
 | Query API | ✅ Implemented (Task A007 — GET /recent, /latest, /history, /types) |
-| Decision Script | ✅ Implemented (Task A008 — Decision Engine + rule framework) |
+| Decision Engine | ✅ Implemented (Task A008 + A009 — config-driven rule engine, SessionAnalyzer, Cooldown, RuleManager) |
 | Claude Trigger | ⬜ Planned |
 
 **Design Principles:** Source agnostic, normalize late, schema-versioned, typed payload.
@@ -98,9 +99,9 @@ See `docs/activity/SCHEMA.md` for the full event contract.
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-A008 |
+| **Task ID** | Task-A009 |
 | **Status** | ✅ Completed |
-| **Description** | Decision Engine Phase 1 — rule framework + Trigger model + 60s scheduler |
+| **Description** | Decision Engine Phase 2 — Configuration-driven rule system: SessionAnalyzer, Cooldown, RuleManager, real rules (screen_long_use, app_long_use) |
 
 ---
 
@@ -131,6 +132,30 @@ ai-infrastructure/
 │           ├── config.ts    YAML config loader with defaults
 │           ├── types.ts     Job interface + ExecutionResult
 │           └── jobs/        DailyJournal (placeholder)
+├── decision/                Decision Engine (Python)
+│   ├── __init__.py          Public API
+│   ├── models.py            Trigger dataclass — stable schema
+│   ├── rules.py             @register framework + real config-driven rules
+│   ├── service.py           DecisionService.evaluate()
+│   ├── scheduler.py         60s loop + CLI entry point
+│   ├── cooldown.py          CooldownStore ABC + MemoryCooldownStore
+│   ├── rule_manager.py      RuleManager — YAML config facade
+│   ├── config/
+│   │   ├── __init__.py
+│   │   ├── loader.py        load_rules() / reload_rules()
+│   │   └── rules.yaml       All rule parameters (thresholds, apps, cooldowns)
+│   ├── analyzers/
+│   │   ├── __init__.py
+│   │   └── session.py       SessionAnalyzer — screen & app sessions
+│   └── tests/
+│       ├── test_models.py
+│       ├── test_rules.py
+│       ├── test_service.py
+│       ├── test_scheduler.py
+│       ├── test_config_loader.py
+│       ├── test_rule_manager.py
+│       ├── test_cooldown.py
+│       └── test_session_analyzer.py
 ├── activity/
 │   ├── types.ts             Activity Event Schema — TypeScript contract
 │   ├── gateway/             Activity Gateway (Python/FastAPI)
@@ -143,7 +168,7 @@ ai-infrastructure/
 │   │   ├── mappings.py      Collector→canonical event type mapping table
 │   │   ├── service.py       normalize_event() + payload normalizers
 │   │   └── tests/
-│   │       └── test_normalizer.py  20 unit tests
+│   │       └── test_normalizer.py  26 unit tests
 │   └── storage/             Activity Storage (Python)
 │       ├── __init__.py
 │       ├── database.py      SQLite connection + table creation
@@ -153,8 +178,11 @@ ai-infrastructure/
 │   └── tests/                Activity integration tests
 │       └── test_macrodroid_integration.py  30 integration tests
 ├── docs/
-│   └── activity/
-│       └── SCHEMA.md        Activity Event Schema documentation
+│   ├── activity/
+│   │   └── SCHEMA.md        Activity Event Schema documentation
+│   └── decision/
+│       ├── ARCHITECTURE.md  Decision Engine architecture
+│       └── RULES.md         Rule configuration reference
 ├── mcp_servers/             MCP server adapters (Python)
 ├── caddy/                   Reverse proxy config
 ├── cloudflare/              Tunnel config
@@ -163,22 +191,35 @@ ai-infrastructure/
 
 ---
 
-## Completed Tasks
+## Decision Engine (Task A009)
 
-1. Task-001 — Project Specification (MCP Hub architecture)
-2. Task-002 — Foundation (repository structure, stubs)
-3. Task-003 — MCP Hub Core Runtime
-4. Task-004 — JSON-RPC 2.0 Transport Layer
-5. Task-004.1 — Lifecycle fixes, Discovery isolation, API stats
-6. Task-004 Review — Router→handlers, Runtime, Loader, unified dirs
-7. Task-002 Refactor — Repository architecture alignment
-8. Task-Documentation-Refinement — PROJECT_STATE, CLAUDE, DECISIONS
-9. Task-014 — Real ntfy Notification Test (notify_send verified via Hub)
-10. Task-017 — MCP Tool 诊断（确认 Hub 层无过滤，Ombre 6 tool 全部在线）
-11. Task-018 — 修复 Tool 命名（notify.send → notify_send）
-12. Task-019 — 隐藏内部 Tool（ExampleServer 复用 HUB_EXPOSE_INTERNAL_TOOLS）
-13. Task-020 — 诊断日志 + TROUBLESHOOTING_MCP_TOOLS.md
-14. Task-021 — 文档筛查（INFRASTRUCTURE, CLAUDE_DESKTOP, NOTIFICATION_MCP, OMBRE_INTEGRATION, REGISTRY, SPECIFICATION）
+### What changed
+
+- **Placeholder rules removed** — `battery_low_rule`, `screen_awake_rule`, `focus_timeout_rule`.
+- **Real config-driven rules added** — `screen_long_use_rule`, `app_long_use_rule`.
+- **SessionAnalyzer** — Extracts screen/app sessions from events; rules never scan events directly.
+- **RuleManager** — Loads YAML config; rules and DecisionService never touch YAML.
+- **CooldownStore** — Abstract interface (`MemoryCooldownStore` now, `RedisCooldownStore` future).
+- **Config loader** — `load_rules()` / `reload_rules()` with graceful error handling.
+- **Normalizer updated** — `screen_on` → `screen.on`, `screen_off` → `screen.off`; added `app.opened`/`app.closed` payload normalizers.
+
+### Design principles
+
+- **Configuration-driven** — All thresholds, apps, cooldowns from `rules.yaml`. Zero code changes for tuning.
+- **Separation of concerns** — YAML = parameters, Python = logic.
+- **Claude is the only intelligent layer** — Decision emits Triggers, never text.
+
+### Acceptance criteria met
+
+| Change | Action |
+|---|---|
+| 40 min → 60 min threshold | Edit `threshold_minutes` in YAML |
+| Douyin → Bilibili | Change `package` in YAML |
+| Add a new app rule | Add rule block in YAML |
+| Disable a rule | Set `enabled: false` |
+| Adjust cooldown | Edit `cooldown_minutes` |
+
+All without modifying any Python code.
 
 ---
 
@@ -226,11 +267,12 @@ ai-infrastructure/
 | Audit logging | `mcp-hub/src/core/observability/audit.py` |
 | Request context (contextvars) | `mcp-hub/src/core/request_context.py` |
 | MCP Auth (Bearer Token) | Integrated in `mcp-hub/src/main.py` (MCPProxy) |
-| Diagnostic logging (temporary) | `main.py`, `transport/server.py`, `mcp_servers/{ombre,ntfy}/server.py` |
-| MCP Tool naming compliance | `notify.send` → `notify_send` |
-| Internal tool hiding | `HUB_EXPOSE_INTERNAL_TOOLS` controls ExampleServer + HubServer |
 | Docker Compose | `docker-compose.yml` |
-| Unit tests | `mcp-hub/tests/` (166 tests) |
+| Decision Engine (config-driven) | `decision/` |
+| SessionAnalyzer | `decision/analyzers/session.py` |
+| RuleManager | `decision/rule_manager.py` |
+| CooldownStore | `decision/cooldown.py` |
+| Unit tests | `decision/tests/` (8 test files) |
 
 ## Not Yet Implemented
 
@@ -239,11 +281,8 @@ ai-infrastructure/
 | GitHub MCP Server | Future |
 | Filesystem MCP Server | Future |
 | Docker Production optimization | Task-015 |
-| Activity Gateway | Task A002+ |
-| Event Normalizer | Task A003+ |
-| Event Database | Task A004+ |
-| Decision Script | Future |
 | Claude Trigger (Activity) | Future |
+| RedisCooldownStore | Future |
 | Health-check loop | Future |
 | Remote server adapters (HTTP/SSE/WebSocket) | Future |
 | Prometheus / Grafana metrics | Future |
@@ -261,7 +300,8 @@ ai-infrastructure/
 | Cloudflare | ✅ DNS + Proxy |
 | Ombre MCP | ✅ External (45.76.169.98:8000) — 6 tools |
 | ntfy MCP | ✅ External (ntfy.sh) — 3 tools |
-| Activity Subsystem | 🟡 In Design (Event Schema defined) |
+| Activity Subsystem | 🟡 In Progress — Decision Engine Phase 2 complete |
+| Decision Engine | ✅ Implemented — configuration-driven rule system |
 | Filesystem MCP | Reserved |
 | GitHub MCP | Reserved |
 
@@ -274,18 +314,17 @@ ai-infrastructure/
 | Documentation | ✅ Consistent |
 | Architecture | ✅ Stable Core / Extensible Service Layer |
 | Architecture Audit | ✅ Pre-deployment check passed (2026-06-18) |
-| Tests | ✅ 6 test files (lifecycle, discovery, transport, tools, auth, ntfy) |
+| Tests | ✅ Decision: 8 test files; Activity: 4 test files; MCP Hub: 6 test files |
 | GitHub Sync | ✅ Up to date |
 | No duplicate docs | ✅ Single source of truth per concern |
 | CHANGELOG | ✅ Created |
-| Troubleshooting doc | ✅ `docs/TROUBLESHOOTING_MCP_TOOLS.md` |
 
 ## Last Commit
 
 | Field | Value |
 |---|---|
-| **Hash** | (pending — Task A008) |
-| **Summary** | feat(decision): Decision Engine Phase 1 — rule framework + Trigger model + scheduler |
+| **Hash** | (pending — Task A009) |
+| **Summary** | feat(decision): Configuration-driven rule system — SessionAnalyzer, Cooldown, RuleManager, real rules |
 
 ---
 
@@ -296,4 +335,4 @@ When resuming this project:
 1. Read README.md
 2. Read PROJECT_STATE.md
 3. Read ARCHITECTURE.md
-4. Continue from **Task-A008** — Decision Engine Phase 1 (completed); next: **Task-A009** (Claude Trigger) or **Task-015** (Docker Production)
+4. Continue from **Task-A009** — Decision Engine Phase 2 (completed); next: **Claude Trigger (Phase 3)** or **Task-015** (Docker Production)

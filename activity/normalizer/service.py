@@ -102,6 +102,36 @@ def _norm_device_sleep(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _norm_screen_on(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize screen.on payload."""
+    return {
+        "method": _str_field(payload, "method", "unknown"),
+    }
+
+
+def _norm_screen_off(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize screen.off payload."""
+    return {
+        "method": _str_field(payload, "method", "unknown"),
+    }
+
+
+def _norm_app_opened(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize app.opened payload."""
+    return {
+        "package": _str_field(payload, "package", "unknown"),
+        "label": _str_field(payload, "label", "unknown"),
+    }
+
+
+def _norm_app_closed(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize app.closed payload."""
+    return {
+        "package": _str_field(payload, "package", "unknown"),
+        "label": _str_field(payload, "label", "unknown"),
+    }
+
+
 def _norm_battery_low(payload: dict[str, Any]) -> dict[str, Any]:
     """Normalize battery.low payload."""
     return {
@@ -150,6 +180,10 @@ def _norm_network_wifi_connected(payload: dict[str, Any]) -> dict[str, Any]:
 _PAYLOAD_NORMALIZERS: dict[str, Any] = {
     "device.awake": _norm_device_awake,
     "device.sleep": _norm_device_sleep,
+    "screen.on": _norm_screen_on,
+    "screen.off": _norm_screen_off,
+    "app.opened": _norm_app_opened,
+    "app.closed": _norm_app_closed,
     "battery.low": _norm_battery_low,
     "battery.charging.started": _norm_battery_charging_started,
     "battery.charging.stopped": _norm_battery_charging_stopped,

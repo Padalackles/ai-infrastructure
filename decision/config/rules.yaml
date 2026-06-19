@@ -1,0 +1,21 @@
+# Decision Engine — Rule Configuration
+#
+# All rule parameters live here.  To modify behaviour:
+#   1. Edit this file.
+#   2. (Optional) call reload_rules() at runtime, or restart.
+#
+# Decision code MUST NOT hard-code thresholds, apps, or cooldowns.
+
+rules:
+  - id: screen_long_use
+    enabled: true
+    trigger: screen.long_use
+    threshold_minutes: 40
+    cooldown_minutes: 60
+
+  - id: app_long_use
+    enabled: true
+    trigger: app.long_use
+    package: com.ss.android.ugc.aweme
+    threshold_minutes: 30
+    cooldown_minutes: 120

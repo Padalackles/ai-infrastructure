@@ -171,6 +171,18 @@ screen.unlocked
 }
 ```
 
+### `app.closed`
+
+```json
+{
+  "type": "app.closed",
+  "payload": {
+    "package": "com.whatsapp",
+    "label": "WhatsApp"
+  }
+}
+```
+
 ### `network.wifi.connected`
 
 ```json

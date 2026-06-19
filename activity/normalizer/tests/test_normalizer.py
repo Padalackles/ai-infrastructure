@@ -1,13 +1,14 @@
 """Unit tests for the Event Normalizer.
 
 Covers:
-    * screen_on  → device.awake
-    * screen_off → device.sleep
+    * screen_on  → screen.on
+    * screen_off → screen.off
     * battery_low → battery.low
     * charging_started → battery.charging.started
     * unknown_event → unknown (with raw preservation)
     * Payload normalization
     * Raw preservation
+    * app.opened / app.closed payload normalization
 """
 
 from __future__ import annotations
@@ -42,7 +43,6 @@ def _make_event(**overrides) -> dict:
         "raw": {},
     }
     event.update(overrides)
-    # Ensure raw contains a copy of the original
     if not event["raw"]:
         event["raw"] = {
             "type": event["type"],
@@ -53,18 +53,18 @@ def _make_event(**overrides) -> dict:
 
 # ── Canonical type mapping ──────────────────────────────────────────
 
-def test_screen_on_maps_to_device_awake():
-    """screen_on → device.awake"""
+def test_screen_on_maps_to_screen_on():
+    """screen_on → screen.on"""
     event = _make_event(type="screen_on")
     result = normalize_event(event)
-    assert result["type"] == "device.awake"
+    assert result["type"] == "screen.on"
 
 
-def test_screen_off_maps_to_device_sleep():
-    """screen_off → device.sleep"""
+def test_screen_off_maps_to_screen_off():
+    """screen_off → screen.off"""
     event = _make_event(type="screen_off")
     result = normalize_event(event)
-    assert result["type"] == "device.sleep"
+    assert result["type"] == "screen.off"
 
 
 def test_battery_low_maps_to_battery_low():
@@ -82,7 +82,7 @@ def test_charging_started_maps_to_battery_charging_started():
 
 
 def test_unknown_event_marked_unknown():
-    """An unmapped event type → 'unknown'."""
+    """An unmapped event type → unknown."""
     event = _make_event(type="some_bizarre_event", payload={"foo": "bar"})
     result = normalize_event(event)
     assert result["type"] == "unknown"
@@ -118,14 +118,14 @@ def test_charging_started_payload_normalized():
 
 
 def test_charging_started_payload_defaults():
-    """Missing method defaults to 'unknown'."""
+    """Missing method defaults to unknown."""
     event = _make_event(type="charging_started", payload={"level": 50})
     result = normalize_event(event)
     assert result["payload"] == {"level": 50, "method": "unknown"}
 
 
-def test_device_awake_payload_normalized():
-    """device.awake payload gets method field."""
+def test_screen_on_payload_normalized():
+    """screen.on payload gets method field."""
     event = _make_event(
         type="screen_on",
         payload={"method": "power_button"},
@@ -134,14 +134,43 @@ def test_device_awake_payload_normalized():
     assert result["payload"] == {"method": "power_button"}
 
 
-def test_device_sleep_payload_normalized():
-    """device.sleep payload gets method field."""
+def test_screen_off_payload_normalized():
+    """screen.off payload gets method field."""
     event = _make_event(
         type="screen_off",
         payload={"method": "timeout"},
     )
     result = normalize_event(event)
     assert result["payload"] == {"method": "timeout"}
+
+
+def test_app_opened_payload_normalized():
+    """app.opened payload gets package + label."""
+    event = _make_event(
+        type="app_opened",
+        payload={"package": "com.whatsapp", "label": "WhatsApp"},
+    )
+    result = normalize_event(event)
+    assert result["type"] == "app.opened"
+    assert result["payload"] == {"package": "com.whatsapp", "label": "WhatsApp"}
+
+
+def test_app_closed_payload_normalized():
+    """app.closed payload gets package + label."""
+    event = _make_event(
+        type="app_closed",
+        payload={"package": "com.whatsapp", "label": "WhatsApp"},
+    )
+    result = normalize_event(event)
+    assert result["type"] == "app.closed"
+    assert result["payload"] == {"package": "com.whatsapp", "label": "WhatsApp"}
+
+
+def test_app_opened_payload_defaults():
+    """Missing package/label default to unknown."""
+    event = _make_event(type="app_opened", payload={})
+    result = normalize_event(event)
+    assert result["payload"] == {"package": "unknown", "label": "unknown"}
 
 
 # ── Raw preservation ────────────────────────────────────────────────
@@ -152,8 +181,7 @@ def test_raw_preserved_for_known_event():
     event = _make_event(type="screen_on", raw=original_raw)
     result = normalize_event(event)
     assert result["raw"] == original_raw
-    # The normalized type should differ from raw
-    assert result["type"] == "device.awake"
+    assert result["type"] == "screen.on"
 
 
 def test_raw_preserved_for_unknown_event():
@@ -170,13 +198,7 @@ def test_raw_preserved_for_unknown_event():
 
 
 def test_raw_auto_populated_when_empty():
-    """If raw is empty/falsy, the normalizer populates it from the event.
-
-    An empty ``raw`` dict is falsy, so the normalizer treats it as
-    "not provided" and snapshots the full incoming event.  This
-    guarantees we never lose the original data even when the Gateway
-    or an earlier step omits raw.
-    """
+    """If raw is empty/falsy, the normalizer populates it from the event."""
     event = {
         "version": 1,
         "id": "evt_test9999",
@@ -189,7 +211,6 @@ def test_raw_auto_populated_when_empty():
         "raw": {},
     }
     result = normalize_event(event)
-    # raw was empty → normalizer snapshots the full original event
     assert result["raw"]
     assert result["raw"]["type"] == "screen_on"
     assert result["raw"]["source"] == "android"
@@ -199,7 +220,7 @@ def test_raw_auto_populated_when_empty():
 # ── Immutability ────────────────────────────────────────────────────
 
 def test_original_event_not_mutated():
-    """The normalizer must never mutate the caller's event dict."""
+    """The normalizer must never mutate the callers event dict."""
     event = _make_event(type="screen_on", payload={"method": "tap"})
     original = {
         "type": event["type"],
@@ -208,7 +229,6 @@ def test_original_event_not_mutated():
         "id": event["id"],
     }
     normalize_event(event)
-    # Original should be untouched
     assert event["type"] == original["type"]
     assert event["payload"] == original["payload"]
     assert event["raw"] == original["raw"]
@@ -219,37 +239,31 @@ def test_original_event_not_mutated():
 
 def test_canonical_type_known():
     """canonical_type() returns the mapped canonical type."""
-    assert canonical_type("screen_on") == "device.awake"
-    assert canonical_type("screen_off") == "device.sleep"
+    assert canonical_type("screen_on") == "screen.on"
+    assert canonical_type("screen_off") == "screen.off"
     assert canonical_type("battery_low") == "battery.low"
     assert canonical_type("charging_started") == "battery.charging.started"
     assert canonical_type("charging_stopped") == "battery.charging.stopped"
+    assert canonical_type("app_opened") == "app.opened"
+    assert canonical_type("app_closed") == "app.closed"
 
 
 def test_canonical_type_unknown():
-    """canonical_type() returns 'unknown' for unmapped types."""
+    """canonical_type() returns unknown for unmapped types."""
     assert canonical_type("nonexistent_event") == CANONICAL_UNKNOWN
     assert canonical_type("") == CANONICAL_UNKNOWN
 
 
-# ── Pass-through for already-canonical types ────────────────────────
+# ── Identity mappings for already-canonical types ───────────────────
 
-def test_already_canonical_passes_through():
-    """If an event arrives already using a canonical type, it should
-    still work (e.g. a different collector already sends canonical)."""
-    event = _make_event(
-        type="device.awake",
-        payload={"method": "lift"},
-    )
-    result = normalize_event(event)
-    # No mapping for "device.awake" → stays "device.awake" is false if
-    # "device.awake" is not in mappings. Wait — let's check.  It's not
-    # in EVENT_MAPPINGS as a key, so it maps to "unknown"!
-    # This is by design: the Gateway sends collector-specific names.
-    # If a collector already sends canonical names, add them as
-    # identity mappings in EVENT_MAPPINGS.
-    # For now, this is expected behavior — see docs.
-    assert result["type"] == "unknown"
+def test_device_awake_passes_through():
+    """device.awake is an identity mapping (already canonical)."""
+    assert canonical_type("device.awake") == "device.awake"
+
+
+def test_device_sleep_passes_through():
+    """device.sleep is an identity mapping (already canonical)."""
+    assert canonical_type("device.sleep") == "device.sleep"
 
 
 # ── Alternative collector names ─────────────────────────────────────
@@ -292,12 +306,11 @@ def test_network_wifi_connected_payload_ssid_from_name():
     )
     result = normalize_event(event)
     assert result["payload"]["ssid"] == "HomeWiFi"
-    # Original name field is consumed (replaced by ssid)
     assert "name" not in result["payload"]
 
 
 def test_network_wifi_connected_payload_ssid_direct():
-    """If ssid is provided directly, it's kept as-is."""
+    """If ssid is provided directly, it is kept as-is."""
     event = _make_event(
         type="wifi_connected",
         payload={"type": "wifi", "ssid": "MyNetwork"},
@@ -325,7 +338,7 @@ def test_network_wifi_connected_preserves_unknown_fields():
 
 
 def test_network_wifi_connected_payload_default_ssid():
-    """Missing ssid/name defaults to 'unknown'."""
+    """Missing ssid/name defaults to unknown."""
     event = _make_event(
         type="wifi_connected",
         payload={"type": "wifi"},

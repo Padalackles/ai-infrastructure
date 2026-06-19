@@ -68,8 +68,8 @@ in the `"trigger"` field:
 }
 ```
 
-The function reads `type` and `payload` only.  `id`, `priority`, and `status`
-are ignored during prompt generation.
+The function reads `type`, `payload`, `priority`, and `created_at`.
+`id` and `status` are ignored during prompt generation.
 
 ---
 
@@ -93,24 +93,26 @@ buildPrompt(trigger: Trigger) → String
 
 ```javascript
 function buildPrompt(trigger) {
+    const PRIORITY_MARK = {0: "Ⅰ", 1: "Ⅱ", 2: "Ⅲ"};
+    const mark = PRIORITY_MARK[trigger.priority] || "Ⅱ";
+    const ts = formatTimestamp(trigger.created_at);  // ISO → "2026-03-07 08:23"
+    const header = `🔔自动触发|${ts} ${mark}`;
+
     const templates = {
         procrastination: (p) =>
+            `${header}\n\n` +
             `用户已经连续使用 ${p.app} ${formatDuration(p.duration)}。\n\n` +
-            `请结合最近 Activity，提醒用户停止当前行为，` +
-            `并建议更有价值的替代活动。\n\n` +
-            `回复控制在 100 字以内。`,
+            `请自行决定是否回复。`,
 
         battery_low: (p) =>
+            `${header}\n\n` +
             `用户设备电量已降至 ${p.level}%。\n\n` +
-            `请提醒用户及时充电，并根据当前时间建议` +
-            `开启省电模式或寻找充电设备。\n\n` +
-            `回复控制在 80 字以内。`,
+            `请自行决定是否回复。`,
 
         late_sleep: (p) =>
+            `${header}\n\n` +
             `现在是 ${p.current_time}，用户仍然处于活跃状态。\n\n` +
-            `请温和地提醒用户休息，说明熬夜对健康的影响，` +
-            `并给出放松入睡的建议。\n\n` +
-            `回复控制在 100 字以内。`,
+            `请自行决定是否回复。`,
     };
 
     const fn = templates[trigger.type];
@@ -119,7 +121,7 @@ function buildPrompt(trigger) {
     }
 
     // Unknown type — fallback
-    return fallbackPrompt(trigger);
+    return fallbackPrompt(trigger, header);
 }
 ```
 
@@ -148,23 +150,21 @@ function buildPrompt(trigger) {
 **Template:**
 
 ```
+🔔自动触发|{timestamp} Ⅱ
+
 用户已经连续使用 {app} {formatted_duration}。
 
-请结合最近 Activity，提醒用户停止当前行为，
-并建议更有价值的替代活动。
-
-回复控制在 100 字以内。
+请自行决定是否回复。
 ```
 
 **Example output:**
 
 ```
+🔔自动触发|2026-03-07 08:23 Ⅱ
+
 用户已经连续使用 Bilibili 2 小时。
 
-请结合最近 Activity，提醒用户停止当前行为，
-并建议更有价值的替代活动。
-
-回复控制在 100 字以内。
+请自行决定是否回复。
 ```
 
 ---
@@ -188,23 +188,21 @@ function buildPrompt(trigger) {
 **Template:**
 
 ```
+🔔自动触发|{timestamp} Ⅰ
+
 用户设备电量已降至 {level}%。
 
-请提醒用户及时充电，并根据当前时间建议
-开启省电模式或寻找充电设备。
-
-回复控制在 80 字以内。
+请自行决定是否回复。
 ```
 
 **Example output:**
 
 ```
+🔔自动触发|2026-03-07 08:23 Ⅰ
+
 用户设备电量已降至 15%。
 
-请提醒用户及时充电，并根据当前时间建议
-开启省电模式或寻找充电设备。
-
-回复控制在 80 字以内。
+请自行决定是否回复。
 ```
 
 ---
@@ -230,23 +228,21 @@ function buildPrompt(trigger) {
 **Template:**
 
 ```
+🔔自动触发|{timestamp} Ⅱ
+
 现在是 {current_time}，用户仍然处于活跃状态。
 
-请温和地提醒用户休息，说明熬夜对健康的影响，
-并给出放松入睡的建议。
-
-回复控制在 100 字以内。
+请自行决定是否回复。
 ```
 
 **Example output:**
 
 ```
+🔔自动触发|2026-03-07 08:23 Ⅱ
+
 现在是 02:30，用户仍然处于活跃状态。
 
-请温和地提醒用户休息，说明熬夜对健康的影响，
-并给出放松入睡的建议。
-
-回复控制在 100 字以内。
+请自行决定是否回复。
 ```
 
 ---
@@ -258,12 +254,14 @@ function buildPrompt(trigger) {
 **Template:**
 
 ```
+🔔自动触发|{timestamp} Ⅱ
+
 检测到触发器: {type}。
 
 Payload:
 {formatted_payload}
 
-请根据以上信息提供建议。回复控制在 100 字以内。
+请自行决定是否回复。
 ```
 
 **Behavior:**
@@ -277,12 +275,13 @@ Payload:
 **Fallback implementation:**
 
 ```javascript
-function fallbackPrompt(trigger) {
+function fallbackPrompt(trigger, header) {
     const payloadStr = JSON.stringify(trigger.payload, null, 2);
     return (
+        `${header}\n\n` +
         `检测到触发器: ${trigger.type}。\n\n` +
         `Payload:\n${payloadStr}\n\n` +
-        `请根据以上信息提供建议。回复控制在 100 字以内。`
+        `请自行决定是否回复。`
     );
 }
 ```
@@ -422,39 +421,38 @@ const templates = {
 ### 9.1 procrastination
 
 ```
+🔔自动触发|2026-03-07 08:23 Ⅱ
+
 用户已经连续使用 Bilibili 2 小时。
 
-请结合最近 Activity，提醒用户停止当前行为，
-并建议更有价值的替代活动。
-
-回复控制在 100 字以内。
+请自行决定是否回复。
 ```
 
 ### 9.2 battery_low
 
 ```
+🔔自动触发|2026-03-07 08:23 Ⅰ
+
 用户设备电量已降至 15%。
 
-请提醒用户及时充电，并根据当前时间建议
-开启省电模式或寻找充电设备。
-
-回复控制在 80 字以内。
+请自行决定是否回复。
 ```
 
 ### 9.3 late_sleep
 
 ```
+🔔自动触发|2026-03-07 08:23 Ⅱ
+
 现在是 02:30，用户仍然处于活跃状态。
 
-请温和地提醒用户休息，说明熬夜对健康的影响，
-并给出放松入睡的建议。
-
-回复控制在 100 字以内。
+请自行决定是否回复。
 ```
 
 ### 9.4 unknown (e.g. future `exercise` trigger)
 
 ```
+🔔自动触发|2026-03-07 08:23 Ⅱ
+
 检测到触发器: exercise。
 
 Payload:
@@ -463,19 +461,34 @@ Payload:
   "step_count": 1200
 }
 
-请根据以上信息提供建议。回复控制在 100 字以内。
+请自行决定是否回复。
 ```
 
 ---
 
 ## 10. Template Reference
 
-| Trigger type | Priority | Payload fields | Prompt length |
-|---|---|---|---|
-| `procrastination` | 2 | `app` (str), `duration` (int, seconds) | ≤ 100 字 |
-| `battery_low` | 0 | `level` (int, 0–100) | ≤ 80 字 |
-| `late_sleep` | 1 | `current_time` (str), `awake_duration` (int) | ≤ 100 字 |
-| `unknown` / any | — | any (rendered as formatted JSON) | ≤ 100 字 |
+| Trigger type | Priority | Header mark | Payload fields | Prompt length |
+|---|---|---|---|---|
+| `battery_low` | 0 | `Ⅰ` | `level` (int, 0–100) | ≤ 3 lines |
+| `late_sleep` | 1 | `Ⅱ` | `current_time` (str), `awake_duration` (int) | ≤ 3 lines |
+| `procrastination` | 2 | `Ⅱ` | `app` (str), `duration` (int, seconds) | ≤ 3 lines |
+| `unknown` / any | 1 | `Ⅱ` | any (rendered as formatted JSON) | ≤ 10 lines |
+
+### Header Format
+
+```
+🔔自动触发|{YYYY-MM-DD HH:MM} {mark}
+```
+
+| Priority | Mark |
+|---|---|
+| 0 (highest) | `Ⅰ` |
+| 1 (normal) | `Ⅱ` |
+| 2 (low) | `Ⅲ` |
+
+The timestamp is derived from `trigger.created_at` (ISO 8601 → formatted as
+`YYYY-MM-DD HH:MM`).  The mark is derived from `trigger.priority`.
 
 ---
 

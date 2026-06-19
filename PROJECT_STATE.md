@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.4.0
-**Last Updated:** 2026-06-19 — Activity Gateway implemented (Task A002)
+**Version:** v0.5.0
+**Last Updated:** 2026-06-19 — Event Normalizer implemented (Task A003)
 
 ---
 
@@ -55,7 +55,8 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-021 | ✅ | 文档筛查 — 7 docs 修复（工具名、状态、环境变量、架构图） |
 | Task-016 | ✅ | Scheduler Framework — TypeScript scheduler service with Job registry |
 | Task-A001 | ✅ | Activity Event Schema — unified event contract for device activity pipeline |
-| Task-A002 | 🟡 | Activity Gateway — HTTP ingest endpoint (POST /activity/events) |
+| Task-A002 | ✅ | Activity Gateway — HTTP ingest endpoint (POST /activity/events) |
+| Task-A003 | ✅ | Event Normalizer — canonical event transformation |
 
 ---
 
@@ -76,7 +77,7 @@ Android (MacroDroid) → Activity Gateway → Event Normalizer → Event Databas
 |---|---|
 | Event Schema | ✅ Defined (Task A001 — `docs/activity/SCHEMA.md`) |
 | Activity Gateway | 🟡 Implemented (Task A002 — POST /activity/events) |
-| Event Normalizer | ⬜ Planned |
+| Event Normalizer | ✅ Implemented (Task A003 — maps collector→canonical types, normalizes payloads) |
 | Event Database | ⬜ Planned |
 | Decision Script | ⬜ Planned |
 | Claude Trigger | ⬜ Planned |
@@ -90,9 +91,9 @@ See `docs/activity/SCHEMA.md` for the full event contract.
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-A002 |
-| **Status** | 🟡 In Progress |
-| **Description** | Activity Gateway — HTTP POST /activity/events endpoint |
+| **Task ID** | Task-A003 |
+| **Status** | ✅ Completed |
+| **Description** | Event Normalizer — canonical event transformation |
 
 ---
 
@@ -125,11 +126,17 @@ ai-infrastructure/
 │           └── jobs/        DailyJournal (placeholder)
 ├── activity/
 │   ├── types.ts             Activity Event Schema — TypeScript contract
-│   └── gateway/             Activity Gateway (Python/FastAPI)
+│   ├── gateway/             Activity Gateway (Python/FastAPI)
+│   │   ├── __init__.py
+│   │   ├── models.py        Pydantic request/response models
+│   │   ├── service.py       ID generation, timestamp, event assembly
+│   │   └── router.py        POST /activity/events endpoint
+│   └── normalizer/          Event Normalizer (Python)
 │       ├── __init__.py
-│       ├── models.py        Pydantic request/response models
-│       ├── service.py       ID generation, timestamp, event assembly
-│       └── router.py        POST /activity/events endpoint
+│       ├── mappings.py      Collector→canonical event type mapping table
+│       ├── service.py       normalize_event() + payload normalizers
+│       └── tests/
+│           └── test_normalizer.py  20 unit tests
 ├── docs/
 │   └── activity/
 │       └── SCHEMA.md        Activity Event Schema documentation
@@ -262,8 +269,8 @@ ai-infrastructure/
 
 | Field | Value |
 |---|---|
-| **Hash** | (pending — Task A001) |
-| **Summary** | feat(activity): introduce unified activity event schema |
+| **Hash** | (pending — Task A003) |
+| **Summary** | feat(activity): implement canonical event normalizer |
 
 ---
 

@@ -4,8 +4,24 @@ Single endpoint::
 
     POST /activity/events
 
+Pipeline::
+
+    HTTP POST
+        │
+        ▼
+    Gateway (validate, build)
+        │
+        ▼
+    Normalizer (canonical type mapping, payload normalization)
+        │
+        ▼
+    Console (log)
+        │
+        ▼
+    Response (accepted)
+
 Receives raw device events, validates them, auto-populates server-side
-fields, logs them, and returns a success response.
+fields, normalizes to canonical form, and returns a success response.
 
 Source-agnostic — no collector-specific logic.
 """
@@ -17,6 +33,8 @@ from typing import Any
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
+
+from activity.normalizer.service import normalize_event
 
 from .models import ActivityEventRequest, ActivityEventResponse
 from .service import build_event
@@ -30,21 +48,25 @@ router = APIRouter(prefix="/activity", tags=["activity"])
 async def ingest_event(request: Request, body: ActivityEventRequest) -> dict[str, Any]:
     """Ingest an Activity Event from an external collector.
 
-    Validates required fields, fills in server-side defaults, logs
-    the event to the console, and returns the assigned ID + timestamp.
+    Validates required fields, fills in server-side defaults, normalizes
+    to canonical form, logs the event, and returns the assigned ID +
+    timestamp.
     """
     # ── Build the complete event ──────────────────────────────────
     event = build_event(body)
 
+    # ── Normalize to canonical form ───────────────────────────────
+    normalized = normalize_event(event)
+
     # ── Log the event (temporary — for development visibility) ─────
-    _log_event(event)
+    _log_event(normalized)
 
     # ── Return acceptance ─────────────────────────────────────────
     return {
         "status": "accepted",
-        "id": event["id"],
-        "timestamp": event["timestamp"],
-        "version": event["version"],
+        "id": normalized["id"],
+        "timestamp": normalized["timestamp"],
+        "version": normalized["version"],
     }
 
 

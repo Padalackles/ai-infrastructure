@@ -249,7 +249,7 @@ Claude Trigger           ← Notify Claude
 | Component | Responsibility |
 |---|---|
 | **Gateway** | HTTP ingest endpoint. Receives raw events from collectors (MacroDroid, Tasker, …) |
-| **Normalizer** | Maps collector-specific formats to the unified Activity Event Schema |
+| **Normalizer** | Maps collector-specific formats to the unified Activity Event Schema.  Source-independent mapping table with per-type payload normalizers.  Unknown events are logged and marked, never rejected. |
 | **Database** | Persists normalized events. Queryable by time, type, device, source |
 | **Decision** | Evaluates rules against events. Triggers actions (notify, schedule, escalate) |
 | **Claude Trigger** | Bridges Activity decisions to Claude via the MCP Hub |
@@ -261,8 +261,8 @@ Claude Trigger           ← Notify Claude
 - **Schema-Versioned** — breaking changes to the event schema bump a version integer
 - **Typed Payload** — each event type maps to a specific, typed payload sub-schema
 
-**Current Status:** 🟡 In Progress — Event Schema defined (Task A001), Gateway implemented (Task A002).
-See `docs/activity/SCHEMA.md` and `activity/gateway/`.
+**Current Status:** 🟡 In Progress — Event Schema defined (Task A001), Gateway implemented (Task A002), Normalizer implemented (Task A003).
+See `docs/activity/SCHEMA.md`, `docs/activity/NORMALIZER.md`, `activity/gateway/`, and `activity/normalizer/`.
 
 ---
 

@@ -4,6 +4,58 @@ All notable changes to the MCP Hub project.
 
 ---
 
+## [v0.5.0] — 2026-06-19 (Event Normalizer Implemented)
+
+### Event Normalizer (Task A003)
+
+Second executable component of the Activity subsystem.  Transforms
+collector-specific events into the unified canonical format consumed
+by all downstream components.
+
+- **`activity/normalizer/`**: Python normalization package
+  - `mappings.py`: Extensible event-name mapping table — collector-specific
+    names (snake_case) → canonical names (dot-notation).  30+ mappings covering
+    MacroDroid, Tasker, and Home Assistant aliases.
+  - `service.py`: Pure normalization functions — `normalize_event()` entry point,
+    per-type payload normalizers (device.awake, device.sleep, battery.low,
+    battery.charging.started, battery.charging.stopped), type coercion with safe
+    defaults.
+  - `__init__.py`: Package docstring and public API (`normalize_event`)
+- **`activity/normalizer/tests/test_normalizer.py`**: 20 unit tests covering:
+  - Canonical type mapping (screen_on, screen_off, battery_low, charging_started)
+  - Payload normalization with field coercion
+  - Unknown event handling (marked as `"unknown"`, logged, raw preserved)
+  - Raw preservation (known and unknown events)
+  - Alternative collector aliases (display_on, power_connected)
+  - Original event immutability
+- **`activity/gateway/router.py`**: Integrated Normalizer into pipeline —
+  Gateway build → Normalizer normalize → Console log → Response
+
+### Design Highlights
+
+- **Source-independent**: MacroDroid, Tasker, Apple Shortcuts, Home Assistant
+  all produce the same canonical output shape.
+- **Mapping table**: Extensible dict — new collectors add entries, not code.
+- **Unknown events**: Never crash. Marked `"unknown"`, preserved in `raw`, logged.
+- **Payload normalizers**: Per-type coercion with safe defaults — missing/wrong
+  types never raise.
+- **Zero downstream impact**: Existing Gateway, tests, and MCP Hub unaffected.
+
+### Documentation
+
+- `docs/activity/NORMALIZER.md`: Normalization flow, mapping strategy, canonical
+  naming, unknown event handling
+- `ARCHITECTURE.md`: Updated Activity Subsystem component descriptions
+- `ROADMAP.md`: Event Normalizer marked ✅ Implemented
+- `PROJECT_STATE.md`: Task A003 marked complete, v0.5.0
+- `CHANGELOG.md`: This entry
+
+### Tag
+
+`v0.5.0` — Activity pipeline normalizing events, growing toward persistence
+
+---
+
 ## [v0.4.0] — 2026-06-19 (Activity Gateway Implemented)
 
 ### Activity Gateway (Task A002)

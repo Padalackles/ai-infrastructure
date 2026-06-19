@@ -37,6 +37,7 @@ services:
       - ./mcp-hub/config.yaml:/app/config.yaml:ro
       - ./mcp_servers:/app/mcp_servers:ro
       - ./activity:/app/activity:ro
+      - ./decision:/app/decision:ro
     environment:
       - MCP_HUB_AUTH_TOKEN=${MCP_HUB_AUTH_TOKEN}
       - NTFY_SERVER=${NTFY_SERVER:-https://ntfy.sh}

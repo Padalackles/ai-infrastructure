@@ -61,6 +61,9 @@ def init_db(db_path: Path | str | None = None) -> Path:
         conn.execute(_CREATE_EVENTS_TABLE)
         conn.execute(_CREATE_EVENTS_TYPE_INDEX)
         conn.execute(_CREATE_EVENTS_TIMESTAMP_INDEX)
+        conn.execute(_CREATE_TRIGGERS_TABLE)
+        conn.execute(_CREATE_TRIGGERS_STATUS_INDEX)
+        conn.execute(_CREATE_TRIGGERS_PRIORITY_INDEX)
         conn.commit()
         logger.info("Database ready: %s", path)
     finally:
@@ -105,4 +108,24 @@ _CREATE_EVENTS_TYPE_INDEX = (
 
 _CREATE_EVENTS_TIMESTAMP_INDEX = (
     "CREATE INDEX IF NOT EXISTS idx_events_timestamp ON events (timestamp)"
+)
+
+_CREATE_TRIGGERS_TABLE = """
+CREATE TABLE IF NOT EXISTS triggers (
+    id          TEXT PRIMARY KEY,
+    type        TEXT    NOT NULL,
+    payload     TEXT    NOT NULL DEFAULT '{}',
+    status      TEXT    NOT NULL DEFAULT 'pending',
+    priority    INTEGER NOT NULL DEFAULT 1,
+    created_at  TEXT    NOT NULL,
+    acked_at    TEXT
+)
+"""
+
+_CREATE_TRIGGERS_STATUS_INDEX = (
+    "CREATE INDEX IF NOT EXISTS idx_triggers_status ON triggers (status)"
+)
+
+_CREATE_TRIGGERS_PRIORITY_INDEX = (
+    "CREATE INDEX IF NOT EXISTS idx_triggers_priority ON triggers (priority, created_at)"
 )

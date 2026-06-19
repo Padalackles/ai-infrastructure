@@ -47,6 +47,7 @@ from src.registry.server_manager import ServerManager
 from src.runtime.runtime import Runtime
 from activity.gateway import router as activity_router
 from activity.storage.database import init_db as init_activity_db
+from trigger import router as trigger_router
 from src.transport.server import _mcp_asgi, set_runtime, start_mcp, stop_mcp
 
 # ── Logging ─────────────────────────────────────────────────────
@@ -158,6 +159,7 @@ from src.api.routes import router as api_router  # noqa: E402
 
 app.include_router(api_router)
 app.include_router(activity_router)
+app.include_router(trigger_router)
 
 
 # ── Bearer Token check (raw ASGI — no FastAPI Depends) ───────────

@@ -125,6 +125,26 @@ def _norm_battery_charging_stopped(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _norm_network_wifi_connected(payload: dict[str, Any]) -> dict[str, Any]:
+    """Normalize network.wifi.connected payload.
+
+    Extracts ``ssid`` from the collector's payload.  MacroDroid uses
+    ``name`` for the SSID; other collectors may use ``ssid`` directly.
+    Unknown fields are preserved — nothing is discarded.
+    """
+    result = dict(payload)  # preserve all existing fields
+    # Normalize ssid: prefer explicit ssid, fall back to name (MacroDroid)
+    if "ssid" not in result:
+        if "name" in result:
+            result["ssid"] = result.pop("name")
+        else:
+            result["ssid"] = "unknown"
+    # Ensure ssid is a string
+    if not isinstance(result.get("ssid"), str):
+        result["ssid"] = "unknown"
+    return result
+
+
 # ── Mapping from canonical type → payload normalizer ────────────────
 
 _PAYLOAD_NORMALIZERS: dict[str, Any] = {
@@ -133,6 +153,7 @@ _PAYLOAD_NORMALIZERS: dict[str, Any] = {
     "battery.low": _norm_battery_low,
     "battery.charging.started": _norm_battery_charging_started,
     "battery.charging.stopped": _norm_battery_charging_stopped,
+    "network.wifi.connected": _norm_network_wifi_connected,
     # Additional normalizers are added here as new event types are
     # introduced.  Types without an entry pass through unchanged.
 }

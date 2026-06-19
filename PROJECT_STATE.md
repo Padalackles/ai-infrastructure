@@ -1,8 +1,8 @@
 # Project State
 
 **Status:** 🟡 In Progress
-**Version:** v0.7.0
-**Last Updated:** 2026-06-19 — MacroDroid integration documented and tested (Task A005)
+**Version:** v0.8.0
+**Last Updated:** 2026-06-19 — Current Android Events fully supported: network.wifi.connected canonical type (Task A006)
 
 ---
 
@@ -59,6 +59,7 @@ Build an **MCP Hub** deployed on a VPS that connects Claude Desktop to multiple 
 | Task-A003 | ✅ | Event Normalizer — canonical event transformation |
 | Task-A004 | ✅ | Activity SQLite Persistence — repository + auto-create DB |
 | Task-A005 | ✅ | MacroDroid Integration — documented, tested, 30 integration tests |
+| Task-A006 | ✅ | Support Current Android Events — network.wifi.connected canonical type + payload normalizer |
 
 ---
 
@@ -93,9 +94,9 @@ See `docs/activity/SCHEMA.md` for the full event contract.
 
 | Field | Value |
 |---|---|
-| **Task ID** | Task-A005 |
+| **Task ID** | Task-A006 |
 | **Status** | ✅ Completed |
-| **Description** | MacroDroid Integration — documented, tested, 30 integration tests |
+| **Description** | Support Current Android Events — network.wifi.connected + payload normalization |
 
 ---
 
@@ -279,8 +280,8 @@ ai-infrastructure/
 
 | Field | Value |
 |---|---|
-| **Hash** | (pending — Task A005) |
-| **Summary** | feat(activity): MacroDroid integration — HTTP interface + 30 E2E tests |
+| **Hash** | (pending — Task A006) |
+| **Summary** | feat(activity): support Android events — network.wifi.connected canonical type + payload normalization |
 
 ---
 
@@ -291,4 +292,4 @@ When resuming this project:
 1. Read README.md
 2. Read PROJECT_STATE.md
 3. Read ARCHITECTURE.md
-4. Continue from **Task-015** — Docker Production
+4. Continue from **Task-A006** — Support Current Android Events (completed); next: **Task-A007** (Decision Script) or **Task-015** (Docker Production)

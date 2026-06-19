@@ -75,6 +75,7 @@ app.closed
 
 network.connected
 network.disconnected
+network.wifi.connected
 
 location.changed
 
@@ -169,6 +170,24 @@ screen.unlocked
   }
 }
 ```
+
+### `network.wifi.connected`
+
+```json
+{
+  "type": "network.wifi.connected",
+  "payload": {
+    "ssid": "HomeWiFi"
+  }
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `ssid` | `string` | Wi-Fi network SSID |
+
+> **Note:** Unknown payload fields from the collector (e.g. `bssid`, `rssi`)
+> are preserved — nothing is discarded.
 
 ### `notification.received`
 

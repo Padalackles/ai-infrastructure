@@ -201,7 +201,7 @@ def test_battery_changed_event(client: TestClient, repo: ActivityRepository):
 
 
 def test_wifi_connected_event(client: TestClient, repo: ActivityRepository):
-    """MacroDroid wifi_connected → network.connected → persisted."""
+    """MacroDroid wifi_connected → network.wifi.connected → persisted."""
     status, body = _post(
         client,
         {
@@ -213,7 +213,8 @@ def test_wifi_connected_event(client: TestClient, repo: ActivityRepository):
         },
     )
     _assert_accepted(status, body)
-    _assert_persisted(repo, body["id"], "network.connected")
+    event = _assert_persisted(repo, body["id"], "network.wifi.connected")
+    assert event["payload"]["ssid"] == "HomeWiFi"
 
 
 def test_wifi_disconnected_event(client: TestClient, repo: ActivityRepository):
@@ -427,7 +428,7 @@ _MACRODROID_EVENT_TYPES = [
     ("charging_started", {"level": 65, "method": "usb"}, "battery.charging.started"),
     ("charging_stopped", {"level": 100}, "battery.charging.stopped"),
     ("battery_changed", {"level": 42, "is_charging": False}, "battery.level_changed"),
-    ("wifi_connected", {"type": "wifi", "name": "HomeWiFi"}, "network.connected"),
+    ("wifi_connected", {"type": "wifi", "name": "HomeWiFi"}, "network.wifi.connected"),
     ("wifi_disconnected", {"type": "wifi"}, "network.disconnected"),
     ("bluetooth_connected", {"device_name": "AirPods", "device_address": "00:11:22:33:44:55"}, "bluetooth.connected"),
     ("bluetooth_disconnected", {"device_name": "AirPods", "device_address": "00:11:22:33:44:55"}, "bluetooth.disconnected"),

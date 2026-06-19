@@ -270,3 +270,70 @@ def test_power_connected_alias():
     )
     result = normalize_event(event)
     assert result["type"] == "battery.charging.started"
+
+
+# ── network.wifi.connected ─────────────────────────────────────────
+
+def test_wifi_connected_maps_to_network_wifi_connected():
+    """wifi_connected → network.wifi.connected"""
+    event = _make_event(
+        type="wifi_connected",
+        payload={"type": "wifi", "name": "HomeWiFi"},
+    )
+    result = normalize_event(event)
+    assert result["type"] == "network.wifi.connected"
+
+
+def test_network_wifi_connected_payload_ssid_from_name():
+    """MacroDroid sends name=SSID → normalized to ssid field."""
+    event = _make_event(
+        type="wifi_connected",
+        payload={"type": "wifi", "name": "HomeWiFi"},
+    )
+    result = normalize_event(event)
+    assert result["payload"]["ssid"] == "HomeWiFi"
+    # Original name field is consumed (replaced by ssid)
+    assert "name" not in result["payload"]
+
+
+def test_network_wifi_connected_payload_ssid_direct():
+    """If ssid is provided directly, it's kept as-is."""
+    event = _make_event(
+        type="wifi_connected",
+        payload={"type": "wifi", "ssid": "MyNetwork"},
+    )
+    result = normalize_event(event)
+    assert result["payload"]["ssid"] == "MyNetwork"
+
+
+def test_network_wifi_connected_preserves_unknown_fields():
+    """Unknown payload fields are never discarded."""
+    event = _make_event(
+        type="wifi_connected",
+        payload={
+            "type": "wifi",
+            "name": "HomeWiFi",
+            "bssid": "aa:bb:cc:dd:ee:ff",
+            "rssi": -45,
+        },
+    )
+    result = normalize_event(event)
+    assert result["payload"]["ssid"] == "HomeWiFi"
+    assert result["payload"]["bssid"] == "aa:bb:cc:dd:ee:ff"
+    assert result["payload"]["rssi"] == -45
+    assert result["payload"]["type"] == "wifi"
+
+
+def test_network_wifi_connected_payload_default_ssid():
+    """Missing ssid/name defaults to 'unknown'."""
+    event = _make_event(
+        type="wifi_connected",
+        payload={"type": "wifi"},
+    )
+    result = normalize_event(event)
+    assert result["payload"]["ssid"] == "unknown"
+
+
+def test_canonical_type_wifi_connected():
+    """canonical_type() for wifi_connected → network.wifi.connected"""
+    assert canonical_type("wifi_connected") == "network.wifi.connected"

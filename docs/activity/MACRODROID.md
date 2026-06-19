@@ -80,7 +80,7 @@ their canonical equivalents after normalization:
 | `charging_started` | `battery.charging.started` | `level` (int), `method` (usb, wireless, unknown) |
 | `charging_stopped` | `battery.charging.stopped` | `level` (int) |
 | `battery_changed` | `battery.level_changed` | `level` (int), `is_charging` (bool) |
-| `wifi_connected` | `network.connected` | `type` ("wifi"), `name` (SSID) |
+| `wifi_connected` | `network.wifi.connected` | `ssid` (Wi-Fi network name), all other fields preserved |
 | `wifi_disconnected` | `network.disconnected` | `type` ("wifi") |
 | `bluetooth_connected` | `bluetooth.connected` | `device_name`, `device_address` |
 | `bluetooth_disconnected` | `bluetooth.disconnected` | `device_name`, `device_address` |
@@ -181,6 +181,8 @@ Unknown event types are logged and preserved — they never crash the system.
   }
 }
 ```
+
+> Normalized to `network.wifi.connected` with `payload.ssid` extracted from `name`. All extra fields (e.g. `bssid`, `rssi`) are preserved.
 
 ### Bluetooth Connected
 

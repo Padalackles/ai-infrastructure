@@ -61,6 +61,7 @@ export type EventType =
   // Network
   | "network.connected"
   | "network.disconnected"
+  | "network.wifi.connected"
 
   // Location
   | "location.changed"
@@ -146,6 +147,11 @@ export interface NetworkConnectedPayload {
 
 export interface NetworkDisconnectedPayload {
   type: "wifi" | "mobile" | "ethernet" | "bluetooth";
+}
+
+export interface NetworkWifiConnectedPayload {
+  ssid: string;
+  [key: string]: unknown; // preserve unknown collector fields
 }
 
 export interface LocationChangedPayload {
@@ -244,6 +250,7 @@ export type EventPayload<T extends EventType = EventType> =
   T extends "app.closed" ? AppClosedPayload :
   T extends "network.connected" ? NetworkConnectedPayload :
   T extends "network.disconnected" ? NetworkDisconnectedPayload :
+  T extends "network.wifi.connected" ? NetworkWifiConnectedPayload :
   T extends "location.changed" ? LocationChangedPayload :
   T extends "notification.received" ? NotificationReceivedPayload :
   T extends "notification.dismissed" ? NotificationDismissedPayload :

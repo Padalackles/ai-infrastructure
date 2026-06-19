@@ -60,6 +60,8 @@ CANONICAL_BLUETOOTH_DISCONNECTED = "bluetooth.disconnected"
 CANONICAL_WIFI_CONNECTED = "wifi.connected"
 CANONICAL_WIFI_DISCONNECTED = "wifi.disconnected"
 
+CANONICAL_NETWORK_WIFI_CONNECTED = "network.wifi.connected"
+
 CANONICAL_SCHEDULE_TRIGGERED = "schedule.triggered"
 
 # Sentinel for unmapped event types.
@@ -102,7 +104,7 @@ EVENT_MAPPINGS: dict[str, str] = {
     # ── Network ─────────────────────────────────────────────────
     "network_connected": CANONICAL_NETWORK_CONNECTED,
     "network_disconnected": CANONICAL_NETWORK_DISCONNECTED,
-    "wifi_connected": CANONICAL_NETWORK_CONNECTED,
+    "wifi_connected": CANONICAL_NETWORK_WIFI_CONNECTED,
     "wifi_disconnected": CANONICAL_NETWORK_DISCONNECTED,
     # ── Location ────────────────────────────────────────────────
     "location_changed": CANONICAL_LOCATION_CHANGED,

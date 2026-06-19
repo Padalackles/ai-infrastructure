@@ -80,6 +80,7 @@ Event types use **hierarchical dot-notation**: `<domain>.<subdomain>.<action>`.
 | `display_off` | `device.sleep` |
 | `power_connected` | `battery.charging.started` |
 | `power_disconnected` | `battery.charging.stopped` |
+| `wifi_connected` | `network.wifi.connected` |
 
 ### Adding a New Collector
 
